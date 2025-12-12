@@ -10,7 +10,6 @@ import CategoryPieChart from "../components/CategoryPieChart";
 import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
 
-// 📌 IMPORTS PARA PROJEÇÃO
 import { getTransactions } from "../services/transactions.service";
 import { getReservations } from "../services/reservations.service";
 import { getBills } from "../services/bills.service";
@@ -22,8 +21,6 @@ export default function Home({
   loans,
   mes,
   categorias,
-
-  // 📌 Adicionamos agora:
   savingsGoal,
   setSavingsGoal
 }) {
@@ -38,12 +35,10 @@ export default function Home({
   const [showDebts, setShowDebts] = useState(false);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  // 📌 ESTADOS PARA DADOS COMPLETOS (projeção)
   const [transactions, setTransactions] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [bills, setBills] = useState([]);
 
-  // 📌 CARREGAR OS DADOS REAIS
   useEffect(() => {
     async function carregarTudo() {
       const t = await getTransactions();
@@ -57,7 +52,6 @@ export default function Home({
     carregarTudo();
   }, []);
 
-  // 📌 Dados agrupados para projeção real
   const dadosMensais = {
     transactions,
     reservas,
@@ -71,7 +65,6 @@ export default function Home({
       {/* ===================== COLUNA ESQUERDA ===================== */}
       <div className="home-column left">
 
-        {/* TOP CARDS */}
         <section className="home-card hero-total">
           <CardsGrid
             mensal={mensal}
@@ -80,19 +73,16 @@ export default function Home({
           />
         </section>
 
-        {/* DÍVIDAS */}
         {showDebts && (
           <section className="home-card">
             <DebtsInline dividas={dividas} />
           </section>
         )}
 
-        {/* RESUMO POR PESSOA */}
         <section className="home-card people-section">
           <header className="section-title">Resumo por pessoa</header>
 
           <div className="people-grid">
-            {/* AMANDA */}
             <div className="person-box amanda">
               <h3>Amanda</h3>
 
@@ -111,7 +101,6 @@ export default function Home({
               </div>
             </div>
 
-            {/* CELSO */}
             <div className="person-box celso">
               <h3>Celso</h3>
 
@@ -132,7 +121,6 @@ export default function Home({
           </div>
         </section>
 
-        {/* EVOLUÇÃO ANUAL */}
         <section className="home-card">
           <header className="section-title">Evolução anual</header>
           <div className="evolution-chart-wrapper">
@@ -145,7 +133,6 @@ export default function Home({
       {/* ===================== COLUNA DIREITA ===================== */}
       <div className="home-column right">
 
-        {/* CONTAS DA CASA */}
         <section className="home-card">
           <header className="section-title">Contas da casa</header>
 
@@ -167,24 +154,21 @@ export default function Home({
           </div>
         </section>
 
-        {/* META DE ECONOMIA ANUAL */}
+        {/* ⭐ AQUI ESTÁ SUA META ANUAL */}
         <section className="home-card">
           <AnnualSavingsGoal
             salarios={salarios}
             dadosMensais={dadosMensais}
-            savingsGoal={savingsGoal}          // ✔ Agora está recebendo a meta
-            
-            setSavingsGoal={setSavingsGoal}    // ✔ Para atualizar a meta quando editada
-            mes={mes}                          // ✔ Se o componente precisar saber o ano
+            savingsGoal={savingsGoal}
+            setSavingsGoal={setSavingsGoal}
+            mes={mes}
           />
         </section>
 
-        {/* EMPRÉSTIMOS */}
         <section className="home-card">
           <LoansSummary loans={loans} mes={mes} />
         </section>
 
-        {/* GASTOS POR CATEGORIA */}
         <section className="home-card">
           <header className="section-title category-header">
             Gastos por categoria
@@ -204,10 +188,7 @@ export default function Home({
 
           <CategoryPieChart data={categorias?.[pessoaCategorias.toLowerCase()] || []} />
 
-          <MonthSummary
-            categorias={categorias}
-            pessoa={pessoaCategorias}
-          />
+          <MonthSummary categorias={categorias} pessoa={pessoaCategorias} />
         </section>
 
       </div>
