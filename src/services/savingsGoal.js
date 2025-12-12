@@ -9,10 +9,16 @@ export async function getSavingsGoal(ano) {
     .from("savings_goal")
     .select("*")
     .eq("ano", ano)
-    .single();
+    .maybeSingle();  // ✔ mais seguro que .single()
 
-  // Se não existir meta, retorna null sem quebrar
-  if (error && error.code !== "PGRST116") {
+  // Se não existe meta, retorna null sem erro
+  if (error) {
+    // Erros de "registro não encontrado" são esperados
+    const ignorable = ["PGRST116", "PGRST204", "PGRST007"];
+    if (ignorable.includes(error.code)) {
+      return null;
+    }
+
     console.error("Erro ao buscar meta:", error);
     throw error;
   }
@@ -29,8 +35,8 @@ export async function saveSavingsGoal(ano, valor) {
   const { error } = await supabase
     .from("savings_goal")
     .upsert(
-      { ano, valor },
-      { onConflict: "ano" }
+      { ano, valor },   // ✔ envia os dados
+      { onConflict: "ano" } // ✔ garante update em vez de insert duplicado
     );
 
   if (error) {
