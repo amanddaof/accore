@@ -7,24 +7,26 @@ import { supabase } from "./supabase";
 export async function getSavingsGoal(ano) {
   const { data, error } = await supabase
     .from("savings_goal")
-    .select("*")
+    .select("valor")
     .eq("ano", ano)
-    .maybeSingle();  // ✔ mais seguro que .single()
+    .maybeSingle();
 
-  // Se não existe meta, retorna null sem erro
   if (error) {
-    // Erros de "registro não encontrado" são esperados
-    const ignorable = ["PGRST116", "PGRST204", "PGRST007"];
-    if (ignorable.includes(error.code)) {
-      return null;
-    }
-
     console.error("Erro ao buscar meta:", error);
-    throw error;
+    return null;
   }
 
-  return data || null;
+  // nada encontrado
+  if (!data || data.valor === undefined || data.valor === null) {
+    return null;
+  }
+
+  // converter sempre para número (numeric vem como string)
+  const valor = Number(data.valor);
+
+  return { valor };
 }
+
 
 /**
  * Salva ou atualiza a meta anual.
