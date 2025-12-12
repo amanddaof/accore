@@ -1,27 +1,31 @@
 import { useEffect, useState } from "react";
 import { getSavingsByYear } from "../services/savings";
-import { saveSavingsGoal } from "../services/savingsGoal";
+import { getSavingsGoal, saveSavingsGoal } from "../services/savingsGoal";
 import { money } from "../utils/money";
 import { calcularProjecaoEconomiaAnual } from "../calculations/economyProjection";
 import "./AnnualSavingsGoal.css";
 
 export default function AnnualSavingsGoal({
   salarios,
-  dadosMensais,     // TRANSACTIONS, RESERVAS, BILLS, LOANS
-  savingsGoal,       // 👈 META VINDO DO DASHBOARD
-  setSavingsGoal,    // 👈 ATUALIZA META
+  dadosMensais,
+  savingsGoal,        // meta do ANO ATUAL (dashboard)
+  setSavingsGoal,     // atualiza meta do ANO ATUAL
   mes
 }) {
-  const anoInicial = Number(mes.split("-")[0]);
-  const [ano, setAno] = useState(anoInicial);
+
+  const anoAtual = Number(mes.split("-")[0]);
+  const [ano, setAno] = useState(anoAtual);
 
   const [dadosReais, setDadosReais] = useState([]);
 
-  // Formulário de edição
+  // Meta LOCAL para o ano selecionado
+  const [metaAno, setMetaAno] = useState(0);
+  const [metaTemp, setMetaTemp] = useState(0);
   const [editandoMeta, setEditandoMeta] = useState(false);
-  const [metaTemp, setMetaTemp] = useState(savingsGoal || 0);
 
-  // Carrega savings reais do ano
+  // =========================================================
+  // 🔹 Carrega economias registradas para o ano
+  // =========================================================
   useEffect(() => {
     async function carregar() {
       const r = await getSavingsByYear(ano);
@@ -30,16 +34,34 @@ export default function AnnualSavingsGoal({
     carregar();
   }, [ano]);
 
-  // Atualiza meta local ao trocar ano
+  // =========================================================
+  // 🔹 Carrega meta do ANO selecionado
+  // =========================================================
   useEffect(() => {
-    if (ano === anoInicial) {
-      setMetaTemp(savingsGoal || 0);
-    } else {
-      setMetaTemp(0);
-    }
-  }, [ano, savingsGoal, anoInicial]);
+    async function carregarMeta() {
 
-  // Projeção
+      // Ano atual usa a meta do dashboard
+      if (ano === anoAtual) {
+        setMetaAno(savingsGoal || 0);
+        setMetaTemp(savingsGoal || 0);
+        return;
+      }
+
+      // Outros anos buscam no banco
+      const metaBD = await getSavingsGoal(ano);
+      const valor = metaBD?.valor || 0;
+
+      setMetaAno(valor);
+      setMetaTemp(valor);
+    }
+
+    carregarMeta();
+  }, [ano, savingsGoal, anoAtual]);
+
+
+  // =========================================================
+  // 🔹 Cálculos de projeção
+  // =========================================================
   const proj = calcularProjecaoEconomiaAnual({
     ano,
     dadosReais,
@@ -49,26 +71,22 @@ export default function AnnualSavingsGoal({
 
   const {
     somaReais,
-    sobraProjetadaTotal,
-    totalProjetadoAno,
     mesesReais,
-    mesesFuturos
+    mesesFuturos,
+    totalProjetadoAno
   } = proj;
 
   const qtdMesesFuturos = mesesFuturos.length;
 
-  // Barras de progresso
-  const pctReal =
-    savingsGoal > 0 ? Math.min(100, (somaReais / savingsGoal) * 100) : 0;
+  const meta = metaAno; // Mais claro
 
-  const pctProjetado =
-    savingsGoal > 0 ? Math.min(100, (totalProjetadoAno / savingsGoal) * 100) : 0;
+  const pctReal = meta > 0 ? Math.min(100, (somaReais / meta) * 100) : 0;
+  const pctProjetado = meta > 0 ? Math.min(100, (totalProjetadoAno / meta) * 100) : 0;
 
-  // Mensagens
   let tone = "neutral";
   let status = "Defina sua meta anual para começar.";
 
-  if (savingsGoal > 0) {
+  if (meta > 0) {
     if (pctProjetado >= 100) {
       tone = "good";
       status = "🎉 Meta projetada atingida!";
@@ -84,18 +102,25 @@ export default function AnnualSavingsGoal({
     }
   }
 
-  // Cálculo de quanto falta por mês
-  const faltante = Math.max(0, savingsGoal - somaReais);
+  const faltante = Math.max(0, meta - somaReais);
   const guardarPorMes =
     qtdMesesFuturos > 0 ? faltante / qtdMesesFuturos : faltante;
 
-  // SALVAR META NO SUPABASE
+  // =========================================================
+  // 🔹 SALVAR META
+  // =========================================================
   async function salvarMeta() {
     const m = Number(metaTemp);
     if (!m || m <= 0) return;
 
-    await saveSavingsGoal(ano, m);   // 👉 SALVA NO BANCO
-    setSavingsGoal(m);               // 👉 ATUALIZA IMEDIATAMENTE
+    await saveSavingsGoal(ano, m); // salva no banco
+
+    // se é o ano atual → atualiza dashboard
+    if (ano === anoAtual) {
+      setSavingsGoal(m);
+    }
+
+    setMetaAno(m);
     setEditandoMeta(false);
   }
 
@@ -119,13 +144,13 @@ export default function AnnualSavingsGoal({
             <input
               type="number"
               value={metaTemp}
-              onChange={(e) => setMetaTemp(e.target.value)}
+              onChange={e => setMetaTemp(e.target.value)}
             />
             <button onClick={salvarMeta}>Salvar</button>
           </>
         ) : (
           <button className="meta-btn" onClick={() => setEditandoMeta(true)}>
-            {savingsGoal ? `Meta: ${money(savingsGoal)}` : "Definir meta"}
+            {meta > 0 ? `Meta: ${money(meta)}` : "Definir meta"}
           </button>
         )}
       </div>
@@ -150,8 +175,7 @@ export default function AnnualSavingsGoal({
         </div>
       </div>
 
-      {/* BARRAS DE PROGRESSO */}
-      {savingsGoal > 0 && (
+      {meta > 0 && (
         <div className="progress-area multi">
           <div className="bar-bg">
             <div
@@ -171,13 +195,10 @@ export default function AnnualSavingsGoal({
         </div>
       )}
 
-      {/* PLANO DE AÇÃO */}
-      {savingsGoal > 0 && (
+      {meta > 0 && (
         <div className="save-plan">
           {faltante <= 0 ? (
-            <div className="save-ok">
-              🎉 Meta atingida com meses reais!
-            </div>
+            <div className="save-ok">🎉 Meta atingida com meses reais!</div>
           ) : qtdMesesFuturos > 0 ? (
             <div className="save-need">
               Faltam {money(faltante)} — guardar{" "}
