@@ -35,29 +35,28 @@ export default function AnnualSavingsGoal({
   }, [ano]);
 
   // =========================================================
-  // 🔹 Carrega meta do ANO selecionado
+  // 🔹 Carrega META para o ano selecionado (CORRIGIDO)
   // =========================================================
   useEffect(() => {
     async function carregarMeta() {
 
-      // Ano atual usa a meta do dashboard
-      if (ano === anoAtual) {
-        setMetaAno(savingsGoal || 0);
-        setMetaTemp(savingsGoal || 0);
-        return;
-      }
-
-      // Outros anos buscam no banco
+      // Sempre buscar meta do banco primeiro
       const metaBD = await getSavingsGoal(ano);
-      const valor = metaBD?.valor || 0;
+      const valorBanco = metaBD?.valor || 0;
 
-      setMetaAno(valor);
-      setMetaTemp(valor);
+      // Ano atual usa savingsGoal como prioridade (se existir),
+      // mas mantém fallback do banco se savingsGoal for null/undefined.
+      const valorFinal =
+        ano === anoAtual && savingsGoal != null
+          ? savingsGoal
+          : valorBanco;
+
+      setMetaAno(valorFinal);
+      setMetaTemp(valorFinal);
     }
 
     carregarMeta();
   }, [ano, savingsGoal, anoAtual]);
-
 
   // =========================================================
   // 🔹 Cálculos de projeção
@@ -78,7 +77,7 @@ export default function AnnualSavingsGoal({
 
   const qtdMesesFuturos = mesesFuturos.length;
 
-  const meta = metaAno; // Mais claro
+  const meta = metaAno;
 
   const pctReal = meta > 0 ? Math.min(100, (somaReais / meta) * 100) : 0;
   const pctProjetado = meta > 0 ? Math.min(100, (totalProjetadoAno / meta) * 100) : 0;
