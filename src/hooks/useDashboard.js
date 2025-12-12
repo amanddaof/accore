@@ -177,22 +177,27 @@ export function useDashboard() {
   }, [salarios]);
 
   return {
-    loading,
-    cards,
-    loans,
-    bills,
-    reservations,
-    salaryHistory,
-    transactions,
-    mes,
-    setMes,
-    mensal,
-    dividas,
-    categorias,
-    anual,
-    salarios,
-    cofre,
-    savingsGoal, // Agora aqui está a meta anual
-    reload: loadAll
-  };
+  loading,
+  cards,
+  loans,
+  bills,
+  reservations,
+  salaryHistory,
+  transactions,
+  mes,
+  setMes,
+  mensal,
+  dividas,
+  categorias,
+  anual,
+  salarios,
+  cofre,
+
+  savingsGoal,       // ✔ meta anual
+  setSavingsGoal,    // ✔ NECESSÁRIO para atualizar a meta
+
+  reload: loadAll
+};
+
 }
+
