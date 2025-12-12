@@ -56,8 +56,7 @@ console.log("🟩 Resultado Supabase:", teste);
 
       // Sempre buscar do banco primeiro
       const metaBD = await getSavingsGoal(ano);
-      const valorBanco = metaBD?.valor?.[0] ?? 0;
-
+      const valorBanco = metaBD?.valor?.[0]?.valor ?? 0;
 
       // Se for o ano do dashboard, savingsGoal substitui
       const valorFinal =
@@ -229,5 +228,6 @@ console.log("🟩 Resultado Supabase:", teste);
     </div>
   );
 }
+
 
 
