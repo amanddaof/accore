@@ -32,7 +32,11 @@ export default function App() {
     salarios,
     cofre,
     loans,
-    reload
+    reload,
+
+    // ⭐ ADICIONADO
+    savingsGoal,
+    setSavingsGoal
   } = useDashboard();
 
   if (loading) return <p>Carregando...</p>;
@@ -40,10 +44,10 @@ export default function App() {
   return (
     <Routes>
 
-      {/** 🔓 ROTA SEM LOGIN NECESSÁRIO */}
+      {/* 🔓 ROTA SEM LOGIN */}
       <Route path="/login" element={<Login />} />
 
-      {/** 🔒 ROTAS PROTEGIDAS */}
+      {/* 🔒 ROTAS PROTEGIDAS */}
       <Route
         element={
           <ProtectedRoute>
@@ -72,6 +76,10 @@ export default function App() {
               cofre={cofre}
               loans={loans}
               mes={mes}
+
+              // ⭐ AGORA A HOME RECEBE A META ANUAL!
+              savingsGoal={savingsGoal}
+              setSavingsGoal={setSavingsGoal}
             />
           }
         />
