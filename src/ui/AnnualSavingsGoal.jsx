@@ -1,40 +1,45 @@
 import { useEffect, useState } from "react";
 import { getSavingsByYear } from "../services/savings";
+import { saveSavingsGoal } from "../services/savingsGoal";
 import { money } from "../utils/money";
 import { calcularProjecaoEconomiaAnual } from "../calculations/economyProjection";
 import "./AnnualSavingsGoal.css";
 
 export default function AnnualSavingsGoal({
   salarios,
-  dadosMensais, // TRANSACTIONS, RESERVAS, BILLS, LOANS
+  dadosMensais,     // TRANSACTIONS, RESERVAS, BILLS, LOANS
+  savingsGoal,       // 👈 META VINDO DO DASHBOARD
+  setSavingsGoal,    // 👈 ATUALIZA META
+  mes
 }) {
-  const now = new Date();
-  const anoAtual = now.getFullYear();
+  const anoInicial = Number(mes.split("-")[0]);
+  const [ano, setAno] = useState(anoInicial);
 
-  const [ano, setAno] = useState(anoAtual);
   const [dadosReais, setDadosReais] = useState([]);
 
-  const metaStorageKey = `metaAnual_${ano}`;
-  const [metaAnual, setMetaAnual] = useState(
-    Number(localStorage.getItem(metaStorageKey)) || 0
-  );
+  // Formulário de edição
   const [editandoMeta, setEditandoMeta] = useState(false);
-  const [metaTemp, setMetaTemp] = useState(metaAnual);
+  const [metaTemp, setMetaTemp] = useState(savingsGoal || 0);
 
   // Carrega savings reais do ano
   useEffect(() => {
     async function carregar() {
       const r = await getSavingsByYear(ano);
       setDadosReais(Array.isArray(r) ? r : []);
-
-      const meta = Number(localStorage.getItem(metaStorageKey) || 0);
-      setMetaAnual(meta);
-      setMetaTemp(meta);
     }
     carregar();
   }, [ano]);
 
-  // Projeção real + futura
+  // Atualiza meta local ao trocar ano
+  useEffect(() => {
+    if (ano === anoInicial) {
+      setMetaTemp(savingsGoal || 0);
+    } else {
+      setMetaTemp(0);
+    }
+  }, [ano, savingsGoal, anoInicial]);
+
+  // Projeção
   const proj = calcularProjecaoEconomiaAnual({
     ano,
     dadosReais,
@@ -47,22 +52,23 @@ export default function AnnualSavingsGoal({
     sobraProjetadaTotal,
     totalProjetadoAno,
     mesesReais,
-    mesesFuturos, // array de meses futuros
+    mesesFuturos
   } = proj;
 
   const qtdMesesFuturos = mesesFuturos.length;
 
-  // Percentuais para as barras
+  // Barras de progresso
   const pctReal =
-    metaAnual > 0 ? Math.min(100, (somaReais / metaAnual) * 100) : 0;
-  const pctProjetado =
-    metaAnual > 0 ? Math.min(100, (totalProjetadoAno / metaAnual) * 100) : 0;
+    savingsGoal > 0 ? Math.min(100, (somaReais / savingsGoal) * 100) : 0;
 
-  // Mensagem final
+  const pctProjetado =
+    savingsGoal > 0 ? Math.min(100, (totalProjetadoAno / savingsGoal) * 100) : 0;
+
+  // Mensagens
   let tone = "neutral";
   let status = "Defina sua meta anual para começar.";
 
-  if (metaAnual > 0) {
+  if (savingsGoal > 0) {
     if (pctProjetado >= 100) {
       tone = "good";
       status = "🎉 Meta projetada atingida!";
@@ -78,30 +84,31 @@ export default function AnnualSavingsGoal({
     }
   }
 
-  // Quanto falta guardar por mês
-  // Se quiser considerar a projeção, troque somaReais por totalProjetadoAno
-  const faltante = Math.max(0, metaAnual - somaReais);
+  // Cálculo de quanto falta por mês
+  const faltante = Math.max(0, savingsGoal - somaReais);
   const guardarPorMes =
     qtdMesesFuturos > 0 ? faltante / qtdMesesFuturos : faltante;
 
-  function salvarMeta() {
+  // SALVAR META NO SUPABASE
+  async function salvarMeta() {
     const m = Number(metaTemp);
     if (!m || m <= 0) return;
 
-    localStorage.setItem(metaStorageKey, m);
-    setMetaAnual(m);
+    await saveSavingsGoal(ano, m);   // 👉 SALVA NO BANCO
+    setSavingsGoal(m);               // 👉 ATUALIZA IMEDIATAMENTE
     setEditandoMeta(false);
   }
 
   return (
     <div className="annual-goal-card">
+
       <header>
         <span>🎯 Economia anual</span>
 
         <div className="year-select">
-          <button onClick={() => setAno((a) => a - 1)}>‹</button>
+          <button onClick={() => setAno(a => a - 1)}>‹</button>
           <span>{ano}</span>
-          <button onClick={() => setAno((a) => a + 1)}>›</button>
+          <button onClick={() => setAno(a => a + 1)}>›</button>
         </div>
       </header>
 
@@ -118,7 +125,7 @@ export default function AnnualSavingsGoal({
           </>
         ) : (
           <button className="meta-btn" onClick={() => setEditandoMeta(true)}>
-            {metaAnual ? `Meta: ${money(metaAnual)}` : "Definir meta"}
+            {savingsGoal ? `Meta: ${money(savingsGoal)}` : "Definir meta"}
           </button>
         )}
       </div>
@@ -143,7 +150,8 @@ export default function AnnualSavingsGoal({
         </div>
       </div>
 
-      {metaAnual > 0 && (
+      {/* BARRAS DE PROGRESSO */}
+      {savingsGoal > 0 && (
         <div className="progress-area multi">
           <div className="bar-bg">
             <div
@@ -163,7 +171,8 @@ export default function AnnualSavingsGoal({
         </div>
       )}
 
-      {metaAnual > 0 && (
+      {/* PLANO DE AÇÃO */}
+      {savingsGoal > 0 && (
         <div className="save-plan">
           {faltante <= 0 ? (
             <div className="save-ok">
