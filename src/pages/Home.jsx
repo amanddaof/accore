@@ -10,12 +10,23 @@ import CategoryPieChart from "../components/CategoryPieChart";
 import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
 
-// 📌 IMPORTS NECESSÁRIOS PARA A PROJEÇÃO
+// 📌 IMPORTS PARA PROJEÇÃO
 import { getTransactions } from "../services/transactions.service";
 import { getReservations } from "../services/reservations.service";
 import { getBills } from "../services/bills.service";
 
-export default function Home({ mensal, dividas, salarios, loans, mes, categorias }) {
+export default function Home({
+  mensal,
+  dividas,
+  salarios,
+  loans,
+  mes,
+  categorias,
+
+  // 📌 Adicionamos agora:
+  savingsGoal,
+  setSavingsGoal
+}) {
   const amanda = salarios?.amanda || { salario: 0, gasto: 0, sobra: 0 };
   const celso = salarios?.celso || { salario: 0, gasto: 0, sobra: 0 };
 
@@ -27,12 +38,12 @@ export default function Home({ mensal, dividas, salarios, loans, mes, categorias
   const [showDebts, setShowDebts] = useState(false);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  // 📌 ESTADOS PARA DADOS COMPLETOS (necessários para projeção mensal)
+  // 📌 ESTADOS PARA DADOS COMPLETOS (projeção)
   const [transactions, setTransactions] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [bills, setBills] = useState([]);
 
-  // 📌 CARREGA DADOS COMPLETOS AO MONTAR O COMPONENTE
+  // 📌 CARREGAR OS DADOS REAIS
   useEffect(() => {
     async function carregarTudo() {
       const t = await getTransactions();
@@ -43,16 +54,15 @@ export default function Home({ mensal, dividas, salarios, loans, mes, categorias
       setReservas(r || []);
       setBills(b || []);
     }
-
     carregarTudo();
   }, []);
 
-  // 📌 OBJETO QUE A PROJEÇÃO ANUAL REALMENTE PRECISA
+  // 📌 Dados agrupados para projeção real
   const dadosMensais = {
     transactions,
     reservas,
     bills,
-    loans, // você já recebia esse antes
+    loans
   };
 
   return (
@@ -82,6 +92,7 @@ export default function Home({ mensal, dividas, salarios, loans, mes, categorias
           <header className="section-title">Resumo por pessoa</header>
 
           <div className="people-grid">
+            {/* AMANDA */}
             <div className="person-box amanda">
               <h3>Amanda</h3>
 
@@ -100,6 +111,7 @@ export default function Home({ mensal, dividas, salarios, loans, mes, categorias
               </div>
             </div>
 
+            {/* CELSO */}
             <div className="person-box celso">
               <h3>Celso</h3>
 
@@ -155,11 +167,15 @@ export default function Home({ mensal, dividas, salarios, loans, mes, categorias
           </div>
         </section>
 
-        {/* META DE ECONOMIA - COMPLETA COM PROJEÇÃO REAL */}
+        {/* META DE ECONOMIA ANUAL */}
         <section className="home-card">
           <AnnualSavingsGoal
             salarios={salarios}
-            dadosMensais={dadosMensais}  // <<–– ESSENCIAL PARA FUNCIONAR
+            dadosMensais={dadosMensais}
+            savingsGoal={savingsGoal}          // ✔ Agora está recebendo a meta
+            
+            setSavingsGoal={setSavingsGoal}    // ✔ Para atualizar a meta quando editada
+            mes={mes}                          // ✔ Se o componente precisar saber o ano
           />
         </section>
 
