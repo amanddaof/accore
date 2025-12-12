@@ -1,0 +1,100 @@
+.transactions-list {
+  display: grid;
+  gap: 12px;
+}
+
+.transaction-card {
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: .2s ease;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.transaction-card:hover {
+  background: rgba(255,255,255,.07);
+}
+
+.txn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.txn-row strong {
+  font-size: .9rem;
+}
+
+.txn-sub {
+  font-size: .7rem;
+  opacity: .6;
+  display: block;
+  margin-top: 2px;
+}
+
+.txn-value {
+  font-weight: bold;
+}
+
+.txn-value.pago {
+  color: #2dd4bf;
+}
+
+.txn-value.pendente {
+  color: #fb7185;
+}
+
+/* EXPANSÃO */
+.txn-details {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  font-size: .75rem;
+  opacity: .85;
+}
+
+.txn-details span {
+  opacity: .6;
+  display: block;
+}
+
+.txn-details strong {
+  display: block;
+  margin-top: 2px;
+}
+
+/* BOTÃO PAGAR */
+.mark-paid-btn {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.mark-paid-btn:hover {
+  opacity: .9;
+  transform: scale(1.02);
+}
+
+/* VAZIO */
+.empty-extract {
+  text-align: center;
+  opacity: .6;
+  padding: 24px;
+}
+
+/* STATUS */
+.pago {
+  color: #2dd4bf;
+}
+
+.pendente {
+  color: #fb7185;
+}

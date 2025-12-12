@@ -1,0 +1,205 @@
+/* ================================
+   SIDEBAR BASE
+================================ */
+
+.sidebar {
+  width: 58px;
+  height: 100vh;
+  background: rgba(10, 12, 28, 0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.45);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: width 0.25s ease;
+}
+
+/* quando abre */
+.sidebar.open {
+  width: 185px;
+}
+
+/* logo (se ainda estiver usando) */
+.sidebar-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6c63ff, #8b82ff);
+  color: white;
+  font-weight: bold;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 26px;
+  box-shadow: 0 6px 16px rgba(108, 99, 255, 0.55);
+}
+
+/* topo: botão + (opcional) logo */
+.sidebar-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* fechado = centralizado */
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.sidebar.open .sidebar-top {
+  justify-content: space-between; /* aberto = logo + botão nas pontas */
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+/* menu centralizado verticalmente */
+.sidebar-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+/* item do menu (icone + label) */
+.sidebar-item {
+  width: 100%;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* quando sidebar está aberta → ícone à esquerda, texto ao lado */
+.sidebar.open .sidebar-item {
+  justify-content: flex-start;
+  padding-left: 14px;
+  gap: 10px;
+}
+
+/* hover item */
+.sidebar-item:hover {
+  background: rgba(108, 99, 255, 0.12);
+  color: white;
+  transform: translateY(-0.5px);
+}
+
+/* ativo */
+.sidebar-item.active {
+  background: rgba(108, 99, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(108, 99, 255, 0.25);
+}
+
+/* divisorzinho */
+.sidebar-divider {
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0.5;
+  margin: 8px auto;
+}
+
+/* label dos itens (texto) */
+.sidebar-label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: translateX(-6px);
+  transition: all 0.25s ease;
+  font-size: 0.86rem;
+}
+
+/* quando abre: mostra texto */
+.sidebar.open .sidebar-label {
+  opacity: 1;
+  width: auto;
+  transform: translateX(0);
+}
+
+/* ================================
+   BOTÃO PREMIUM DE EXPANSÃO
+================================ */
+
+.sidebar-toggle {
+  position: absolute;
+  top: 14px;
+  right: 10px;
+
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(108, 99, 255, 0.15);
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  color: #8b82ff;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
+}
+
+/* hover suave */
+.sidebar-toggle:hover {
+  background: rgba(108, 99, 255, 0.25);
+  box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.12);
+}
+
+/* deixa só a transição da seta, SEM girar à força
+   (quem troca o ícone é o JSX: <FiChevronLeft /> / <FiChevronRight />) */
+.sidebar-toggle svg {
+  transition: transform 0.25s ease;
+}
+
+/* efeito de clique */
+.sidebar-toggle:active {
+  transform: scale(0.92);
+}
+
+/* ================================
+   ÍCONES SVG
+================================ */
+
+.sidebar svg {
+  stroke: rgba(255, 255, 255, 0.8);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sidebar svg text {
+  fill: white;
+  font-weight: bold;
+}
+
+/* hover ícone */
+.sidebar-item:hover svg {
+  stroke: #8b82ff;
+}
+
+/* ativo ícone */
+.sidebar-item.active svg {
+  stroke: #6c63ff;
+}
+
+.sidebar-item:hover svg text {
+  fill: #8b82ff;
+}
+
+.sidebar-item.active svg text {
+  fill: #6c63ff;
+}

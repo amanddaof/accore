@@ -1,0 +1,46 @@
+/* ============================
+   CATEGORIAS — FINAL
+============================ */
+
+.categories-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.category-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-name {
+  font-size: .75rem;
+  opacity: .85;
+}
+
+.category-value {
+  font-size: .75rem;
+  opacity: .7;
+}
+
+.category-bar {
+  height: 7px;
+  background: rgba(255,255,255,.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.category-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6c63ff, #ff8c5f);
+  box-shadow: 0 0 8px rgba(108,99,255,.35);
+}
+
+/* cores suaves por tipo (quando existir classe) */
+.cat-mercado .category-fill { background: linear-gradient(90deg,#2dd4bf,#6ee7b7); }
+.cat-transporte .category-fill { background: linear-gradient(90deg,#60a5fa,#93c5fd); }
+.cat-moradia .category-fill { background: linear-gradient(90deg,#fb7185,#fda4af); }
+.cat-assinaturas .category-fill { background: linear-gradient(90deg,#c084fc,#d8b4fe); }
+.cat-outros .category-fill { background: linear-gradient(90deg,#fbbf24,#fde68a); }

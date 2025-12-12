@@ -1,0 +1,341 @@
+/* --- OVERLAY --- */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 9999;
+}
+
+/* --- DRAWER BASE --- */
+.drawer {
+  width: 420px;
+  height: 100%;
+  background: #0f1224;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: -4px 0 12px rgba(0,0,0,0.4);
+}
+
+/* --- HEADER (igual Reservas) --- */
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.drawer-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.drawer-header button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  opacity: .75;
+  transition: .2s;
+}
+
+.drawer-header button:hover {
+  opacity: 1;
+}
+
+/* --- INPUTS --- */
+.drawer-content label {
+  font-size: .85rem;
+  opacity: .75;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.drawer-input,
+.drawer-content input {
+  width: 100%;
+  background: #1a1d33;
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #fff;
+  margin-bottom: 14px;
+  font-size: .9rem;
+  transition: border .2s, background .2s;
+}
+
+.drawer-input:focus,
+.drawer-content input:focus {
+  border-color: #6e8bff;
+  background: #222642;
+  outline: none;
+}
+
+/* --- BOTÕES --- */
+.primary-btn {
+  width: 100%;
+  background: #6a7dff;
+  color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 4px 12px rgba(110,130,255,.35);
+  transition: .2s;
+}
+
+.primary-btn:hover {
+  background: #7e8fff;
+}
+
+.cancel-btn {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: none;
+  font-size: .9rem;
+  opacity: .7;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.cancel-btn:hover {
+  opacity: 1;
+}
+
+/* --- HISTÓRICO --- */
+.savings-list {
+  margin-top: 24px;
+}
+
+.section-title {
+  font-size: .85rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .75;
+  margin-bottom: 12px;
+}
+
+/* --- ITEM (card similar ao Reservas) --- */
+.savings-item {
+  background: rgba(255,255,255,0.04);
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.savings-item:hover {
+  background: rgba(255,255,255,0.07);
+}
+
+/* Header do item */
+.savings-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.savings-item-header span {
+  font-size: .9rem;
+}
+
+.savings-item-header strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Corpo expandido */
+.savings-item-body {
+  margin-top: 10px;
+  animation: fadeIn .25s ease;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: .9rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Botões editar e excluir */
+.edit-btn,
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.edit-btn {
+  background: rgba(110,130,255,.25);
+  color: #9fb2ff;
+}
+
+.edit-btn:hover {
+  background: rgba(110,130,255,.35);
+}
+
+.delete-btn {
+  background: rgba(255,60,60,.25);
+  color: #ff8f8f;
+}
+
+.delete-btn:hover {
+  background: rgba(255,60,60,.35);
+}
+
+/* ANIMAÇÃO */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mensagem vazia */
+.empty {
+  opacity: .6;
+  font-size: .85rem;
+  margin-top: 8px;
+}
+
+/* FORM mais compacto */
+.savings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;               /* controla o espaçamento global */
+  margin-bottom: 20px;
+}
+
+/* linha "Mês / Ano" */
+.savings-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* inputs menores e mais elegantes */
+.savings-form input.drawer-input {
+  padding: 8px 10px;
+  height: 38px;
+  font-size: .88rem;
+}
+
+/* labels mais discretos */
+.savings-form label {
+  margin-bottom: 3px !important;
+  font-size: .75rem !important;
+  opacity: .7;
+}
+
+/* botão salvar mais próximo do form */
+.savings-form .primary-btn {
+  margin-top: 6px;
+}
+
+/* botão cancelar sem aquele espaço enorme */
+.savings-form .cancel-btn {
+  margin-top: 4px;
+}
+.savings-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.savings-input-row label {
+  width: 90px;             /* tamanho fixo para alinhar */
+  font-size: .82rem;
+  opacity: .75;
+}
+
+.savings-input-row .drawer-input {
+  flex: 1;                 /* input ocupa todo o espaço restante */
+  padding: 8px 12px;
+  height: 38px;
+}
+
+/* overlay escuro — igual aos outros drawers */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 999; 
+}
+
+/* drawer ocupando a tela inteira, sem scroll interno */
+.save-savings-drawer {
+  width: 420px;
+  height: 100vh;              /* ocupa a tela inteira */
+  background: #0e1320;
+  border-left: 1px solid rgba(255,255,255,0.05);
+  padding: 24px;
+  overflow: hidden;           /* nunca mostra scrollbar interna */
+  display: flex;
+  flex-direction: column;
+}
+
+/* conteúdo pode crescer mas SEM criar scrollbar interna */
+.save-savings-content {
+  flex: 1;
+  overflow: auto;            /* rolamento aparece APENAS se realmente passar da tela */
+  padding-right: 6px;
+}
+
+.year-switcher {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.year-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.year-selector span {
+  min-width: 48px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.year-selector button {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 2px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+}
+
+.year-selector button:hover {
+  background: rgba(255,255,255,0.16);
+}

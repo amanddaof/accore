@@ -1,0 +1,539 @@
+/* ==============================
+   OVERLAY E DRAWER
+============================== */
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 20;
+}
+
+.drawer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 420px;
+  background: linear-gradient(180deg, #10132e, #07091a);
+  box-shadow: -20px 0 40px rgba(0,0,0,.6);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn .35s ease forwards;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+}
+
+.drawer-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* ==============================
+   CONTEÚDO
+============================== */
+
+.drawer-content {
+  padding: 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ==============================
+   STACK FUNCIONAL SIMPLES
+============================== */
+
+.cards-stack-fm {
+  position: relative;
+  height: 0;              /* não usa mais height fixa */
+  padding-bottom: 260px;  /* reserva espaço para o cartão */
+  margin-bottom: 12px;
+}
+
+/* mantém os cards absolutos ocupando esse espaço */
+.cards-stack-fm > div {
+  position: absolute;
+  inset: 0;
+}
+
+/* CARD PRINCIPAL */
+.cards-stack-fm .card-main {
+  z-index: 3;
+}
+
+/* CARDS DE FUNDO */
+.cards-stack-fm .card-ghost.left {
+  z-index: 1;
+}
+
+.cards-stack-fm .card-ghost.right {
+  z-index: 2;
+}
+
+/* ==============================
+   GARANTE TAMANHO DOS CARTÕES
+============================== */
+
+.credit-card-full {
+  width: 100%;
+  height: 240px;
+  box-sizing: border-box;
+}
+
+/* ==============================
+   UI ABAIXO DO CARTÃO
+============================== */
+
+.drawer-filter,
+.drawer-total,
+.primary-btn,
+.purchase-form,
+.card-transactions {
+  position: relative;
+  z-index: 10;
+}
+
+/* ==============================
+   FORMULÁRIO
+============================== */
+
+.purchase-form {
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.purchase-form input,
+.purchase-form select {
+  background: rgba(255,255,255,.1);
+  border: none;
+  padding: 8px;
+  border-radius: 10px;
+  color: white;
+}
+
+/* ==============================
+   BOTÃO
+============================== */
+
+.primary-btn {
+  background: linear-gradient(135deg, #6c63ff, #877dff);
+  border: none;
+  padding: 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+/* ==============================
+   NAV
+============================== */
+
+.cards-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-size: .8rem;
+  margin-bottom: 8px;
+}
+
+.drawer-filter,
+.drawer-total {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ================================
+   🎯 FILTRO DE MÊS - ESTILIZADO
+================================ */
+
+/* ===========================
+   FILTRO DE MÊS (PREMIUM)
+=========================== */
+
+.drawer-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+
+  border-radius: 14px;
+  padding: 6px 10px;
+
+  backdrop-filter: blur(8px);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 6px 14px rgba(0,0,0,.25);
+}
+
+/* TEXTO DO MÊS */
+.drawer-filter strong {
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .4px;
+  color: rgba(255,255,255,.9);
+  user-select: none;
+}
+
+/* BOTÕES DE SETA */
+.drawer-filter button {
+  background: rgba(255,255,255,.08);
+  border: none;
+  border-radius: 999px;
+
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: .85rem;
+  color: white;
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 3px 6px rgba(0,0,0,.3);
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    filter .15s ease;
+}
+
+.drawer-filter button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.drawer-filter button:active {
+  transform: scale(.92);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.25);
+}
+
+/* ============================
+   INPUTS PREMIUM • FORMULÁRIO
+============================ */
+
+.purchase-form input,
+.purchase-form select {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.03)
+  );
+
+  border-radius: 12px;
+  padding: 11px 14px;
+  border: none;
+
+  color: white;
+  font-size: .85rem;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 4px 10px rgba(0,0,0,.25);
+
+  transition:
+    box-shadow .15s ease,
+    background .15s ease,
+    transform .1s ease;
+}
+
+/* Placeholder elegante */
+.purchase-form input::placeholder {
+  color: rgba(255,255,255,.45);
+}
+
+/* Foco premium */
+.purchase-form input:focus,
+.purchase-form select:focus {
+  outline: none;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.12),
+    rgba(255,255,255,.05)
+  );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.2),
+    0 0 0 2px rgba(140,120,255,.45),
+    0 6px 14px rgba(0,0,0,.35);
+
+  transform: translateY(-1px);
+}
+
+/* Campo desativado */
+.purchase-form input[disabled] {
+  opacity: .6;
+  background: rgba(255,255,255,.04);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* SELECT */
+.purchase-form select {
+  cursor: pointer;
+}
+
+/* Botão do formulário */
+.purchase-form button {
+  margin-top: 6px;
+
+  background: linear-gradient(135deg, #5f6cff, #7c86ff);
+  color: white;
+
+  border-radius: 999px;
+  border: none;
+  padding: 12px;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(95,108,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+
+  transition:
+    transform .15s ease,
+    filter .15s ease,
+    box-shadow .15s ease;
+}
+
+.purchase-form button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.purchase-form button:active {
+  transform: scale(.96);
+}
+
+/* ================================
+   EXTRATO FINTECH • PREMIUM
+================================ */
+
+.card-transactions {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* CADA LINHA */
+.history-row {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.03),
+    rgba(255,255,255,.01)
+  );
+  
+  border-radius: 14px;
+  padding: 12px 14px;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    0 4px 12px rgba(0,0,0,.25);
+
+  transition:
+    background .15s ease,
+    transform .12s ease,
+    box-shadow .15s ease;
+}
+
+/* HOVER */
+.history-row:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 8px 18px rgba(0,0,0,.35);
+}
+
+/* COLUNA DA DESCRIÇÃO */
+.history-desc {
+  display: grid;
+  gap: 4px;
+}
+
+.history-desc .title {
+  font-size: .85rem;
+  font-weight: 600;
+  opacity: .95;
+}
+
+.history-desc .sub {
+  font-size: .7rem;
+  opacity: .5;
+}
+
+/* VALOR */
+.amount {
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+/* CORES FINAS */
+.amount.success {
+  color: #2dd4bf;
+}
+
+.amount.danger {
+  color: #fb7185;
+}
+
+/* LINHAS MAIS "AREJADAS" */
+.card-transactions > * {
+  margin-bottom: 3px;
+}
+
+/* PASSAGEM MAIS SUAVE AO SCROLL */
+.card-transactions {
+  scroll-behavior: smooth;
+}
+
+
+/* quando abre as opções */
+select option {
+  background: #0f1333;   /* fundo escuro */
+  color: #ffffff;        /* texto claro */
+}
+
+/* ===========================
+   CAMPOS PREMIUM (INPUTS + SELECT)
+=========================== */
+
+.purchase-form input,
+.purchase-form select {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: .85rem;
+  color: #f1f1ff;
+  transition: 
+    border .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
+}
+
+/* placeholder elegante */
+.purchase-form input::placeholder {
+  color: rgba(180,180,220,.45);
+  font-size: .78rem;
+}
+
+/* foco premium */
+.purchase-form input:focus,
+.purchase-form select:focus {
+  outline: none;
+  border-color: rgba(130,110,255,.7);
+  box-shadow: 0 0 0 2px rgba(120,100,255,.25);
+  background: rgba(255,255,255,.09);
+}
+
+/* dropdown dark (select) */
+.purchase-form select {
+  appearance: none;
+  background-image:
+    linear-gradient(135deg, transparent 50%, #aaa 50%),
+    linear-gradient(225deg, transparent 50%, #aaa 50%),
+    linear-gradient(to right, rgba(255,255,255,.15), rgba(255,255,255,.15));
+  background-position:
+    calc(100% - 18px) calc(50% - 2px),
+    calc(100% - 13px) calc(50% - 2px),
+    calc(100% - 42px) 50%;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1px 20px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+/* abrir lista mais escura */
+.purchase-form select option {
+  background: #101330;
+  color: #f5f6ff;
+}
+
+/* hover sutil */
+.purchase-form input:hover,
+.purchase-form select:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.mark-month-btn {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  transition: .2s ease;
+  margin-bottom: 8px;
+}
+
+.mark-month-btn:hover {
+  transform: scale(1.03);
+  opacity: .9;
+}
+
+/* ============================
+   RESERVAS — MÊS AO LADO
+============================ */
+
+.reserva-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.reserve-month {
+  font-weight: 600;
+  font-size: .9rem;
+  min-width: 60px;
+  color: rgba(255,255,255,.85);
+}

@@ -1,0 +1,319 @@
+.salaries-page {
+  margin: 30px;
+}
+
+.salaries-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.salaries-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.92);
+  letter-spacing: .4px;
+}
+
+/* botão novo salário */
+.salaries-header button {
+  background: linear-gradient(135deg, #6c63ff, #8b82ff);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 500;
+  padding: 8px 14px;
+  font-size: .85rem;
+}
+
+.salaries-header button:hover {
+  filter: brightness(1.1);
+}
+
+.salaries-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px; /* cria respiro entre linhas */
+}
+
+.salaries-table thead th {
+  text-transform: uppercase;
+  font-size: .7rem;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.45);
+  text-align: left;
+  padding: 6px 12px;
+}
+
+.salaries-table tbody tr {
+  background: rgba(255,255,255,.03);
+  border-radius: 10px;
+}
+
+.salaries-table td {
+  padding: 10px 12px;
+  color: rgba(255,255,255,.9);
+}
+
+/* arredondar primeira e última celula */
+.salaries-table tbody tr td:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.salaries-table tbody tr td:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.badge {
+  padding: 4px 8px;
+  font-size: .75rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.badge.amanda {
+  background: rgba(124,108,255,.15);
+  color: #a8a2ff;
+}
+
+.badge.celso {
+  background: rgba(76,184,184,.15);
+  color: #7ad9d9;
+}
+
+.salary-value {
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+
+.salaries-table tbody tr:hover {
+  background: rgba(255,255,255,.06);
+}
+
+/* 🔵 Fundo escurecido com blur */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 26, 0.65);
+  backdrop-filter: blur(7px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn .20s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* 🔵 Caixa do modal */
+.modal {
+  width: 340px;
+  padding: 24px 26px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #10122b, #171a35);
+  box-shadow: 0 30px 60px rgba(0,0,0,.5);
+  animation: modalPop .22s ease;
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* 🔵 Título */
+.modal h3 {
+  margin-bottom: 10px;
+  font-size: .92rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: rgba(255,255,255,.9);
+  text-transform: uppercase;
+}
+
+
+/* 🔵 Grupo de input */
+.modal label {
+  margin-top: 14px;
+  display: block;
+  color: rgba(255,255,255,.55);
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+
+/* 🔵 Inputs refinados */
+.modal input,
+.modal select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
+
+  color: rgba(255,255,255,.9);
+  font-size: .9rem;
+
+  transition: all .18s ease;
+}
+
+/* hover */
+.modal input:hover,
+.modal select:hover {
+  border-color: rgba(108,99,255,0.35);
+}
+
+/* foco */
+.modal input:focus,
+.modal select:focus {
+  outline: none;
+  border-color: #7a73ff;
+  background: rgba(120,110,255,0.06);
+  box-shadow: 0 0 0 2px rgba(120,110,255,0.25);
+}
+
+/* seletor de mês */
+.modal input[type="month"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  opacity: 0.8;
+}
+
+
+/* 🔵 Ações */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+}
+
+
+/* 🔵 Botão primário */
+.modal-actions .btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg, #6c63ff, #8b82ff);
+  border: none;
+  color: white;
+  padding: 10px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all .18s ease;
+}
+
+.modal-actions .btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+/* 🔵 Botão secundário */
+.modal-actions .btn-secondary {
+  flex: 1;
+  margin-left: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,.55);
+  cursor: pointer;
+  padding: 10px 0;
+  border-radius: 10px;
+  transition: all .18s ease;
+}
+
+.modal-actions .btn-secondary:hover {
+  color: rgba(255,255,255,.85);
+}
+
+.salary-charts {
+  margin-bottom: 16px;
+}
+
+.chart-card {
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.chart-card h4 {
+  margin-bottom: 8px;
+  font-size: .8rem;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.6);
+}
+
+.salary-cards {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.salary-card {
+  flex: 1;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.05);
+}
+
+.salary-card span {
+  font-size: .7rem;
+  letter-spacing: .06em;
+  color: rgba(255,255,255,.55);
+  text-transform: uppercase;
+}
+
+.salary-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.2rem;
+}
+
+.salary-card.amanda { border-left: 3px solid #8b82ff; }
+.salary-card.celso  { border-left: 3px solid #5fd1d1; }
+
+.salary-reajustes {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.reajuste-card {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.04);
+  font-size: .8rem;
+}
+
+.reajuste-card span {
+  display: block;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+}
+
+.reajuste-card small {
+  color: rgba(255,255,255,.55);
+}
+
+.reajuste-card strong {
+  margin-left: 4px;
+}
+
+.reajuste-card.amanda {
+  border-left: 3px solid #8b82ff;
+}
+
+.reajuste-card.celso {
+  border-left: 3px solid #5fd1d1;
+}

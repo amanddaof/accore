@@ -1,0 +1,167 @@
+/* CARD BASE */
+.annual-goal-card {
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 20px;
+  padding: 20px 22px;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* HEADER */
+.annual-goal-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.annual-goal-card header span {
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.year-select {
+  background: rgba(255,255,255,0.06);
+  padding: 4px 10px;
+  border-radius: 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.year-select button {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* META BADGE */
+.meta-btn {
+  background: rgba(56,189,248,0.15);
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(56,189,248,0.3);
+  color: #38bdf8;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.meta-btn:hover {
+  background: rgba(56,189,248,0.25);
+}
+
+/* GRID DE INFOS */
+.goal-infos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.goal-infos div {
+  background: rgba(255,255,255,0.05);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.goal-infos span {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.goal-infos strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+}
+
+/* PROGRESS BAR NOVA */
+.progress-area {
+  margin-top: 6px;
+}
+
+.bar-bg {
+  height: 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.07);
+  overflow: hidden;
+  position: relative;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width .4s ease;
+}
+
+.bar.real {
+  background: linear-gradient(90deg,#4ade80,#22c55e);
+  opacity: 0.65;
+}
+
+.bar.proj {
+  background: linear-gradient(90deg,#60a5fa,#3b82f6);
+}
+
+/* NUMBERS */
+.numbers {
+  margin-top: 4px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0.8;
+}
+
+/* STATUS */
+.status {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.status.good {
+  background: rgba(56,189,248,0.15);
+  border: 1px solid rgba(56,189,248,0.25);
+  color: #38bdf8;
+}
+
+.status.warn {
+  background: rgba(251,191,36,0.15);
+  border: 1px solid rgba(251,191,36,0.25);
+  color: #fbbf24;
+}
+
+.status.bad {
+  background: rgba(248,113,113,0.15);
+  border: 1px solid rgba(248,113,113,0.25);
+  color: #f87171;
+}
+
+/* SAVE PLAN */
+.save-plan {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.save-plan strong {
+  font-size: 15px;
+}

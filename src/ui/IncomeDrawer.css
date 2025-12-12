@@ -1,0 +1,80 @@
+.income-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* cabeçalho */
+.income-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.income-title {
+  display: block;
+  font-size: 0.9rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .85;
+}
+
+.income-sub {
+  display: block;
+  font-size: 0.78rem;
+  opacity: .6;
+  margin-top: 2px;
+}
+
+.income-chip {
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(111, 134, 255, 0.18);
+  color: #c9d0ff;
+  white-space: nowrap;
+}
+
+/* métricas */
+.income-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.income-item span {
+  display: block;
+  font-size: 0.78rem;
+  opacity: .7;
+  margin-bottom: 2px;
+}
+
+.income-item strong {
+  font-size: 0.9rem;
+}
+
+/* barra */
+.income-bar {
+  margin-top: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+
+.income-progress {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #43e97b, #38f9d7);
+  transition: width .3s ease;
+}
+
+/* rodapé */
+.income-percent {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  opacity: .7;
+  text-align: right;
+}

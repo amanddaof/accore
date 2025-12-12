@@ -1,0 +1,102 @@
+.limits-page {
+  margin-left: 24px;
+  margin-top: 12px;
+  max-width: 900px;
+}
+
+.limits-header h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+.limits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.limit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,.04);
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.limit-info span {
+  display: block;
+  font-size: .9rem;
+  color: rgba(255,255,255,.65);
+}
+
+.btn-edit {
+  background: rgba(108,99,255,.15);
+  border: 1px solid rgba(108,99,255,.25);
+  color: #8b82ff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.limits-modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,10,26,.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.limits-modal {
+  background: linear-gradient(160deg, #10122b, #171a35);
+  padding: 20px;
+  width: 280px;
+  border-radius: 14px;
+}
+
+.limits-modal label {
+  display: block;
+  margin-top: 10px;
+  font-size: .7rem;
+  letter-spacing: .06em;
+  color: rgba(255,255,255,.6);
+}
+
+.limits-modal input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  color: white;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg,#6c63ff,#8b82ff);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px;
+}
+
+.btn-secondary {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,.6);
+}
+
+.limits-page {
+  margin-left: auto;
+  margin-right: auto;
+}

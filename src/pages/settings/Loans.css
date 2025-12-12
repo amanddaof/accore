@@ -1,0 +1,173 @@
+.loans-page {
+  max-width: 900px;
+  margin: 16px auto;
+}
+
+.loans-header {
+  margin-bottom: 12px;
+}
+
+.loans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loan-card {
+  background: linear-gradient(
+    160deg,
+    rgba(108,99,255,0.08),
+    rgba(255,255,255,0.03)
+  );
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+  transition: all .25s ease;
+}
+
+.loan-card:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.25),
+    inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+.loan-title {
+  font-size: 1.05rem;
+  letter-spacing: .3px;
+  margin-bottom: 14px;
+}
+
+.loan-summary {
+  background: rgba(255,255,255,.03);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.loan-summary strong {
+  display: block;
+}
+
+.loan-summary small {
+  font-size: .65rem;
+  color: rgba(255,255,255,.6);
+}
+
+.loan-table {
+  font-size: .75rem;
+  border-spacing: 0 6px;
+  border-collapse: separate;
+}
+
+.loan-table tr {
+  background: rgba(255,255,255,.02);
+}
+
+.loan-table th {
+  font-size: .7rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .6;
+}
+
+.loan-table tr:hover {
+  background: rgba(255,255,255,.04);
+}
+
+.loan-table td {
+  padding: 8px 4px;
+  font-weight: 400;
+}
+
+.parcela-paga {
+  opacity: 0.4;
+  text-decoration: line-through;
+  background: linear-gradient(90deg, rgba(255,255,255,.03), transparent);
+}
+
+.parcela-paga td {
+  color: rgba(255,255,255,.5);
+}
+
+.loan-table tbody tr:nth-child(odd) {
+  background: rgba(255,255,255,.015);
+}
+
+.check {
+  color: #3be38a;
+  font-weight: bold;
+  margin-left: 6px;
+}
+
+.loan-progress {
+  height: 7px;
+  margin: 12px 0 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.06);
+  overflow: hidden;
+}
+
+.loan-progress-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #6c63ff, #8b82ff);
+  transition: width .4s ease;
+}
+
+.year-separator td {
+  font-size: .7rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .4;
+  padding-top: 12px;
+}
+
+.loan-filter {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.loan-filter select {
+  background: rgba(255,255,255,.05);
+  border: none;
+  border-radius: 10px;
+  padding: 6px 12px;
+  color: white;
+  font-size: .8rem;
+  outline: none;
+}
+
+.loan-years {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.loan-year-column {
+  background: rgba(255,255,255,.03);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.loan-year-title {
+  font-weight: 600;
+  opacity: .7;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.loan-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 2px;
+  font-size: .75rem;
+  border-radius: 6px;
+  transition: background .15s ease;
+  cursor: pointer;
+}
+
+.loan-row:hover {
+  background: rgba(255,255,255,.04);
+}

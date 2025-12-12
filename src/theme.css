@@ -1,0 +1,270 @@
+/* ==============================
+   ACCORE • THEME PRINCIPAL
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 10% 10%, #1a1d3a 0%, #0b0e25 35%, #06081b 70%);
+  color: #e8e9f3;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ======= VARIÁVEIS ======= */
+:root {
+  --bg-main: #070a1d;
+  --bg-panel: rgba(24,26,64,.88);
+
+  --text-main: #f0f1fa;
+  --text-muted: #a3a6c8;
+
+  --accent: #6c63ff;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+}
+
+/* FUNDO DECORATIVO */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(600px 300px at 80% 10%, rgba(108,99,255,.08), transparent 40%),
+    radial-gradient(500px 290px at 10% 60%, rgba(255,140,95,.06), transparent 45%);
+}
+
+.app-container {
+  max-width: 1240px;
+  margin: auto;
+  padding: 20px 28px 26px;
+  display: grid;
+  gap: 26px;
+}
+
+.glass {
+  background: linear-gradient(180deg, rgba(24,26,64,.88), rgba(14,16,48,.88));
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+.section-title {
+  font-size: .9rem;
+  letter-spacing: 1px;
+  opacity: .8;
+}
+
+button {
+  cursor: pointer;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: .8rem;
+  transition: background .2s;
+}
+
+.history-row:hover {
+  background: rgba(255,255,255,.04);
+}
+
+.history-desc {
+  display: grid;
+  gap: 2px;
+}
+
+.history-desc .title {
+  font-size: .8rem;
+}
+
+.history-desc .sub {
+  font-size: .65rem;
+  opacity: .5;
+}
+
+.amount {
+  font-weight: 600;
+}
+
+.credit-card-full {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  border-radius: 28px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 18px 32px rgba(0,0,0,.55);
+}
+
+/* HEADER */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header .bank {
+  font-size: .7rem;
+  opacity: .8;
+}
+
+.card-header .title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* BADGE */
+.badge {
+  background: rgba(0,0,0,.35);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: .7rem;
+}
+
+/* BARRA */
+.limit-bar {
+  height: 6px;
+  background: rgba(255,255,255,.3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.limit-bar .fill {
+  height: 100%;
+  background: white;
+}
+
+/* GRID DOS VALORES */
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.metric {
+  background: rgba(255,255,255,.08);
+  padding: 10px;
+  border-radius: 14px;
+}
+
+.metric strong {
+  margin-top: 4px;
+  display: block;
+}
+
+.metric.highlight {
+  background: rgba(0,0,0,.25);
+}
+
+/* PESSOAS */
+.people {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.person {
+  background: rgba(0,0,0,.25);
+  border-radius: 14px;
+  padding: 10px;
+  font-size: .75rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.credit-card-full.credit-nu {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+}
+
+.credit-card-full.credit-bb {
+  background: linear-gradient(135deg, #1e40af, #172554);
+}
+
+.credit-card-full.credit-si {
+  background: linear-gradient(135deg, #119f5e, #2dd4bf);
+}
+
+input, select {
+  background: rgba(255,255,255,.08);
+  color: white;
+}
+
+/* NORMALIZAÇÃO FINAL DOS CARTÕES */
+.credit-card-full {
+  width: 100% !important;
+  max-width: 360px !important;   /* trava o tamanho */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.limit-bar { 
+  height: 6px !important; 
+}
+
+.values-grid {
+  gap: 10px !important;
+}
+
+.metric,
+.person,
+.badge {
+  border-radius: 14px !important;
+}
+
+/* ===========================
+   BOTÃO PREMIUM (PRIMARY)
+=========================== */
+
+.primary-btn {
+  background: linear-gradient(135deg, #5f6cff, #7a88ff);
+  border: none;
+  color: #fff;
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+
+  box-shadow:
+    0 8px 18px rgba(95,108,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    filter .15s ease,
+    opacity .15s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+
+  box-shadow:
+    0 12px 22px rgba(95,108,255,.45),
+    inset 0 0 0 1px rgba(255,255,255,.2);
+}
+
+.primary-btn:active {
+  transform: scale(.97);
+  box-shadow:
+    0 6px 14px rgba(95,108,255,.35),
+    inset 0 2px 4px rgba(0,0,0,.25);
+  opacity: .95;
+}

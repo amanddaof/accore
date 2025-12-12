@@ -1,0 +1,142 @@
+.categories-page {
+  max-width: 700px;
+  margin: 20px auto;
+}
+
+.new-category {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.new-category input[type="text"],
+.new-category input:not([type]) {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,.05);
+  color: white;
+}
+
+.new-category button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #6c63ff;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.categories-list {
+  display: grid;
+  gap: 12px;
+}
+
+.category-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,.04);
+  border-radius: 12px;
+}
+
+.category-card.inactive {
+  opacity: .4;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.category-card button {
+  margin-left: auto;
+  font-size: .7rem;
+  background: transparent;
+  color: #8b82ff;
+  border: none;
+  cursor: pointer;
+}
+
+.category-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-edit {
+  background: rgba(100,100,255,0.25);
+  border: 1px solid rgba(120,120,255,0.5);
+  color: #cdd;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-edit:hover {
+  background: rgba(120,120,255,0.5);
+}
+
+.btn-toggle {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-toggle:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.65);
+  z-index: 1000;
+}
+
+.modal {
+  width: 280px;
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal input {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-save {
+  background: #22c55e;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.btn-cancel {
+  background: #334155;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
