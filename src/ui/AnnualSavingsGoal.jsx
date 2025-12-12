@@ -12,29 +12,29 @@ export default function AnnualSavingsGoal({
   setSavingsGoal,
   mes
 }) {
-  // Ano inicial do dashboard (não muda quando o usuário navega no card)
+  // Ano inicial baseado no filtro do header
   const anoInicial = Number(mes.split("-")[0]);
 
-  // Ano exibido no card (esse muda quando o usuário clica nas setas)
+  // Ano exibido no card (esse muda ao navegar com as setas)
   const [ano, setAno] = useState(anoInicial);
 
   const [dadosReais, setDadosReais] = useState([]);
 
-  // Meta local para o ano exibido no card
+  // Meta local
   const [metaAno, setMetaAno] = useState(0);
   const [metaTemp, setMetaTemp] = useState(0);
   const [editandoMeta, setEditandoMeta] = useState(false);
 
   // =========================================================
-  // 🔹 Recarregar meta quando mudar o mês do dashboard
-  //    (Ex: usuário mudou para 2026 no filtro principal)
+  // 🔹 SINCRONIZA O ANO COM O HEADER (CORREÇÃO PRINCIPAL)
   // =========================================================
   useEffect(() => {
-    setAno(anoInicial); // sincroniza ano do card com ano do dashboard
-  }, [anoInicial]);
+    const novoAno = Number(mes.split("-")[0]);
+    setAno(novoAno);
+  }, [mes]);
 
   // =========================================================
-  // 🔹 Carrega economias do ano exibido no card
+  // 🔹 Carrega economias registradas para o ano
   // =========================================================
   useEffect(() => {
     async function carregar() {
@@ -45,16 +45,15 @@ export default function AnnualSavingsGoal({
   }, [ano]);
 
   // =========================================================
-  // 🔹 Carrega META do ano exibido no card (CORREÇÃO FINAL)
+  // 🔹 Carrega META do ano exibido no card (agora correto)
   // =========================================================
   useEffect(() => {
     async function carregarMeta() {
-      // Busca sempre o valor no banco
+      // Sempre buscar do banco primeiro
       const metaBD = await getSavingsGoal(ano);
-      const valorBanco = metaBD?.valor || 0;
+      const valorBanco = metaBD?.valor ?? 0;
 
-      // Se for o ano do dashboard, savingsGoal substitui o valor do banco
-      // Mas SOMENTE se savingsGoal tiver sido carregado corretamente
+      // Se for o ano do dashboard, savingsGoal substitui
       const valorFinal =
         ano === anoInicial && savingsGoal != null
           ? savingsGoal
@@ -66,7 +65,6 @@ export default function AnnualSavingsGoal({
 
     carregarMeta();
   }, [ano, savingsGoal, anoInicial]);
-
 
   // =========================================================
   // 🔹 Cálculos de projeção
@@ -89,7 +87,8 @@ export default function AnnualSavingsGoal({
   const meta = metaAno;
 
   const pctReal = meta > 0 ? Math.min(100, (somaReais / meta) * 100) : 0;
-  const pctProjetado = meta > 0 ? Math.min(100, (totalProjetadoAno / meta) * 100) : 0;
+  const pctProjetado =
+    meta > 0 ? Math.min(100, (totalProjetadoAno / meta) * 100) : 0;
 
   let tone = "neutral";
   let status = "Defina sua meta anual para começar.";
@@ -123,7 +122,7 @@ export default function AnnualSavingsGoal({
 
     await saveSavingsGoal(ano, m);
 
-    // Se salvar meta do ano do dashboard
+    // Se salvar do ano do dashboard, atualiza global
     if (ano === anoInicial) {
       setSavingsGoal(m);
     }
