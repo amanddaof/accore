@@ -53,6 +53,11 @@ export default function AnnualSavingsGoal({
       console.log("🟦 Buscando meta do ano:", ano);
 const teste = await getSavingsGoal(ano);
 console.log("🟩 Resultado Supabase:", teste);
+      console.log("🎯 valorBanco:", valorBanco);
+console.log("🎯 savingsGoal:", savingsGoal);
+console.log("🎯 valorFinal:", valorFinal);
+console.log("🎯 ano:", ano, "anoInicial:", anoInicial);
+
 
       // Sempre buscar do banco primeiro
       const metaBD = await getSavingsGoal(ano);
@@ -228,6 +233,7 @@ console.log("🟩 Resultado Supabase:", teste);
     </div>
   );
 }
+
 
 
 
