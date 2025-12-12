@@ -54,7 +54,7 @@ export default function Header({
         <nav className="nav">
 
           <button className={`nav-link ${isCardsOpen ? "active" : ""}`} onClick={onOpenCards}>
-            CARTÕES
+            CARTÕES - teste
           </button>
 
           <button className={`nav-link ${isExternoOpen ? "active" : ""}`} onClick={onOpenExterno}>
@@ -127,3 +127,4 @@ export default function Header({
     </>
   );
 }
+
