@@ -49,6 +49,11 @@ export default function AnnualSavingsGoal({
   // =========================================================
   useEffect(() => {
     async function carregarMeta() {
+
+      console.log("🟦 Buscando meta do ano:", ano);
+const teste = await getSavingsGoal(ano);
+console.log("🟩 Resultado Supabase:", teste);
+
       // Sempre buscar do banco primeiro
       const metaBD = await getSavingsGoal(ano);
       const valorBanco = metaBD?.valor ?? 0;
@@ -223,3 +228,4 @@ export default function AnnualSavingsGoal({
     </div>
   );
 }
+
