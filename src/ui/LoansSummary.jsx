@@ -1,8 +1,7 @@
 // ui/LoansSummary.jsx
-export default function LoansSummary({ loans = [], mes }) {
+export default function LoansSummary({ loans = [] }) {
   if (!loans.length) return null;
 
-  // agrupar parcelas por descrição do empréstimo
   const agrupados = loans.reduce((acc, loan) => {
     const nome = loan.descricao;
 
@@ -17,8 +16,8 @@ export default function LoansSummary({ loans = [], mes }) {
 
     acc[nome].total += 1;
 
-    // ✅ status vem do banco
-    if (loan.pago) {
+    // ✅ status textual
+    if (loan.status === "Pago") {
       acc[nome].pagas += 1;
     }
 
