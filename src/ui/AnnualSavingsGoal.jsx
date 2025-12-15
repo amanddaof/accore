@@ -26,7 +26,7 @@ export default function AnnualSavingsGoal({
   const [editandoMeta, setEditandoMeta] = useState(false);
 
   // =========================================================
-  // 🔹 SINCRONIZA O ANO COM O HEADER (CORREÇÃO PRINCIPAL)
+  // 🔹 SINCRONIZA O ANO COM O HEADER
   // =========================================================
   useEffect(() => {
     const novoAno = Number(mes.split("-")[0]);
@@ -45,28 +45,35 @@ export default function AnnualSavingsGoal({
   }, [ano]);
 
   // =========================================================
-  // 🔹 Carrega META do ano exibido no card (agora correto)
+  // 🔹 Carrega META do ano exibido no card
   // =========================================================
   useEffect(() => {
-  async function carregarMeta() {
-    const metaBD = await getSavingsGoal(ano);
-    const valorBanco = metaBD?.valor ?? 0;
+    async function carregarMeta() {
+      const metaBD = await getSavingsGoal(ano);
+      const valorBanco = metaBD?.valor ?? 0;
 
-    const valorFinal =
-  ano === anoInicial && typeof savingsGoal === "number" && savingsGoal > 0
-    ? savingsGoal
-    : valorBanco;
+      const temMetaGlobalValida =
+        typeof savingsGoal === "number" && savingsGoal > 0;
 
+      const valorFinal =
+        ano === anoInicial && temMetaGlobalValida
+          ? savingsGoal
+          : valorBanco;
 
-    console.log("DEBUG META", { ano, anoInicial, savingsGoal, valorBanco, valorFinal });
+      console.log("DEBUG META", {
+        ano,
+        anoInicial,
+        savingsGoal,
+        valorBanco,
+        valorFinal
+      });
 
-    setMetaAno(valorFinal);
-    setMetaTemp(valorFinal);
-  }
+      setMetaAno(valorFinal);
+      setMetaTemp(valorFinal);
+    }
 
-  carregarMeta();
-}, [ano, savingsGoal, anoInicial]);
-
+    carregarMeta();
+  }, [ano, savingsGoal, anoInicial]);
 
   // =========================================================
   // 🔹 Cálculos de projeção
@@ -75,7 +82,7 @@ export default function AnnualSavingsGoal({
     ano,
     dadosReais,
     salarios,
-    dadosMensais,
+    dadosMensais
   });
 
   const {
@@ -135,14 +142,13 @@ export default function AnnualSavingsGoal({
 
   return (
     <div className="annual-goal-card">
-
       <header>
         <span>🎯 Economia anual</span>
 
         <div className="year-select">
-          <button onClick={() => setAno(a => a - 1)}>‹</button>
+          <button onClick={() => setAno((a) => a - 1)}>‹</button>
           <span>{ano}</span>
-          <button onClick={() => setAno(a => a + 1)}>›</button>
+          <button onClick={() => setAno((a) => a + 1)}>›</button>
         </div>
       </header>
 
@@ -153,7 +159,7 @@ export default function AnnualSavingsGoal({
             <input
               type="number"
               value={metaTemp}
-              onChange={e => setMetaTemp(e.target.value)}
+              onChange={(e) => setMetaTemp(e.target.value)}
             />
             <button onClick={salvarMeta}>Salvar</button>
           </>
@@ -225,11 +231,3 @@ export default function AnnualSavingsGoal({
     </div>
   );
 }
-
-
-
-
-
-
-
-
