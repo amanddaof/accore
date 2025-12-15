@@ -8,34 +8,25 @@ import "./AnnualSavingsGoal.css";
 export default function AnnualSavingsGoal({
   salarios,
   dadosMensais,
-  savingsGoal,        // meta do ano atual do dashboard
+  savingsGoal,        // mantém para o pai saber a meta do ano atual, mas não interfere na leitura
   setSavingsGoal,
   mes
 }) {
-  // Ano inicial baseado no filtro do header
   const anoInicial = Number(mes.split("-")[0]);
-
-  // Ano exibido no card (esse muda ao navegar com as setas)
   const [ano, setAno] = useState(anoInicial);
-
   const [dadosReais, setDadosReais] = useState([]);
 
-  // Meta local
   const [metaAno, setMetaAno] = useState(0);
   const [metaTemp, setMetaTemp] = useState(0);
   const [editandoMeta, setEditandoMeta] = useState(false);
 
-  // =========================================================
-  // 🔹 SINCRONIZA O ANO COM O HEADER
-  // =========================================================
+  // Sincroniza ano com o header
   useEffect(() => {
     const novoAno = Number(mes.split("-")[0]);
     setAno(novoAno);
   }, [mes]);
 
-  // =========================================================
-  // 🔹 Carrega economias registradas para o ano
-  // =========================================================
+  // Carrega economias reais
   useEffect(() => {
     async function carregar() {
       const r = await getSavingsByYear(ano);
@@ -44,21 +35,13 @@ export default function AnnualSavingsGoal({
     carregar();
   }, [ano]);
 
-  // =========================================================
-  // 🔹 Carrega META do ano exibido no card
-  // =========================================================
+  // Carrega SEMPRE a meta do banco para o ano exibido
   useEffect(() => {
     async function carregarMeta() {
       const metaBD = await getSavingsGoal(ano);
       const valorBanco = metaBD?.valor ?? 0;
 
-      const temMetaGlobalValida =
-        typeof savingsGoal === "number" && savingsGoal > 0;
-
-      const valorFinal =
-        ano === anoInicial && temMetaGlobalValida
-          ? savingsGoal
-          : valorBanco;
+      const valorFinal = valorBanco;
 
       console.log("DEBUG META", {
         ano,
@@ -73,11 +56,8 @@ export default function AnnualSavingsGoal({
     }
 
     carregarMeta();
-  }, [ano, savingsGoal, anoInicial]);
+  }, [ano]);
 
-  // =========================================================
-  // 🔹 Cálculos de projeção
-  // =========================================================
   const proj = calcularProjecaoEconomiaAnual({
     ano,
     dadosReais,
@@ -122,22 +102,21 @@ export default function AnnualSavingsGoal({
   const guardarPorMes =
     qtdMesesFuturos > 0 ? faltante / qtdMesesFuturos : faltante;
 
-  // =========================================================
-  // 🔹 SALVAR META
-  // =========================================================
+  // SALVAR META
   async function salvarMeta() {
     const m = Number(metaTemp);
     if (!m || m <= 0) return;
 
     await saveSavingsGoal(ano, m);
 
-    // Se salvar do ano do dashboard, atualiza global
+    // Atualiza o estado local com o que foi salvo
+    setMetaAno(m);
+    setEditandoMeta(false);
+
+    // Se for o ano do dashboard, só atualiza o estado global para o pai (não afeta leitura)
     if (ano === anoInicial) {
       setSavingsGoal(m);
     }
-
-    setMetaAno(m);
-    setEditandoMeta(false);
   }
 
   return (
