@@ -30,3 +30,20 @@ export function incrementarMes(mes, incremento = 1) {
 
   return `${MESES[idx]}/${ano.toString().slice(-2)}`;
 }
+
+// src/core/dates.js
+
+export function dataRealParaMesAbrev(dataReal) {
+  if (!dataReal) return null;
+
+  const data = new Date(dataReal);
+  const meses = [
+    "Jan","Fev","Mar","Abr","Mai","Jun",
+    "Jul","Ago","Set","Out","Nov","Dez"
+  ];
+
+  const mes = meses[data.getMonth()];
+  const ano = String(data.getFullYear()).slice(2);
+
+  return `${mes}/${ano}`;
+}
