@@ -7,16 +7,6 @@ import { money } from "../utils/money";
 import { motion } from "framer-motion";
 import { getCategories } from "../services/categories.service";
 
-const nomesMeses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-
-function proximoMes(mesAtual, incremento = 1) {
-  const [m, y] = mesAtual.split("/");
-  const index = nomesMeses.indexOf(m);
-  const date = new Date(2000 + Number(y), index);
-  date.setMonth(date.getMonth() + incremento);
-  return nomesMeses[date.getMonth()] + "/" + String(date.getFullYear()).slice(2);
-}
-
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -42,7 +32,7 @@ useEffect(() => {
   const [form, setForm] = useState({
     descricao: "",
     valor: "",
-    mes: "",
+    data_real: new Date().toISOString().slice(0, 10),
     parcelas: "1/1",
     quem: "Amanda",
     status: "Pendente",
@@ -121,18 +111,21 @@ useEffect(() => {
 
     const inserts = [];
 
-    for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
-      inserts.push({
-        descricao: form.descricao,
-        valor: Number(form.valor),
-        mes: proximoMes(form.mes, i - (parcelaAtual - 1)),
-        parcelas: `${i + 1}/${totalParcelas}`,
-        quem: form.quem,
-        status: form.status,
-        origem: form.origem,
-        category_id: form.category_id || null
-      });
-    }
+    const inserts = [];
+
+for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
+  inserts.push({
+    descricao: form.descricao,
+    valor: Number(form.valor),
+    data_real: form.data_real,
+    parcela_index: i + 1,
+    total_parcelas: totalParcelas,
+    quem: form.quem,
+    status: form.status,
+    origem: form.origem,
+    category_id: form.category_id || null
+  });
+}
 
     const { error } = await supabase.from("transactions").insert(inserts);
 
@@ -289,9 +282,9 @@ useEffect(() => {
               />
 
               <input
-                placeholder="Dez/25"
-                value={form.mes}
-                onChange={e => setForm({ ...form, mes: e.target.value })}
+                type="date"
+                value={form.data_real}
+                onChange={e => setForm({ ...form, data_real: e.target.value })}
                 required
               />
 
@@ -352,3 +345,4 @@ useEffect(() => {
     </div>
   );
 }
+
