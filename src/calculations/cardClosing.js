@@ -1,22 +1,36 @@
-// src/calculations/cardClosing.js
+import { isoParaMesAbrev } from "../core/dates";
 
-/**
- * Calcula o dia real de fechamento da fatura
- * considerando meses com 28, 29, 30 ou 31 dias
- * e ajustes como Nubank (-1)
- */
-export function calcularDiaFechamento(card, ano, mesIndex) {
-  if (!card?.fechamento_dia) return null;
+export function calcularMesFatura({ dataReal, card }) {
+  if (!dataReal || !card?.fechamento_dia) return null;
 
-  let dia = card.fechamento_dia;
+  const data = new Date(dataReal);
+  let ano = data.getFullYear();
+  let mes = data.getMonth(); // 0–11
+  const diaCompra = data.getDate();
 
-  // Se for 31, usa o último dia real do mês
-  if (dia === 31) {
-    dia = new Date(ano, mesIndex + 1, 0).getDate();
+  // 1️⃣ dia real de fechamento
+  let fechamento = card.fechamento_dia;
+
+  // fechamento no último dia do mês
+  if (fechamento === 31) {
+    fechamento = new Date(ano, mes + 1, 0).getDate();
   }
 
-  // Aplica offset (ex: Nubank = -1)
-  const offset = card.fechamento_offset || 0;
+  fechamento += card.fechamento_offset || 0;
 
-  return dia + offset;
+  // 2️⃣ regra correta da fatura
+  let mesFatura = mes + 1; // padrão: mês seguinte ao atual
+
+  if (diaCompra >= fechamento) {
+    mesFatura += 1; // pula mais um mês
+  }
+
+  if (mesFatura > 11) {
+    mesFatura -= 12;
+    ano += 1;
+  }
+
+  const mesISO = `${ano}-${String(mesFatura + 1).padStart(2, "0")}`;
+
+  return isoParaMesAbrev(mesISO); // ex: Jan/26
 }
