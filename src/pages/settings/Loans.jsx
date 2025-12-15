@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getLoans } from "../../services/loans.service";
+import { getLoans, marcarParcelaComoPaga } from "../../services/loans.service";
 import { money } from "../../utils/money";
 import "./Loans.css";
 
@@ -8,7 +8,6 @@ export default function Loans() {
   const [anoAtivo, setAnoAtivo] = useState("todos");
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pagas, setPagas] = useState({});
 
   async function carregar() {
     setLoading(true);
@@ -19,18 +18,16 @@ export default function Loans() {
 
   useEffect(() => {
     carregar();
-    const saved = localStorage.getItem("parcelas-pagas");
-    if (saved) setPagas(JSON.parse(saved));
   }, []);
 
-  function toggleParcela(id) {
-    const novo = {
-      ...pagas,
-      [id]: !pagas[id]
-    };
+  async function pagarParcela(id) {
+    await marcarParcelaComoPaga(id);
 
-    setPagas(novo);
-    localStorage.setItem("parcelas-pagas", JSON.stringify(novo));
+    setRows(prev =>
+      prev.map(r =>
+        r.id === id ? { ...r, pago: true } : r
+      )
+    );
   }
 
   if (loading) {
@@ -74,28 +71,25 @@ export default function Loans() {
 
         {Object.values(loans).map(loan => {
 
-          // ✅ parcelas filtradas por ano
           const parcelasAno = loan.parcelas
             .filter(p => anoAtivo === "todos" || "20" + p.mes.split("/")[1] === anoAtivo)
             .sort((a, b) => ordenarMes(a.mes, b.mes));
 
-          // ✅ parcelas totais (para progressão)
-          const todasParcelas = loan.parcelas.sort((a, b) => ordenarMes(a.mes, b.mes));
+          const todasParcelas = [...loan.parcelas].sort((a, b) => ordenarMes(a.mes, b.mes));
 
           const totalParcelas = todasParcelas.length;
-          const pagasCount = todasParcelas.filter(p => pagas[p.id]).length;
+          const pagasCount = todasParcelas.filter(p => p.pago).length;
 
           const progresso = totalParcelas
             ? Math.round((pagasCount / totalParcelas) * 100)
             : 0;
 
           const totalPago = todasParcelas
-            .filter(p => pagas[p.id])
+            .filter(p => p.pago)
             .reduce((s, p) => s + Number(p.valor), 0);
 
           const ultima = todasParcelas.at(-1);
 
-          // ✅ agrupar por ano → colunas lado a lado
           const parcelasPorAno = parcelasAno.reduce((acc, p) => {
             const ano = "20" + p.mes.split("/")[1];
             if (!acc[ano]) acc[ano] = [];
@@ -135,7 +129,6 @@ export default function Loans() {
 
               </div>
 
-
               {/* 📆 COLUNAS POR ANO */}
               <div className="loan-years">
 
@@ -148,13 +141,13 @@ export default function Loans() {
                     {lista.map(p => (
                       <div
                         key={p.id}
-                        onClick={() => toggleParcela(p.id)}
-                        className={`loan-row ${pagas[p.id] ? "parcela-paga" : ""}`}
+                        onClick={() => !p.pago && pagarParcela(p.id)}
+                        className={`loan-row ${p.pago ? "parcela-paga" : ""}`}
                       >
                         <span>{p.mes}</span>
                         <span>
                           {money(p.valor)}
-                          {pagas[p.id] && <span className="check"> ✓</span>}
+                          {p.pago && <span className="check"> ✓</span>}
                         </span>
                       </div>
                     ))}
