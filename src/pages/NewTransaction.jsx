@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { criarTransaction } from "../services/transactions.service";
 
 export default function NewTransaction() {
 
@@ -7,17 +8,33 @@ export default function NewTransaction() {
     valor: "",
     pessoa: "Amanda",
     categoria: "",
-    data: new Date().toISOString().slice(0,10)
+    data_real: new Date().toISOString().slice(0, 10)
   });
 
   function setField(field, value) {
     setForm(prev => ({ ...prev, [field]: value }));
   }
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    console.log("NOVO LANÇAMENTO:", form);
-    alert("Por enquanto estamos só salvando no console 🙂");
+
+    await criarTransaction({
+      descricao: form.descricao,
+      valor: Number(form.valor),
+      quem: form.pessoa,
+      categoria: form.categoria,
+      data_real: form.data_real
+    });
+
+    alert("Lançamento salvo com data real 🎉");
+
+    setForm({
+      descricao: "",
+      valor: "",
+      pessoa: "Amanda",
+      categoria: "",
+      data_real: new Date().toISOString().slice(0, 10)
+    });
   }
 
   return (
@@ -60,8 +77,9 @@ export default function NewTransaction() {
 
         <input
           type="date"
-          value={form.data}
-          onChange={e => setField("data", e.target.value)}
+          value={form.data_real}
+          onChange={e => setField("data_real", e.target.value)}
+          required
         />
 
         <button type="submit">Salvar lançamento</button>
