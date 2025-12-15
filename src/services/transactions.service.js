@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { dataRealParaMesAbrev } from "../core/dates";
 
 export async function getTransactions() {
   let todos = [];
@@ -27,4 +28,18 @@ export async function getTransactions() {
   }
 
   return todos;
+}
+
+// ✅ NOVO — NÃO SUBSTITUI NADA
+export async function criarTransaction(dados) {
+  const mes = dataRealParaMesAbrev(dados.data_real);
+
+  const { error } = await supabase
+    .from("transactions")
+    .insert({
+      ...dados,
+      mes
+    });
+
+  if (error) throw error;
 }
