@@ -1,15 +1,22 @@
-import { useState } from "react";
-import { criarTransaction } from "../services/transactions.service";
+import { useEffect, useState } from "react";
+import { createTransaction } from "../services/transactions.service";
+import { getCards } from "../services/cards.service";
 
 export default function NewTransaction() {
+  const [cards, setCards] = useState([]);
 
   const [form, setForm] = useState({
     descricao: "",
     valor: "",
-    pessoa: "Amanda",
+    quem: "Amanda",
     categoria: "",
+    origem: "",
     data_real: new Date().toISOString().slice(0, 10)
   });
+
+  useEffect(() => {
+    getCards().then(setCards);
+  }, []);
 
   function setField(field, value) {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -18,23 +25,9 @@ export default function NewTransaction() {
   async function submit(e) {
     e.preventDefault();
 
-    await criarTransaction({
-      descricao: form.descricao,
-      valor: Number(form.valor),
-      quem: form.pessoa,
-      categoria: form.categoria,
-      data_real: form.data_real
-    });
+    await createTransaction(form);
 
-    alert("Lançamento salvo com data real 🎉");
-
-    setForm({
-      descricao: "",
-      valor: "",
-      pessoa: "Amanda",
-      categoria: "",
-      data_real: new Date().toISOString().slice(0, 10)
-    });
+    alert("Lançamento salvo com fatura correta ✅");
   }
 
   return (
@@ -42,7 +35,6 @@ export default function NewTransaction() {
       <h2>Novo lançamento</h2>
 
       <form className="form" onSubmit={submit}>
-
         <input
           placeholder="Descrição"
           value={form.descricao}
@@ -60,8 +52,8 @@ export default function NewTransaction() {
         />
 
         <select
-          value={form.pessoa}
-          onChange={e => setField("pessoa", e.target.value)}
+          value={form.quem}
+          onChange={e => setField("quem", e.target.value)}
         >
           <option>Amanda</option>
           <option>Celso</option>
@@ -75,15 +67,28 @@ export default function NewTransaction() {
           required
         />
 
+        {/* 🔑 ORIGEM / CARTÃO */}
+        <select
+          value={form.origem}
+          onChange={e => setField("origem", e.target.value)}
+          required
+        >
+          <option value="">Selecione o cartão</option>
+          {cards.map(c => (
+            <option key={c.id} value={c.nome}>
+              {c.nome}
+            </option>
+          ))}
+        </select>
+
+        {/* 📅 DATA REAL */}
         <input
           type="date"
           value={form.data_real}
           onChange={e => setField("data_real", e.target.value)}
-          required
         />
 
         <button type="submit">Salvar lançamento</button>
-
       </form>
     </div>
   );
