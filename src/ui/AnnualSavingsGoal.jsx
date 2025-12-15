@@ -53,9 +53,10 @@ export default function AnnualSavingsGoal({
     const valorBanco = metaBD?.valor ?? 0;
 
     const valorFinal =
-      ano === anoInicial && savingsGoal != null
-        ? savingsGoal
-        : valorBanco;
+  ano === anoInicial && typeof savingsGoal === "number" && savingsGoal > 0
+    ? savingsGoal
+    : valorBanco;
+
 
     console.log("DEBUG META", { ano, anoInicial, savingsGoal, valorBanco, valorFinal });
 
@@ -224,6 +225,7 @@ export default function AnnualSavingsGoal({
     </div>
   );
 }
+
 
 
 
