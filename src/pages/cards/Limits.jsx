@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCards, salvarLimite } from "../../services/cards.service";
+import { getCards, salvarCard } from "../../services/cards.service";
 import { money } from "../../utils/money";
 import "./Limits.css";
 
@@ -7,7 +7,10 @@ export default function Limits() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+
   const [novoLimite, setNovoLimite] = useState("");
+  const [fechamento, setFechamento] = useState("");
+  const [vencimento, setVencimento] = useState("");
 
   async function carregar() {
     setLoading(true);
@@ -22,9 +25,17 @@ export default function Limits() {
 
   async function salvar() {
     if (!editing) return;
-    await salvarLimite(editing.id, Number(novoLimite));
+
+    await salvarCard(editing.id, {
+      limite: Number(novoLimite),
+      fechamento_dia: fechamento ? Number(fechamento) : null,
+      vencimento_dia: vencimento ? Number(vencimento) : null,
+    });
+
     setEditing(null);
     setNovoLimite("");
+    setFechamento("");
+    setVencimento("");
     carregar();
   }
 
@@ -51,6 +62,8 @@ export default function Limits() {
               onClick={() => {
                 setEditing(c);
                 setNovoLimite(c.limite || "");
+                setFechamento(c.fechamento_dia || "");
+                setVencimento(c.vencimento_dia || "");
               }}
             >
               Editar
@@ -72,12 +85,33 @@ export default function Limits() {
               onChange={e => setNovoLimite(e.target.value)}
             />
 
+            <label>Dia de fechamento</label>
+            <input
+              type="number"
+              min="1"
+              max="31"
+              value={fechamento}
+              onChange={e => setFechamento(e.target.value)}
+            />
+
+            <label>Dia de vencimento</label>
+            <input
+              type="number"
+              min="1"
+              max="31"
+              value={vencimento}
+              onChange={e => setVencimento(e.target.value)}
+            />
+
             <div className="modal-actions">
               <button className="btn-primary" onClick={salvar}>
                 Salvar
               </button>
 
-              <button className="btn-secondary" onClick={() => setEditing(null)}>
+              <button
+                className="btn-secondary"
+                onClick={() => setEditing(null)}
+              >
                 Cancelar
               </button>
             </div>
