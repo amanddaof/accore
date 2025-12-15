@@ -6,7 +6,11 @@ export async function getCards() {
   return data || [];
 }
 
-export async function salvarLimite(id, limite) {
-  const { error } = await supabase.from("cards").update({ limite }).eq("id", id);
+export async function salvarCard(id, dados) {
+  const { error } = await supabase
+    .from("cards")
+    .update(dados)
+    .eq("id", id);
+
   if (error) throw error;
 }
