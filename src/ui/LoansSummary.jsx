@@ -1,23 +1,6 @@
 // ui/LoansSummary.jsx
-import { isoParaMesAbrev } from "../core/dates";
-
 export default function LoansSummary({ loans = [], mes }) {
-  if (!loans.length || !mes) return null;
-
-  const mesFiltro = isoParaMesAbrev(mes);
-
-  // converte "Dez/25" para timestamp
-  function parseMesAbr(mesStr) {
-    const meses = {
-      Jan: 0, Fev: 1, Mar: 2, Abr: 3, Mai: 4, Jun: 5,
-      Jul: 6, Ago: 7, Set: 8, Out: 9, Nov: 10, Dez: 11
-    };
-
-    const [m, a] = mesStr.split("/");
-    return new Date(2000 + Number(a), meses[m]).getTime();
-  }
-
-  const filtroTime = parseMesAbr(mesFiltro);
+  if (!loans.length) return null;
 
   // agrupar parcelas por descrição do empréstimo
   const agrupados = loans.reduce((acc, loan) => {
@@ -34,9 +17,8 @@ export default function LoansSummary({ loans = [], mes }) {
 
     acc[nome].total += 1;
 
-    // parcela é considerada paga se o mês dela é ANTERIOR ao mês filtrado
-    const parcelaTime = parseMesAbr(loan.mes);
-    if (parcelaTime < filtroTime) {
+    // ✅ status vem do banco
+    if (loan.pago) {
       acc[nome].pagas += 1;
     }
 
@@ -52,7 +34,9 @@ export default function LoansSummary({ loans = [], mes }) {
       {lista.map((l) => {
         const faltam = l.total - l.pagas;
         const progresso =
-          l.total > 0 ? Math.min(100, Math.floor((l.pagas / l.total) * 100)) : 0;
+          l.total > 0
+            ? Math.min(100, Math.floor((l.pagas / l.total) * 100))
+            : 0;
 
         return (
           <div key={l.nome} className="loan-resume">
@@ -65,7 +49,6 @@ export default function LoansSummary({ loans = [], mes }) {
               {l.pagas} / {l.total} parcelas pagas
             </div>
 
-            {/* 🔵 BARRA INLINE (independente de CSS) */}
             <div
               style={{
                 width: "100%",
