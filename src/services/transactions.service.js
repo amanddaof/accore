@@ -1,6 +1,8 @@
 import { supabase } from "./supabase";
-import { dataRealParaMesAbrev } from "../core/dates";
 
+// ========================
+// 🔎 BUSCAR TRANSAÇÕES
+// ========================
 export async function getTransactions() {
   let todos = [];
   let offset = 0;
@@ -30,14 +32,20 @@ export async function getTransactions() {
   return todos;
 }
 
-// ✅ NOVO — NÃO SUBSTITUI NADA
-export async function criarTransaction(dados) {
-  const mes = dataRealParaMesAbrev(dados.data_real);
+// ========================
+// ➕ CRIAR TRANSAÇÃO
+// ========================
+export async function createTransaction(payload) {
+  const data = new Date(payload.data_real);
+
+  const mes = data.toLocaleString("pt-BR", {
+    month: "short"
+  }) + "/" + String(data.getFullYear()).slice(2);
 
   const { error } = await supabase
     .from("transactions")
     .insert({
-      ...dados,
+      ...payload,
       mes
     });
 
