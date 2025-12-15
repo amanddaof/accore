@@ -13,7 +13,7 @@ export async function getLoans() {
 export async function marcarParcelaComoPaga(id) {
   const { error } = await supabase
     .from("loans")
-    .update({ pago: true })
+    .update({ status: "Pago" })
     .eq("id", id);
 
   if (error) {
