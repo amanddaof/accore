@@ -1,8 +1,7 @@
 import { supabase } from "./supabase";
+import { calcularMesFatura } from "../calculations/cardClosing";
+import { getCards } from "./cards.service";
 
-// ========================
-// 🔎 BUSCAR TRANSAÇÕES
-// ========================
 export async function getTransactions() {
   let todos = [];
   let offset = 0;
@@ -32,20 +31,29 @@ export async function getTransactions() {
   return todos;
 }
 
-// ========================
-// ➕ CRIAR TRANSAÇÃO
-// ========================
+// 🆕 SALVAR TRANSAÇÃO COM DATA REAL + FATURA CORRETA
 export async function createTransaction(payload) {
-  const data = new Date(payload.data_real);
+  const cards = await getCards();
+  const card = cards.find(c => c.nome === payload.origem);
 
-  const mes = data.toLocaleString("pt-BR", {
-    month: "short"
-  }) + "/" + String(data.getFullYear()).slice(2);
+  if (!card) {
+    throw new Error("Cartão não encontrado para calcular fatura");
+  }
+
+  const mes = calcularMesFatura({
+    dataReal: payload.data_real,
+    card
+  });
 
   const { error } = await supabase
     .from("transactions")
     .insert({
-      ...payload,
+      descricao: payload.descricao,
+      valor: payload.valor,
+      quem: payload.quem,
+      categoria: payload.categoria,
+      origem: payload.origem,
+      data_real: payload.data_real,
       mes
     });
 
