@@ -8,21 +8,36 @@ export function calcularMesFatura({ dataReal, card }) {
   let mes = data.getMonth(); // 0–11
   const diaCompra = data.getDate();
 
-  // 1️⃣ dia real de fechamento
   let fechamento = card.fechamento_dia;
 
-  // fechamento no último dia do mês
+  // último dia do mês
   if (fechamento === 31) {
     fechamento = new Date(ano, mes + 1, 0).getDate();
   }
 
+  // Nubank ou similares
   fechamento += card.fechamento_offset || 0;
 
-  // 2️⃣ regra correta da fatura
-  let mesFatura = mes + 1; // padrão: mês seguinte ao atual
+  let mesFatura;
 
-  if (diaCompra >= fechamento) {
-    mesFatura += 1; // pula mais um mês
+  // 🔴 CASO ESPECIAL: FECHAMENTO DIA 1
+  if (fechamento <= 1) {
+    // padrão: próximo mês
+    mesFatura = mes + 1;
+
+    // Nubank: último dia já pula mais um mês
+    const ultimoDiaMes = new Date(ano, mes + 1, 0).getDate();
+    if (diaCompra >= ultimoDiaMes) {
+      mesFatura += 1;
+    }
+  }
+  else {
+    // 🔵 REGRA NORMAL
+    mesFatura = mes + 1;
+
+    if (diaCompra >= fechamento) {
+      mesFatura += 1;
+    }
   }
 
   if (mesFatura > 11) {
@@ -30,7 +45,7 @@ export function calcularMesFatura({ dataReal, card }) {
     ano += 1;
   }
 
-  const mesISO = `${ano}-${String(mesFatura + 1).padStart(2, "0")}`;
-
-  return isoParaMesAbrev(mesISO); // ex: Jan/26
+  return isoParaMesAbrev(
+    `${ano}-${String(mesFatura + 1).padStart(2, "0")}`
+  );
 }
