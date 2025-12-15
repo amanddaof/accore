@@ -23,9 +23,10 @@ export default function Loans() {
   async function pagarParcela(id) {
     await marcarParcelaComoPaga(id);
 
+    // atualiza estado local
     setRows(prev =>
       prev.map(r =>
-        r.id === id ? { ...r, pago: true } : r
+        r.id === id ? { ...r, status: "Pago" } : r
       )
     );
   }
@@ -78,14 +79,14 @@ export default function Loans() {
           const todasParcelas = [...loan.parcelas].sort((a, b) => ordenarMes(a.mes, b.mes));
 
           const totalParcelas = todasParcelas.length;
-          const pagasCount = todasParcelas.filter(p => p.pago).length;
+          const pagasCount = todasParcelas.filter(p => p.status === "Pago").length;
 
           const progresso = totalParcelas
             ? Math.round((pagasCount / totalParcelas) * 100)
             : 0;
 
           const totalPago = todasParcelas
-            .filter(p => p.pago)
+            .filter(p => p.status === "Pago")
             .reduce((s, p) => s + Number(p.valor), 0);
 
           const ultima = todasParcelas.at(-1);
@@ -141,13 +142,13 @@ export default function Loans() {
                     {lista.map(p => (
                       <div
                         key={p.id}
-                        onClick={() => !p.pago && pagarParcela(p.id)}
-                        className={`loan-row ${p.pago ? "parcela-paga" : ""}`}
+                        onClick={() => p.status !== "Pago" && pagarParcela(p.id)}
+                        className={`loan-row ${p.status === "Pago" ? "parcela-paga" : ""}`}
                       >
                         <span>{p.mes}</span>
                         <span>
                           {money(p.valor)}
-                          {p.pago && <span className="check"> ✓</span>}
+                          {p.status === "Pago" && <span className="check"> ✓</span>}
                         </span>
                       </div>
                     ))}
