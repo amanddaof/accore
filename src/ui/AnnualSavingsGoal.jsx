@@ -56,9 +56,9 @@ export default function AnnualSavingsGoal({
 
       // Se for o ano do dashboard, savingsGoal substitui
       const valorFinal =
-        ano === anoInicial && savingsGoal != null
-          ? savingsGoal
-          : valorBanco;
+  ano === anoInicial && typeof savingsGoal === "number"
+    ? savingsGoal
+    : valorBanco;
 
       setMetaAno(valorFinal);
       setMetaTemp(valorFinal);
@@ -224,6 +224,7 @@ export default function AnnualSavingsGoal({
     </div>
   );
 }
+
 
 
 
