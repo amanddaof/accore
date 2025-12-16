@@ -114,60 +114,61 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   }
 
   async function salvarCompra(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const [parcelaAtual, totalParcelas] = form.parcelas.split("/").map(Number);
+  const [parcelaAtual, totalParcelas] = form.parcelas.split("/").map(Number);
 
-    if (!totalParcelas || parcelaAtual > totalParcelas) {
-      alert("Parcelas inválidas. Ex: 3/10");
-      return;
-    }
-
-    const inserts = [];
-
-    for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
-      const numeroParcela = i + 1;
-
-      // i = 0 → mês atual; i = 1 → +1 mês; etc.
-      const dataDaParcela = addMeses(form.data_real, i);
-
-      inserts.push({
-        descricao: form.descricao,
-        valor: Number(form.valor),
-        data_real: dataDaParcela,
-        parcelas: `${numeroParcela}/${totalParcelas}`,
-        // se ainda quiser popular o campo mes enquanto existir:
-        // mes: formatarMes(dataDaParcela.slice(0, 7)),
-        quem: form.quem,
-        status: form.status,
-        origem: form.origem,
-        category_id: form.category_id || null
-      });
-    }
-
-    const { error } = await supabase.from("transactions").insert(inserts);
-
-    if (error) {
-      alert("Erro ao salvar parcelas");
-      console.error(error);
-      return;
-    }
-
-    // atualiza instantaneamente o mês atual
-    setTransactions(prev => [inserts[0], ...prev]);
-    setPendentesGlobais(prev => [...prev, ...inserts]);
-
-    setForm(f => ({
-      ...f,
-      descricao: "",
-      valor: "",
-      mes: "",
-      parcelas: "1/1",
-      category_id: ""
-    }));
-
-    setShowForm(false);
+  if (!totalParcelas || parcelaAtual > totalParcelas) {
+    alert("Parcelas inválidas. Ex: 3/10");
+    return;
   }
+
+  const inserts = [];
+
+  for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
+    const numeroParcela = i + 1;
+
+    const dataDaParcela = addMeses(form.data_real, i); // 0 = mês atual, 1 = +1 mês...
+
+    inserts.push({
+      descricao: form.descricao,
+      valor: Number(form.valor),
+      data_real: dataDaParcela,
+      parcelas: `${numeroParcela}/${totalParcelas}`,
+      // mes: formatarMes(dataDaParcela.slice(0, 7)), // opcional, se ainda quiser preencher mes
+      quem: form.quem,
+      status: form.status,
+      origem: form.origem,
+      category_id: form.category_id || null
+    });
+  }
+
+  const { data: inseridos, error } = await supabase
+    .from("transactions")
+    .insert(inserts)
+    .select("*");
+
+  if (error) {
+    alert("Erro ao salvar parcelas");
+    console.error(error);
+    return;
+  }
+
+  // agora usa os registros com id vindos do banco
+  setTransactions(prev => [inseridos[0], ...prev]);
+  setPendentesGlobais(prev => [...prev, ...inseridos]);
+
+  setForm(f => ({
+    ...f,
+    descricao: "",
+    valor: "",
+    mes: "",
+    parcelas: "1/1",
+    category_id: ""
+  }));
+
+  setShowForm(false);
+}
 
   // Navegação de cartão (anterior/próximo)
   function irProProximo() {
@@ -376,3 +377,4 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
