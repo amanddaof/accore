@@ -15,6 +15,12 @@ function addMonthsDate(dateStr, qtd) {
   return d.toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
+function formatarDataBR(data) {
+  if (!data) return "-";
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
 function proximaDataReserva(r) {
   if (!r.data_real) return null;
 
@@ -353,7 +359,9 @@ function ReservaRow({ r, onProcessar }) {
   return (
     <div className="history-row" onClick={() => setOpen(v => !v)}>
       <div className="history-desc reserva-row">
-        <span className="reserve-month">{r.data_real}</span>
+        <span className="reserve-month">
+           {formatarDataBR(r.data_real)}
+         </span>
         <span className="title">{r.descricao}</span>
       </div>
 
@@ -364,7 +372,10 @@ function ReservaRow({ r, onProcessar }) {
           <div><span>Origem</span><strong>{r.origem}</strong></div>
           <div><span>Quem paga</span><strong>{r.quem_paga || "-"}</strong></div>
           <div><span>Recorrência</span><strong>{r.recorrencia}</strong></div>
-          <div><span>Última cobrança</span><strong>{r.ultimo_mes || "-"}</strong></div>
+          <div>
+              <span>Última cobrança</span>
+              <strong>{formatarDataBR(r.ultimo_mes)}</strong>
+            </div>
           <div><span>Categoria</span><strong>{r.categories?.name || "-"}</strong></div>
           {r.parcelas && <div><span>Parcelas</span><strong>{r.parcelas}</strong></div>}
 
@@ -382,3 +393,4 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
+
