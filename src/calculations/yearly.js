@@ -9,7 +9,13 @@ import { calcularReservasProjetadasParaMes } from "./monthly";
 export function calcularGastosAnuaisPorPessoa(
   ano,
   pessoa,
-  { transactions = [], bills = [], loans = [], reservas = [] }
+  {
+    transactions = [],
+    bills = [],
+    loans = [],
+    reservas = [],
+    cards = []
+  }
 ) {
 
   const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -53,11 +59,14 @@ export function calcularGastosAnuaisPorPessoa(
 
       if (pessoa === "Ambos") total += valor;
       else if (pessoa === "Celso") total += valor;
-      // Amanda nunca soma empréstimo
     });
 
     // 🔁 RESERVAS PROJETADAS
-    calcularReservasProjetadasParaMes(mesISO, reservas).forEach(r => {
+    calcularReservasProjetadasParaMes(
+      mesISO,
+      reservas,
+      cards
+    ).forEach(r => {
       const valor = safeNumber(r.valor);
 
       if (pessoa === "Ambos") {
