@@ -7,6 +7,11 @@ import { money } from "../utils/money";
 import { motion } from "framer-motion";
 import { getCategories } from "../services/categories.service";
 
+const nomesMeses = [
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+  "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+];
+
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -17,17 +22,19 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [categories, setCategories] = useState([]);
 
   function formatarMes(mesISO) {
-  const [ano, mes] = mesISO.split("-");
-  return `${nomesMeses[Number(mes) - 1]}/${ano.slice(2)}`;
-}
-
-const [mesFiltro, setMesFiltro] = useState(() => formatarMes(mes));
-
-useEffect(() => {
-  if (mes) {
-    setMesFiltro(formatarMes(mes));
+    const [ano, mes] = mesISO.split("-");
+    return `${nomesMeses[Number(mes) - 1]}/${ano.slice(2)}`;
   }
-}, [mes]);
+
+  const [mesFiltro, setMesFiltro] = useState(() =>
+    mes ? formatarMes(mes) : formatarMes(new Date().toISOString().slice(0, 7))
+  );
+
+  useEffect(() => {
+    if (mes) {
+      setMesFiltro(formatarMes(mes));
+    }
+  }, [mes]);
 
   const [form, setForm] = useState({
     descricao: "",
@@ -40,14 +47,14 @@ useEffect(() => {
     origem: ""
   });
 
-  // 🔹 carregar categorias
+  // carregar categorias
   useEffect(() => {
     getCategories().then(c => setCategories(c.filter(x => x.active)));
   }, []);
 
   const activeCard = cards[activeIndex] || null;
 
-  // 👉 Total da fatura (mês) – com "Ambos" em dobro
+  // Total da fatura (mês) – com "Ambos" em dobro
   const totalFatura = transactions
     .filter(t => (t.status || "").toLowerCase() === "pendente")
     .reduce((sum, t) => {
@@ -57,7 +64,7 @@ useEffect(() => {
       return sum + v * multiplicador;
     }, 0);
 
-  // 👉 Carregar transações do mês + pendentes globais do cartão
+  // Carregar transações do mês + pendentes globais do cartão
   useEffect(() => {
     if (!open || !activeCard) return;
 
@@ -111,19 +118,19 @@ useEffect(() => {
 
     const inserts = [];
 
-for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
-  inserts.push({
-    descricao: form.descricao,
-    valor: Number(form.valor),
-    data_real: form.data_real,
-    parcela_index: i + 1,
-    total_parcelas: totalParcelas,
-    quem: form.quem,
-    status: form.status,
-    origem: form.origem,
-    category_id: form.category_id || null
-  });
-}
+    for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
+      inserts.push({
+        descricao: form.descricao,
+        valor: Number(form.valor),
+        data_real: form.data_real,
+        parcela_index: i + 1,
+        total_parcelas: totalParcelas,
+        quem: form.quem,
+        status: form.status,
+        origem: form.origem,
+        category_id: form.category_id || null
+      });
+    }
 
     const { error } = await supabase.from("transactions").insert(inserts);
 
@@ -149,7 +156,7 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
     setShowForm(false);
   }
 
-  // 👉 Navegação de cartão (anterior/próximo)
+  // Navegação de cartão (anterior/próximo)
   function irProProximo() {
     setActiveIndex(i => (i < cards.length - 1 ? i + 1 : i));
   }
@@ -158,19 +165,23 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
     setActiveIndex(i => (i > 0 ? i - 1 : i));
   }
 
-  // 👉 Navegação de mês
+  // Navegação de mês
   function mesAnterior() {
     const [m, y] = mesFiltro.split("/");
     const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
     base.setMonth(base.getMonth() - 1);
-    setMesFiltro(nomesMeses[base.getMonth()] + "/" + String(base.getFullYear()).slice(2));
+    setMesFiltro(
+      nomesMeses[base.getMonth()] + "/" + String(base.getFullYear()).slice(2)
+    );
   }
 
   function mesProximo() {
     const [m, y] = mesFiltro.split("/");
     const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
     base.setMonth(base.getMonth() + 1);
-    setMesFiltro(nomesMeses[base.getMonth()] + "/" + String(base.getFullYear()).slice(2));
+    setMesFiltro(
+      nomesMeses[base.getMonth()] + "/" + String(base.getFullYear()).slice(2)
+    );
   }
 
   if (!open) return null;
@@ -190,11 +201,15 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
 
         <div className="drawer-content">
 
-          {/* 🎴 STACK FLUTUANTE COM FRAMER MOTION */}
+          {/* STACK FLUTUANTE COM FRAMER MOTION */}
           <div className="cards-stack-fm">
             {prevIndex !== null && (
               <motion.div className="card-ghost left">
-                <CreditCardFull card={cards[prevIndex]} transactions={[]} pendentesGlobais={[]} />
+                <CreditCardFull
+                  card={cards[prevIndex]}
+                  transactions={[]}
+                  pendentesGlobais={[]}
+                />
               </motion.div>
             )}
 
@@ -220,7 +235,11 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
 
             {nextIndex !== null && (
               <motion.div className="card-ghost right">
-                <CreditCardFull card={cards[nextIndex]} transactions={[]} pendentesGlobais={[]} />
+                <CreditCardFull
+                  card={cards[nextIndex]}
+                  transactions={[]}
+                  pendentesGlobais={[]}
+                />
               </motion.div>
             )}
           </div>
@@ -255,7 +274,10 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
             Marcar mês como pago ✅
           </button>
 
-          <button className="primary-btn" onClick={() => setShowForm(v => !v)}>
+          <button
+            className="primary-btn"
+            onClick={() => setShowForm(v => !v)}
+          >
             + Nova compra
           </button>
 
@@ -311,7 +333,7 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
                 <option>Pago</option>
               </select>
 
-              {/* ✅ CATEGORIA VIA FK */}
+              {/* CATEGORIA VIA FK */}
               <select
                 value={form.category_id}
                 onChange={e => setForm({ ...form, category_id: e.target.value })}
@@ -343,5 +365,3 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
     </div>
   );
 }
-
-
