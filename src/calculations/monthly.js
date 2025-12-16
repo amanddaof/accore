@@ -6,7 +6,6 @@ import { calcularMesFatura } from "../calculations/cardInvoice";
 // ========================
 // 🔁 RESERVAS PROJETADAS
 // ========================
-console.log(cards);
 export function calcularReservasProjetadasParaMes(
   mesFiltroISO,
   reservas = [],
@@ -31,7 +30,6 @@ export function calcularReservasProjetadasParaMes(
       dataReal: res.data_real,
       card
     });
-    console.log(mesBase);
 
     if (!mesBase) return;
 
@@ -307,4 +305,5 @@ export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
     celso: { total: C, media: C / dia, projecao: (C / dia) * diasMes }
   };
 }
+
 
