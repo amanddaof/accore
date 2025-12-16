@@ -1,11 +1,16 @@
 import { MESES, incrementarMes, isoParaMesAbrev } from "../core/dates";
 import { safeNumber } from "../core/helpers";
+import { calcularMesFatura } from "../calculations/cardInvoice";
 
 
 // ========================
 // 🔁 RESERVAS PROJETADAS
 // ========================
-export function calcularReservasProjetadasParaMes(mesFiltroISO, reservas = []) {
+export function calcularReservasProjetadasParaMes(
+  mesFiltroISO,
+  reservas = [],
+  cards = []
+) {
 
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
   if (!mesFmt) return [];
@@ -15,31 +20,54 @@ export function calcularReservasProjetadasParaMes(mesFiltroISO, reservas = []) {
   reservas.forEach(res => {
 
     const valor = safeNumber(res.valor);
-    if (!valor || !res.mes) return;
+    if (!valor || !res.data_real) return;
 
-    // parcelado
+    // 🔑 resolver cartão (ou null se externo)
+    const card = cards.find(c => c.nome === res.origem) || null;
+
+    // 🔑 mês base = mês da FATURA
+    const mesBase = calcularMesFatura({
+      dataReal: res.data_real,
+      card
+    });
+
+    if (!mesBase) return;
+
+    // ========================
+    // 📦 PARCELADO
+    // ========================
     if (res.recorrencia === "Parcelado" && res.parcelas?.includes("/")) {
 
       const [atual, total] = res.parcelas.split("/").map(Number);
 
       for (let i = atual - 1; i < total; i++) {
-        const m = incrementarMes(res.mes, i);
+        const m = incrementarMes(mesBase, i);
         if (m === mesFmt) {
-          projetadas.push({ ...res, tipo: "Reserva projetada", mes: m });
+          projetadas.push({
+            ...res,
+            tipo: "Reserva projetada",
+            mes: m
+          });
         }
       }
       return;
     }
 
-    // recorrente
+    // ========================
+    // 🔁 RECORRENTE
+    // ========================
     let inc = 1;
     if (res.recorrencia === "Bimestral") inc = 2;
     if (res.recorrencia === "Trimestral") inc = 3;
 
     for (let i = 0; i < 12; i += inc) {
-      const m = incrementarMes(res.mes, i);
+      const m = incrementarMes(mesBase, i);
       if (m === mesFmt) {
-        projetadas.push({ ...res, tipo: "Reserva projetada", mes: m });
+        projetadas.push({
+          ...res,
+          tipo: "Reserva projetada",
+          mes: m
+        });
       }
     }
 
@@ -54,7 +82,7 @@ export function calcularReservasProjetadasParaMes(mesFiltroISO, reservas = []) {
 // ========================
 export function calcularGastosPorPessoa(
   mesFiltroISO,
-  { transactions = [], bills = [], loans = [], reservas = [] }
+  { transactions = [], bills = [], loans = [], reservas = [], cards = [] }
 ) {
 
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
@@ -77,7 +105,7 @@ export function calcularGastosPorPessoa(
     }
   });
 
-  // 🏡 CONTAS DA CASA (50 / 50)
+  // 🏡 CONTAS DA CASA
   bills.forEach(b => {
     if (b.mes !== mesFmt) return;
     const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
@@ -87,28 +115,24 @@ export function calcularGastosPorPessoa(
     total.Celso.contas += metade;
   });
 
-  // 💳 EMPRÉSTIMOS (TODOS contam como gasto do Celso)
+  // 💳 EMPRÉSTIMOS
   loans.forEach(l => {
     if (l.mes !== mesFmt) return;
-    const v = safeNumber(l.valor);
-
-    // sempre Celso
-    total.Celso.emprestimos += v;
+    total.Celso.emprestimos += safeNumber(l.valor);
   });
 
   // 🔁 RESERVAS PROJETADAS
-  const proj = calcularReservasProjetadasParaMes(mesFiltroISO, reservas);
+  calcularReservasProjetadasParaMes(mesFiltroISO, reservas, cards)
+    .forEach(r => {
+      const v = safeNumber(r.valor);
 
-  proj.forEach(r => {
-    const v = safeNumber(r.valor);
-
-    if (r.quem === "Amanda") total.Amanda.pessoais += v;
-    else if (r.quem === "Celso") total.Celso.pessoais += v;
-    else if (r.quem === "Ambos") {
-      total.Amanda.pessoais += v;
-      total.Celso.pessoais += v;
-    }
-  });
+      if (r.quem === "Amanda") total.Amanda.pessoais += v;
+      else if (r.quem === "Celso") total.Celso.pessoais += v;
+      else if (r.quem === "Ambos") {
+        total.Amanda.pessoais += v;
+        total.Celso.pessoais += v;
+      }
+    });
 
   const pessoa = nome => ({
     nome,
@@ -130,17 +154,8 @@ export function calcularTotalMensal(mesFiltroISO, dados) {
 
 
 // ========================
-// 🏦 COFRE
-// ========================
-export function calcularCofre(sobra) {
-  if (!sobra || sobra <= 0) return { mensal: 0, anual: 0 };
-  return { mensal: sobra * 0.3, anual: sobra * 12 * 0.3 };
-}
-
-
-// ========================
 // 🔮 PROJEÇÃO MENSAL (TOTAL)
- // ========================
+// ========================
 export function calcularProjecaoMensal(mesFiltroISO, dados) {
 
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
@@ -150,8 +165,8 @@ export function calcularProjecaoMensal(mesFiltroISO, dados) {
 
   let ateHoje = 0;
 
-  dados.transactions.forEach(t => { 
-    if (t.mes === mesFmt) ateHoje += safeNumber(t.valor); 
+  dados.transactions.forEach(t => {
+    if (t.mes === mesFmt) ateHoje += safeNumber(t.valor);
   });
 
   dados.bills.forEach(b => {
@@ -160,13 +175,17 @@ export function calcularProjecaoMensal(mesFiltroISO, dados) {
     }
   });
 
-  // empréstimos entram NO TOTAL
   dados.loans.forEach(l => {
     if (l.mes === mesFmt) ateHoje += safeNumber(l.valor);
   });
 
-  calcularReservasProjetadasParaMes(mesFiltroISO, dados.reservas)
-    .forEach(r => ateHoje += safeNumber(r.valor));
+  calcularReservasProjetadasParaMes(
+    mesFiltroISO,
+    dados.reservas,
+    dados.cards
+  ).forEach(r => {
+    ateHoje += safeNumber(r.valor);
+  });
 
   return {
     totalAteHoje: ateHoje,
@@ -175,17 +194,21 @@ export function calcularProjecaoMensal(mesFiltroISO, dados) {
   };
 }
 
-// 🔮 PROJEÇÃO POR PESSOA (TOTAL FIXO PARA ANO)
+
+// ========================
+// 🔮 PROJEÇÃO POR PESSOA (ANUAL)
+// ========================
 export function calcularProjecaoPorPessoaAnual(mesFiltroISO, dados) {
+
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
 
   let A = 0;
   let C = 0;
 
-  // transações
   dados.transactions.forEach(t => {
     if (t.mes !== mesFmt) return;
     const v = safeNumber(t.valor);
+
     if (t.quem === "Amanda") A += v;
     if (t.quem === "Celso") C += v;
     if (t.quem === "Ambos") {
@@ -194,7 +217,6 @@ export function calcularProjecaoPorPessoaAnual(mesFiltroISO, dados) {
     }
   });
 
-  // contas da casa
   dados.bills.forEach(b => {
     if (b.mes !== mesFmt) return;
     const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
@@ -202,16 +224,17 @@ export function calcularProjecaoPorPessoaAnual(mesFiltroISO, dados) {
     C += valor / 2;
   });
 
-  // empréstimos → só Celso
   dados.loans.forEach(l => {
-    if (l.mes === mesFmt) {
-      C += safeNumber(l.valor);
-    }
+    if (l.mes === mesFmt) C += safeNumber(l.valor);
   });
 
-  // reservas projetadas
-  calcularReservasProjetadasParaMes(mesFiltroISO, dados.reservas).forEach(r => {
+  calcularReservasProjetadasParaMes(
+    mesFiltroISO,
+    dados.reservas,
+    dados.cards
+  ).forEach(r => {
     const v = safeNumber(r.valor);
+
     if (r.quem === "Amanda") A += v;
     if (r.quem === "Celso") C += v;
     if (r.quem === "Ambos") {
@@ -220,10 +243,9 @@ export function calcularProjecaoPorPessoaAnual(mesFiltroISO, dados) {
     }
   });
 
-  // aqui: projeção = total do mês
   return {
     amanda: { total: A, projecao: A },
-    celso:  { total: C, projecao: C }
+    celso: { total: C, projecao: C }
   };
 }
 
@@ -241,7 +263,6 @@ export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
   let A = 0;
   let C = 0;
 
-  // transações
   dados.transactions.forEach(t => {
     if (t.mes !== mesFmt) return;
 
@@ -253,7 +274,6 @@ export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
     }
   });
 
-  // contas da casa
   dados.bills.forEach(b => {
     if (b.mes !== mesFmt) return;
     const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
@@ -261,16 +281,17 @@ export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
     C += valor / 2;
   });
 
-  // empréstimos → só Celso
   dados.loans.forEach(l => {
-    if (l.mes === mesFmt) {
-      C += safeNumber(l.valor);
-    }
+    if (l.mes === mesFmt) C += safeNumber(l.valor);
   });
 
-  // reservas projetadas
-  calcularReservasProjetadasParaMes(mesFiltroISO, dados.reservas).forEach(r => {
+  calcularReservasProjetadasParaMes(
+    mesFiltroISO,
+    dados.reservas,
+    dados.cards
+  ).forEach(r => {
     const v = safeNumber(r.valor);
+
     if (r.quem === "Amanda") A += v;
     if (r.quem === "Celso") C += v;
     if (r.quem === "Ambos") {
