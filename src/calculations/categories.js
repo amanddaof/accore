@@ -6,11 +6,12 @@ import { calcularReservasProjetadasParaMes } from "./monthly";
 // 📂 PESO POR PESSOA
 // ========================
 export function pesoCategoria(quem, pessoa) {
-  if (pessoa === "Ambos") {return quem === "Ambos" ? 2 : 1;}
+  if (pessoa === "Ambos") {
+    return quem === "Ambos" ? 2 : 1;
+  }
   if (quem === "Ambos") return 1;
   return quem === pessoa ? 1 : 0;
 }
-
 
 // ========================
 // 📊 CATEGORIAS MENSAIS
@@ -18,7 +19,11 @@ export function pesoCategoria(quem, pessoa) {
 export function calcularCategoriasMes(
   mesFiltroISO,
   pessoa,
-  { transactions = [], reservas = [] }
+  {
+    transactions = [],
+    reservas = [],
+    cards = []
+  }
 ) {
 
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
@@ -50,9 +55,12 @@ export function calcularCategoriasMes(
     total[name].valor += safeNumber(valor);
   }
 
+  // ========================
   // 🔹 TRANSAÇÕES
+  // ========================
   transactions.forEach(t => {
     if (t.mes !== mesFmt) return;
+
     const peso = pesoCategoria(t.quem, pessoa);
     if (!peso) return;
 
@@ -60,8 +68,15 @@ export function calcularCategoriasMes(
     acumular(cat, safeNumber(t.valor) * peso);
   });
 
+  // ========================
   // 🔹 RESERVAS PROJETADAS
-  const proj = calcularReservasProjetadasParaMes(mesFiltroISO, reservas);
+  // ========================
+  const proj = calcularReservasProjetadasParaMes(
+    mesFiltroISO,
+    reservas,
+    cards
+  );
+
   proj.forEach(r => {
     const peso = pesoCategoria(r.quem, pessoa);
     if (!peso) return;
@@ -81,7 +96,6 @@ export function calcularCategoriasMes(
     .sort((a, b) => b.valor - a.valor);
 }
 
-
 // ========================
 // 📈 COMPARATIVO
 // ========================
@@ -94,21 +108,28 @@ export function compararCategoriasMes(mesAtualISO, pessoa, dados) {
   }
 
   const atual = calcularCategoriasMes(mesAtualISO, pessoa, dados);
-  const anterior = calcularCategoriasMes(mesAnterior(mesAtualISO), pessoa, dados);
+  const anterior = calcularCategoriasMes(
+    mesAnterior(mesAtualISO),
+    pessoa,
+    dados
+  );
 
   const todas = new Set([
     ...atual.map(i => i.categoria),
     ...anterior.map(i => i.categoria)
   ]);
 
-  return [...todas].map(cat => {
-    const a = atual.find(i => i.categoria === cat)?.valor || 0;
-    const p = anterior.find(i => i.categoria === cat)?.valor || 0;
-    return {
-      categoria: cat,
-      atual: a,
-      anterior: p,
-      diferenca: a - p
-    };
-  }).sort((a, b) => Math.abs(b.diferenca) - Math.abs(a.diferenca));
+  return [...todas]
+    .map(cat => {
+      const a = atual.find(i => i.categoria === cat)?.valor || 0;
+      const p = anterior.find(i => i.categoria === cat)?.valor || 0;
+
+      return {
+        categoria: cat,
+        atual: a,
+        anterior: p,
+        diferenca: a - p
+      };
+    })
+    .sort((a, b) => Math.abs(b.diferenca) - Math.abs(a.diferenca));
 }
