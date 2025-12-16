@@ -19,42 +19,34 @@ import { getSalaryHistory } from "../services/salary.service";
 import { getTransactions } from "../services/transactions.service";
 import { getSavingsGoal } from "../services/savingsGoal";
 
-// ========================
-// 🧠 HOOK CENTRAL
-// ========================
 export function useDashboard() {
-
   const [cards, setCards] = useState([]);
   const [loans, setLoans] = useState([]);
   const [bills, setBills] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [salaryHistory, setSalaryHistory] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [savingsGoal, setSavingsGoal] = useState(null);
+  const [savingsGoal, setSavingsGoal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const [mes, setMes] = useState(() => {
     const hoje = new Date();
     const diaVirada = 7;
 
     let ano = hoje.getFullYear();
-    let mesAtual = hoje.getMonth(); // 0–11
+    let mesAtual = hoje.getMonth();
 
     if (hoje.getDate() >= diaVirada) {
-      mesAtual += 1;
+      mesAtual++;
       if (mesAtual > 11) {
         mesAtual = 0;
-        ano += 1;
+        ano++;
       }
     }
 
     return `${ano}-${String(mesAtual + 1).padStart(2, "0")}`;
   });
 
-  const [loading, setLoading] = useState(true);
-
-  // ========================
-  // 🔄 LOAD GERAL
-  // ========================
   async function loadAll() {
     setLoading(true);
 
@@ -91,9 +83,6 @@ export function useDashboard() {
     loadAll();
   }, [mes]);
 
-  // ========================
-  // 📦 DADOS BASE
-  // ========================
   const dados = useMemo(() => ({
     transactions,
     bills,
@@ -102,9 +91,6 @@ export function useDashboard() {
     cards
   }), [transactions, bills, loans, reservations, cards]);
 
-  // ========================
-  // 📊 MENSAL
-  // ========================
   const mensal = useMemo(() => ({
     porPessoa: calcularGastosPorPessoa(mes, dados),
     total: calcularTotalMensal(mes, dados),
@@ -112,17 +98,11 @@ export function useDashboard() {
     porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
   }), [mes, dados]);
 
-  // ========================
-  // 💳 DÍVIDAS
-  // ========================
   const dividas = useMemo(
     () => calcularDividasMes(mes, dados),
     [mes, dados]
   );
 
-  // ========================
-  // 🧩 CATEGORIAS
-  // ========================
   const categorias = useMemo(() => ({
     amanda: calcularCategoriasMes(mes, "Amanda", dados),
     celso: calcularCategoriasMes(mes, "Celso", dados),
@@ -130,9 +110,6 @@ export function useDashboard() {
     comparativo: compararCategoriasMes(mes, "Ambos", dados)
   }), [mes, dados]);
 
-  // ========================
-  // 📈 ANUAL
-  // ========================
   const anual = useMemo(() => ({
     amanda: calcularGastosAnuaisPorPessoa(new Date(mes).getFullYear(), "Amanda", dados),
     celso: calcularGastosAnuaisPorPessoa(new Date(mes).getFullYear(), "Celso", dados),
@@ -141,11 +118,8 @@ export function useDashboard() {
     projecaoCelso: calcularProjecaoAnual(new Date(mes).getFullYear(), "Celso", dados)
   }), [mes, dados]);
 
-  // ========================
-  // 💰 SALÁRIOS
-  // ========================
   const salarios = useMemo(() => {
-    if (!salaryHistory || !salaryHistory.length) return null;
+    if (!salaryHistory.length) return null;
 
     const ano = new Date(mes).getFullYear();
     const registrosAno = salaryHistory.filter(
@@ -161,16 +135,10 @@ export function useDashboard() {
       .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
 
     const salarioAmanda =
-      registrosAno
-        .filter(s => s.quem.toLowerCase() === "amanda")
-        .sort((a, b) => new Date(b.data) - new Date(a.data))[0]
-      || ultimoAmanda;
+      registrosAno.filter(s => s.quem.toLowerCase() === "amanda")[0] || ultimoAmanda;
 
     const salarioCelso =
-      registrosAno
-        .filter(s => s.quem.toLowerCase() === "celso")
-        .sort((a, b) => new Date(b.data) - new Date(a.data))[0]
-      || ultimoCelso;
+      registrosAno.filter(s => s.quem.toLowerCase() === "celso")[0] || ultimoCelso;
 
     const gasto = mensal.porPessoa;
 
@@ -188,9 +156,6 @@ export function useDashboard() {
     };
   }, [salaryHistory, mensal, mes]);
 
-  // ========================
-  // 🔚 RETURN
-  // ========================
   return {
     loading,
     cards,
@@ -206,10 +171,8 @@ export function useDashboard() {
     categorias,
     anual,
     salarios,
-
     savingsGoal,
     setSavingsGoal,
-
     reload: loadAll
   };
 }
