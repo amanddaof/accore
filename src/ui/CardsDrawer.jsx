@@ -105,6 +105,14 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     loadData();
   }, [open, activeCard, mesFiltro]);
 
+  function addMeses(dataISO, qtdMeses) {
+  if (!dataISO) return "";
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
+  const d = new Date(ano, mes - 1, dia);
+  d.setMonth(d.getMonth() + qtdMeses);
+  return d.toISOString().slice(0, 10);
+}
+
   async function salvarCompra(e) {
     e.preventDefault();
 
@@ -118,19 +126,23 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     const inserts = [];
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
-      const numeroParcela = i + 1;
+  const numeroParcela = i + 1;
 
-      inserts.push({
-        descricao: form.descricao,
-        valor: Number(form.valor),
-        data_real: form.data_real,
-        parcelas: `${numeroParcela}/${totalParcelas}`, // usa a coluna que já existe
-        quem: form.quem,
-        status: form.status,
-        origem: form.origem,
-        category_id: form.category_id || null
-      });
-    }
+  const dataDaParcela = addMeses(form.data_real, i); // 0 = mês atual, 1 = +1 mês...
+
+  inserts.push({
+    descricao: form.descricao,
+    valor: Number(form.valor),
+    data_real: dataDaParcela,
+    parcelas: `${numeroParcela}/${totalParcelas}`,
+    // se ainda quiser preencher mes (enquanto existir no sistema):
+    // mes: calcularMesReferencia(dataDaParcela),
+    quem: form.quem,
+    status: form.status,
+    origem: form.origem,
+    category_id: form.category_id || null
+  });
+}
 
     const { error } = await supabase.from("transactions").insert(inserts);
 
@@ -365,3 +377,4 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
