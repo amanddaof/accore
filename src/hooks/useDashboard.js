@@ -16,9 +16,8 @@ import { getLoans } from "../services/loans.service";
 import { getBills } from "../services/bills.service";
 import { getReservations } from "../services/reservations.service";
 import { getSalaryHistory } from "../services/salary.service";
-
 import { getTransactions } from "../services/transactions.service";
-import { getSavingsGoal } from "../services/savingsGoal"; // Importando o serviço de meta de economia
+import { getSavingsGoal } from "../services/savingsGoal";
 
 // ========================
 // 🧠 HOOK CENTRAL
@@ -31,19 +30,17 @@ export function useDashboard() {
   const [reservations, setReservations] = useState([]);
   const [salaryHistory, setSalaryHistory] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [savingsGoal, setSavingsGoal] = useState(null); // Estado para armazenar a meta anual
+  const [savingsGoal, setSavingsGoal] = useState(null);
 
   const [mes, setMes] = useState(() => {
     const hoje = new Date();
     const diaVirada = 7;
 
     let ano = hoje.getFullYear();
-    let mesAtual = hoje.getMonth(); // 0-11
+    let mesAtual = hoje.getMonth(); // 0–11
 
-    // se passou do dia 7, avança o mês
     if (hoje.getDate() >= diaVirada) {
       mesAtual += 1;
-
       if (mesAtual > 11) {
         mesAtual = 0;
         ano += 1;
@@ -55,6 +52,9 @@ export function useDashboard() {
 
   const [loading, setLoading] = useState(true);
 
+  // ========================
+  // 🔄 LOAD GERAL
+  // ========================
   async function loadAll() {
     setLoading(true);
 
@@ -65,7 +65,7 @@ export function useDashboard() {
       reservationsData,
       salaryData,
       transactionsData,
-      savingsGoalData // Busca a meta de economia
+      savingsGoalData
     ] = await Promise.all([
       getCards(),
       getLoans(),
@@ -73,16 +73,16 @@ export function useDashboard() {
       getReservations(),
       getSalaryHistory(),
       getTransactions(),
-      getSavingsGoal(new Date(mes).getFullYear()) // Carrega a meta do ano atual
+      getSavingsGoal(new Date(mes).getFullYear())
     ]);
 
-    setTransactions(transactionsData);
-    setCards(cardsData);
-    setLoans(loansData);
-    setBills(billsData);
-    setReservations(reservationsData);
-    setSalaryHistory(salaryData);
-    setSavingsGoal(savingsGoalData ? savingsGoalData.valor : 0); // Armazena a meta anual de economia
+    setCards(cardsData || []);
+    setLoans(loansData || []);
+    setBills(billsData || []);
+    setReservations(reservationsData || []);
+    setSalaryHistory(salaryData || []);
+    setTransactions(transactionsData || []);
+    setSavingsGoal(savingsGoalData ? savingsGoalData.valor : 0);
 
     setLoading(false);
   }
@@ -91,6 +91,9 @@ export function useDashboard() {
     loadAll();
   }, [mes]);
 
+  // ========================
+  // 📦 DADOS BASE
+  // ========================
   const dados = useMemo(() => ({
     transactions,
     bills,
@@ -99,17 +102,27 @@ export function useDashboard() {
     cards
   }), [transactions, bills, loans, reservations, cards]);
 
-
+  // ========================
+  // 📊 MENSAL
+  // ========================
   const mensal = useMemo(() => ({
     porPessoa: calcularGastosPorPessoa(mes, dados),
     total: calcularTotalMensal(mes, dados),
     projecao: calcularProjecaoMensal(mes, dados),
-    porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados),
-    cofre: null // entrará depois com salários
+    porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
   }), [mes, dados]);
 
-  const dividas = useMemo(() => calcularDividasMes(mes, dados), [mes, dados]);
+  // ========================
+  // 💳 DÍVIDAS
+  // ========================
+  const dividas = useMemo(
+    () => calcularDividasMes(mes, dados),
+    [mes, dados]
+  );
 
+  // ========================
+  // 🧩 CATEGORIAS
+  // ========================
   const categorias = useMemo(() => ({
     amanda: calcularCategoriasMes(mes, "Amanda", dados),
     celso: calcularCategoriasMes(mes, "Celso", dados),
@@ -117,6 +130,9 @@ export function useDashboard() {
     comparativo: compararCategoriasMes(mes, "Ambos", dados)
   }), [mes, dados]);
 
+  // ========================
+  // 📈 ANUAL
+  // ========================
   const anual = useMemo(() => ({
     amanda: calcularGastosAnuaisPorPessoa(new Date(mes).getFullYear(), "Amanda", dados),
     celso: calcularGastosAnuaisPorPessoa(new Date(mes).getFullYear(), "Celso", dados),
@@ -125,12 +141,16 @@ export function useDashboard() {
     projecaoCelso: calcularProjecaoAnual(new Date(mes).getFullYear(), "Celso", dados)
   }), [mes, dados]);
 
+  // ========================
+  // 💰 SALÁRIOS
+  // ========================
   const salarios = useMemo(() => {
     if (!salaryHistory || !salaryHistory.length) return null;
 
     const ano = new Date(mes).getFullYear();
-
-    const registrosAno = salaryHistory.filter(s => new Date(s.data).getFullYear() === ano);
+    const registrosAno = salaryHistory.filter(
+      s => new Date(s.data).getFullYear() === ano
+    );
 
     const ultimoAmanda = [...salaryHistory]
       .filter(s => s.quem.toLowerCase() === "amanda")
@@ -140,14 +160,16 @@ export function useDashboard() {
       .filter(s => s.quem.toLowerCase() === "celso")
       .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
 
-    const salarioAmanda = registrosAno
-      .filter(s => s.quem.toLowerCase() === "amanda")
-      .sort((a, b) => new Date(b.data) - new Date(a.data))[0]
+    const salarioAmanda =
+      registrosAno
+        .filter(s => s.quem.toLowerCase() === "amanda")
+        .sort((a, b) => new Date(b.data) - new Date(a.data))[0]
       || ultimoAmanda;
 
-    const salarioCelso = registrosAno
-      .filter(s => s.quem.toLowerCase() === "celso")
-      .sort((a, b) => new Date(b.data) - new Date(a.data))[0]
+    const salarioCelso =
+      registrosAno
+        .filter(s => s.quem.toLowerCase() === "celso")
+        .sort((a, b) => new Date(b.data) - new Date(a.data))[0]
       || ultimoCelso;
 
     const gasto = mensal.porPessoa;
@@ -164,35 +186,30 @@ export function useDashboard() {
         sobra: (salarioCelso?.valor || 0) - (gasto[1]?.total || 0)
       }
     };
-
   }, [salaryHistory, mensal, mes]);
 
-  }, [salarios]);
-
+  // ========================
+  // 🔚 RETURN
+  // ========================
   return {
-  loading,
-  cards,
-  loans,
-  bills,
-  reservations,
-  salaryHistory,
-  transactions,
-  mes,
-  setMes,
-  mensal,
-  dividas,
-  categorias,
-  anual,
-  salarios,
+    loading,
+    cards,
+    loans,
+    bills,
+    reservations,
+    salaryHistory,
+    transactions,
+    mes,
+    setMes,
+    mensal,
+    dividas,
+    categorias,
+    anual,
+    salarios,
 
-  savingsGoal,       // ✔ meta anual
-  setSavingsGoal,    // ✔ NECESSÁRIO para atualizar a meta
+    savingsGoal,
+    setSavingsGoal,
 
-  reload: loadAll
-};
-
+    reload: loadAll
+  };
 }
-
-
-
-
