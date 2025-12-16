@@ -55,8 +55,8 @@ console.log("transactions em CardTransactions", transactions);
               <div>
                 <strong>{t.descricao}</strong>
                 <span className="txn-sub">
-                  {t.origem} • {t.mes}
-                </span>
+  {t.data_real} • {t.origem} • {t.mes}
+</span>
               </div>
 
               <div className={`txn-value ${t.status === "Pago" ? "pago" : "pendente"}`}>
@@ -115,4 +115,5 @@ console.log("transactions em CardTransactions", transactions);
     </div>
   );
 }
+
 
