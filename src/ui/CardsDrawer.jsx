@@ -161,6 +161,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     }
 
     const inserts = [];
+console.log("activeCard em salvarCompra:", activeCard);
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
       const numeroParcela = i + 1;
@@ -411,3 +412,4 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
