@@ -13,14 +13,6 @@ const nomesMeses = [
 ];
 
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
-
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [transactions, setTransactions] = useState([]);
-  const [pendentesGlobais, setPendentesGlobais] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [categories, setCategories] = useState([]);
-
   function formatarMes(mesISO) {
     const [ano, mes] = mesISO.split("-");
     return `${nomesMeses[Number(mes) - 1]}/${ano.slice(2)}`;
@@ -365,3 +357,4 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
