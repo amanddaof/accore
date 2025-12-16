@@ -2,134 +2,103 @@ import { isoParaMesAbrev } from "../core/dates";
 import { safeNumber } from "../core/helpers";
 import { calcularReservasProjetadasParaMes } from "./monthly";
 
-// ========================
-// 📂 PESO POR PESSOA
-// ========================
-export function pesoCategoria(quem, pessoa) {
-  if (pessoa === "Ambos") {
-    return quem === "Ambos" ? 2 : 1;
-  }
-  if (quem === "Ambos") return 1;
-  return quem === pessoa ? 1 : 0;
-}
 
 // ========================
-// 📊 CATEGORIAS MENSAIS
+// 📊 ANUAL POR PESSOA
 // ========================
-export function calcularCategoriasMes(
-  mesFiltroISO,
+export function calcularGastosAnuaisPorPessoa(
+  ano,
   pessoa,
-  {
-    transactions = [],
-    reservas = [],
-    cards = []
-  }
+  { transactions = [], bills = [], loans = [], reservas = [] }
 ) {
 
-  const mesFmt = isoParaMesAbrev(mesFiltroISO);
-  const total = {};
+  const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  const resultado = [];
 
-  // transforma categoria em { name, color }
-  function normalizarCategoria(categoria) {
-    if (!categoria) return { name: "Outros", color: "#888" };
+  meses.forEach((m, i) => {
 
-    // caso venha do join (Supabase)
-    if (typeof categoria === "object") {
-      return {
-        name: categoria.name || `Categoria ${categoria.id}`,
-        color: categoria.color || "#888"
-      };
-    }
+    const mesISO = `${ano}-${String(i + 1).padStart(2, "0")}`;
+    const mesFmt = isoParaMesAbrev(mesISO);
+    let total = 0;
 
-    // se vier apenas o ID
-    return { name: `Categoria ${categoria}`, color: "#888" };
-  }
+    // 🧾 TRANSAÇÕES
+    transactions.forEach(t => {
+      if (t.mes !== mesFmt) return;
 
-  function acumular(categoria, valor) {
-    const { name, color } = normalizarCategoria(categoria);
+      const v = safeNumber(t.valor);
 
-    if (!total[name]) {
-      total[name] = { valor: 0, color };
-    }
+      if (pessoa === "Ambos") {
+        total += v;
+      }
+      else if (t.quem === pessoa || t.quem === "Ambos") {
+        total += v;
+      }
+    });
 
-    total[name].valor += safeNumber(valor);
-  }
+    // 🏡 CONTAS DA CASA
+    bills.forEach(b => {
+      if (b.mes !== mesFmt) return;
 
-  // ========================
-  // 🔹 TRANSAÇÕES
-  // ========================
-  transactions.forEach(t => {
-    if (t.mes !== mesFmt) return;
+      const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
 
-    const peso = pesoCategoria(t.quem, pessoa);
-    if (!peso) return;
+      if (pessoa === "Ambos") total += valor;
+      else total += valor / 2;
+    });
 
-    const cat = t.categoria ?? t.category_id;
-    acumular(cat, safeNumber(t.valor) * peso);
+    // 💳 EMPRÉSTIMOS → sempre CELSO
+    loans.forEach(l => {
+      if (l.mes !== mesFmt) return;
+
+      const valor = safeNumber(l.valor);
+
+      if (pessoa === "Ambos") total += valor;
+      else if (pessoa === "Celso") total += valor;
+      // Amanda nunca soma empréstimo
+    });
+
+    // 🔁 RESERVAS PROJETADAS
+    calcularReservasProjetadasParaMes(mesISO, reservas).forEach(r => {
+      const valor = safeNumber(r.valor);
+
+      if (pessoa === "Ambos") {
+        total += valor;
+      }
+      else if (r.quem === pessoa || r.quem === "Ambos") {
+        total += valor;
+      }
+    });
+
+    resultado.push({ mes: m, total });
   });
 
-  // ========================
-  // 🔹 RESERVAS PROJETADAS
-  // ========================
-  const proj = calcularReservasProjetadasParaMes(
-    mesFiltroISO,
-    reservas,
-    cards
-  );
-
-  proj.forEach(r => {
-    const peso = pesoCategoria(r.quem, pessoa);
-    if (!peso) return;
-
-    const cat = r.categoria ?? r.category_id;
-    acumular(cat, safeNumber(r.valor) * peso);
-  });
-
-  // retorno no formato certo para o gráfico
-  return Object.entries(total)
-    .map(([categoria, obj]) => ({
-      categoria,
-      valor: obj.valor,
-      color: obj.color
-    }))
-    .filter(i => i.valor > 0)
-    .sort((a, b) => b.valor - a.valor);
+  return resultado;
 }
 
+
 // ========================
-// 📈 COMPARATIVO
+// 📈 FILTRADO
 // ========================
-export function compararCategoriasMes(mesAtualISO, pessoa, dados) {
+export function calcularGastosAnuaisFiltrados(ano, pessoa, dados) {
+  return calcularGastosAnuaisPorPessoa(ano, pessoa, dados);
+}
 
-  function mesAnterior(m) {
-    const [ano, mes] = m.split("-").map(Number);
-    const d = new Date(ano, mes - 2);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-  }
 
-  const atual = calcularCategoriasMes(mesAtualISO, pessoa, dados);
-  const anterior = calcularCategoriasMes(
-    mesAnterior(mesAtualISO),
-    pessoa,
-    dados
-  );
+// ========================
+// 🔮 PROJEÇÃO ANUAL
+// ========================
+export function calcularProjecaoAnual(ano, pessoa, dados) {
 
-  const todas = new Set([
-    ...atual.map(i => i.categoria),
-    ...anterior.map(i => i.categoria)
-  ]);
+  const mensal = calcularGastosAnuaisPorPessoa(ano, pessoa, dados);
 
-  return [...todas]
-    .map(cat => {
-      const a = atual.find(i => i.categoria === cat)?.valor || 0;
-      const p = anterior.find(i => i.categoria === cat)?.valor || 0;
+  const validos = mensal.filter(m => m.total > 0);
 
-      return {
-        categoria: cat,
-        atual: a,
-        anterior: p,
-        diferenca: a - p
-      };
-    })
-    .sort((a, b) => Math.abs(b.diferenca) - Math.abs(a.diferenca));
+  const totalAtual = validos.reduce((s, m) => s + m.total, 0);
+  const jaPassaram = validos.length;
+
+  if (!jaPassaram) return { media: 0, projecao: 0 };
+
+  const media = totalAtual / jaPassaram;
+  const projecao = totalAtual + media * (12 - jaPassaram);
+
+  return { media, projecao };
 }
