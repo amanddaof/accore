@@ -6,6 +6,7 @@ import { money } from "../utils/money";
 export default function CardTransactions({ transactions = [] }) {
   const [openId, setOpenId] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
+console.log("transactions em CardTransactions", transactions);
 
   async function marcarComoPago(id) {
     setLoadingId(id);
@@ -114,3 +115,4 @@ export default function CardTransactions({ transactions = [] }) {
     </div>
   );
 }
+
