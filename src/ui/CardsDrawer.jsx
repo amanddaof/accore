@@ -12,6 +12,41 @@ const nomesMeses = [
   "Jul", "Ago", "Set", "Out", "Nov", "Dez"
 ];
 
+function formatarMesFatura(ano, mesIndex) {
+  const nome = nomesMeses[mesIndex];
+  const sufixo = String(ano).slice(2);
+  return `${nome}/${sufixo}`; // "Jan/26"
+}
+
+function calcularMesFatura(dataISO, fechamento_dia, fechamento_offset = 0) {
+  // dataISO: "2025-12-15"
+  if (!dataISO || !fechamento_dia) return "";
+
+  const [ano, mesStr, diaStr] = dataISO.split("-").map(Number);
+  const diaCompra = diaStr;
+
+  const diaCorte = fechamento_dia + (fechamento_offset || 0);
+
+  let anoFatura = ano;
+  let mesFaturaIndex;
+
+  if (diaCompra <= diaCorte) {
+    // até o corte → fatura do mês seguinte
+    const base = new Date(ano, mesStr - 1, 1);
+    base.setMonth(base.getMonth() + 1);
+    anoFatura = base.getFullYear();
+    mesFaturaIndex = base.getMonth();
+  } else {
+    // depois do corte → fatura do outro mês ainda (2 meses à frente)
+    const base = new Date(ano, mesStr - 1, 1);
+    base.setMonth(base.getMonth() + 2);
+    anoFatura = base.getFullYear();
+    mesFaturaIndex = base.getMonth();
+  }
+
+  return formatarMesFatura(anoFatura, mesFaturaIndex);
+}
+
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -46,14 +81,12 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     origem: ""
   });
 
-  // carregar categorias
   useEffect(() => {
     getCategories().then(c => setCategories(c.filter(x => x.active)));
   }, []);
 
   const activeCard = cards[activeIndex] || null;
 
-  // Total da fatura (mês) – com "Ambos" em dobro
   const totalFatura = transactions
     .filter(t => (t.status || "").toLowerCase() === "pendente")
     .reduce((sum, t) => {
@@ -63,7 +96,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
       return sum + v * multiplicador;
     }, 0);
 
-  // Carregar transações do mês + pendentes globais do cartão
   useEffect(() => {
     if (!open || !activeCard) return;
 
@@ -114,63 +146,72 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   }
 
   async function salvarCompra(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const [parcelaAtual, totalParcelas] = form.parcelas.split("/").map(Number);
+    const [parcelaAtual, totalParcelas] = form.parcelas.split("/").map(Number);
 
-  if (!totalParcelas || parcelaAtual > totalParcelas) {
-    alert("Parcelas inválidas. Ex: 3/10");
-    return;
+    if (!totalParcelas || parcelaAtual > totalParcelas) {
+      alert("Parcelas inválidas. Ex: 3/10");
+      return;
+    }
+
+    if (!activeCard) {
+      alert("Nenhum cartão ativo selecionado.");
+      return;
+    }
+
+    const inserts = [];
+
+    for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
+      const numeroParcela = i + 1;
+
+      const dataDaParcela = addMeses(form.data_real, i);
+
+      const mesFatura = calcularMesFatura(
+        dataDaParcela,
+        activeCard.fechamento_dia,
+        activeCard.fechamento_offset
+      );
+
+      inserts.push({
+        descricao: form.descricao,
+        valor: Number(form.valor),
+        data_real: dataDaParcela,
+        parcelas: `${numeroParcela}/${totalParcelas}`,
+        mes: mesFatura,
+        quem: form.quem,
+        status: form.status,
+        origem: form.origem,
+        category_id: form.category_id || null
+      });
+    }
+
+    const { data: inseridos, error } = await supabase
+      .from("transactions")
+      .insert(inserts)
+      .select("*");
+
+    if (error) {
+      alert("Erro ao salvar parcelas");
+      console.error(error);
+      return;
+    }
+
+    setTransactions(prev => [inseridos[0], ...prev]);
+    setPendentesGlobais(prev => [...prev, ...inseridos]);
+
+    setForm(f => ({
+      ...f,
+      descricao: "",
+      valor: "",
+      mes: "",
+      parcelas: "1/1",
+      category_id: ""
+    }));
+
+    setShowForm(false);
   }
 
-  const inserts = [];
-
-  for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
-    const numeroParcela = i + 1;
-
-    const dataDaParcela = addMeses(form.data_real, i); // 0 = mês atual, 1 = +1 mês...
-
-    inserts.push({
-      descricao: form.descricao,
-      valor: Number(form.valor),
-      data_real: dataDaParcela,
-      parcelas: `${numeroParcela}/${totalParcelas}`,
-      // mes: formatarMes(dataDaParcela.slice(0, 7)), // opcional, se ainda quiser preencher mes
-      quem: form.quem,
-      status: form.status,
-      origem: form.origem,
-      category_id: form.category_id || null
-    });
-  }
-
-  const { data: inseridos, error } = await supabase
-    .from("transactions")
-    .insert(inserts)
-    .select("*");
-
-  if (error) {
-    alert("Erro ao salvar parcelas");
-    console.error(error);
-    return;
-  }
-
-  // agora usa os registros com id vindos do banco
-  setTransactions(prev => [inseridos[0], ...prev]);
-  setPendentesGlobais(prev => [...prev, ...inseridos]);
-
-  setForm(f => ({
-    ...f,
-    descricao: "",
-    valor: "",
-    mes: "",
-    parcelas: "1/1",
-    category_id: ""
-  }));
-
-  setShowForm(false);
-}
-
-  // Navegação de cartão (anterior/próximo)
   function irProProximo() {
     setActiveIndex(i => (i < cards.length - 1 ? i + 1 : i));
   }
@@ -179,7 +220,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     setActiveIndex(i => (i > 0 ? i - 1 : i));
   }
 
-  // Navegação de mês
   function mesAnterior() {
     const [m, y] = mesFiltro.split("/");
     const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
@@ -214,7 +254,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
         <div className="drawer-content">
 
-          {/* STACK FLUTUANTE COM FRAMER MOTION */}
           <div className="cards-stack-fm">
             {prevIndex !== null && (
               <motion.div className="card-ghost left">
@@ -257,14 +296,12 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             )}
           </div>
 
-          {/* FILTRO DE MÊS */}
           <div className="drawer-filter">
             <button onClick={mesAnterior}>◀</button>
             <strong>{mesFiltro}</strong>
             <button onClick={mesProximo}>▶</button>
           </div>
 
-          {/* TOTAL FATURA */}
           <div className="drawer-total">
             Total da fatura: <strong>{money(totalFatura)}</strong>
           </div>
@@ -294,10 +331,8 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             + Nova compra
           </button>
 
-          {/* FORM NOVA COMPRA */}
           {showForm && (
             <form className="purchase-form" onSubmit={salvarCompra}>
-
               <input
                 placeholder="Descrição"
                 value={form.descricao}
@@ -365,7 +400,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             </form>
           )}
 
-          {/* LISTA DE COMPRAS */}
           {loading ? (
             <div className="card-transactions empty">Carregando...</div>
           ) : (
@@ -377,4 +411,3 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
-
