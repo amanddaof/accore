@@ -167,14 +167,6 @@ export function useDashboard() {
 
   }, [salaryHistory, mensal, mes]);
 
-  const cofre = useMemo(() => {
-    if (!salarios) return null;
-
-    return {
-      amanda: calcularCofre(salarios.amanda.sobra),
-      celso: calcularCofre(salarios.celso.sobra)
-    };
-
   }, [salarios]);
 
   return {
@@ -200,6 +192,7 @@ export function useDashboard() {
 };
 
 }
+
 
 
 
