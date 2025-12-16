@@ -4,8 +4,7 @@ import {
   calcularGastosPorPessoa,
   calcularTotalMensal,
   calcularProjecaoMensal,
-  calcularProjecaoPorPessoa,
-  calcularCofre
+  calcularProjecaoPorPessoa
 } from "../calculations/monthly";
 
 import { calcularDividasMes } from "../calculations/debts";
@@ -193,7 +192,6 @@ export function useDashboard() {
   categorias,
   anual,
   salarios,
-  cofre,
 
   savingsGoal,       // ✔ meta anual
   setSavingsGoal,    // ✔ NECESSÁRIO para atualizar a meta
@@ -202,5 +200,6 @@ export function useDashboard() {
 };
 
 }
+
 
 
