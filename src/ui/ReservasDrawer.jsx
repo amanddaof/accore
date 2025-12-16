@@ -6,32 +6,40 @@ import { money } from "../utils/money";
 import { getCategories } from "../services/categories.service";
 
 /* ===============================
-   UTILITÁRIOS DE DATA
+   UTILITÁRIOS DE DATA (DATE REAL)
 ================================ */
 
-const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-
-function addMonths(mesStr, qtd) {
-  const [m, y] = mesStr.split("/");
-  const d = new Date(2000 + Number(y), MESES.indexOf(m));
+function addMonthsDate(dateStr, qtd) {
+  const d = new Date(dateStr);
   d.setMonth(d.getMonth() + qtd);
-  return `${MESES[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`;
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
-function proximoMes(r) {
-  if (!r.ultimo_mes) return r.mes;
+function proximaDataReserva(r) {
+  if (!r.data_real) return null;
 
   switch (r.recorrencia) {
-    case "Mensal":     return addMonths(r.ultimo_mes, 1);
-    case "Bimestral":  return addMonths(r.ultimo_mes, 2);
-    case "Trimestral": return addMonths(r.ultimo_mes, 3);
-    case "Única":      return null;
+    case "Mensal":
+      return addMonthsDate(r.data_real, 1);
+
+    case "Bimestral":
+      return addMonthsDate(r.data_real, 2);
+
+    case "Trimestral":
+      return addMonthsDate(r.data_real, 3);
+
+    case "Única":
+      return null;
+
     case "Parcelado": {
       const [atual, total] = (r.parcelas || "1/1").split("/").map(Number);
-      return atual < total ? addMonths(r.ultimo_mes, 1) : null;
+      return atual < total
+        ? addMonthsDate(r.data_real, 1)
+        : null;
     }
+
     default:
-      return addMonths(r.ultimo_mes, 1);
+      return addMonthsDate(r.data_real, 1);
   }
 }
 
@@ -46,18 +54,15 @@ function avancaParcela(r) {
 ================================ */
 
 export default function ReservasDrawer({ open, onClose }) {
-
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-
   const [categories, setCategories] = useState([]);
 
   const [form, setForm] = useState({
     descricao: "",
     valor: "",
-    mes: "",
-    ultimo_mes: "",
+    data_real: "",
     recorrencia: "Mensal",
     parcelas: "1/1",
     quem: "",
@@ -66,7 +71,10 @@ export default function ReservasDrawer({ open, onClose }) {
     category_id: ""
   });
 
-  // 🔹 carregar categorias
+  /* ===============================
+     CATEGORIAS
+  ================================ */
+
   useEffect(() => {
     getCategories().then(c => setCategories(c.filter(x => x.active)));
   }, []);
@@ -83,7 +91,7 @@ export default function ReservasDrawer({ open, onClose }) {
       const { data, error } = await supabase
         .from("reservations")
         .select("*, categories(name)")
-        .order("id", { ascending: false });
+        .order("data_real", { ascending: true });
 
       if (error) console.error(error);
       setReservas(data || []);
@@ -103,6 +111,7 @@ export default function ReservasDrawer({ open, onClose }) {
     const payload = {
       ...form,
       valor: Number(form.valor),
+      ultimo_mes: null,
       category_id: form.category_id || null
     };
 
@@ -118,14 +127,13 @@ export default function ReservasDrawer({ open, onClose }) {
       return;
     }
 
-    setReservas(prev => [data, ...prev]);
+    setReservas(prev => [...prev, data]);
     setShowForm(false);
 
     setForm({
       descricao: "",
       valor: "",
-      mes: "",
-      ultimo_mes: "",
+      data_real: "",
       recorrencia: "Mensal",
       parcelas: "1/1",
       quem: "",
@@ -140,14 +148,13 @@ export default function ReservasDrawer({ open, onClose }) {
   ================================ */
 
   async function processarReserva(r) {
-    const mes = proximoMes(r);
-    if (!mes) return alert("Esta reserva já foi concluída.");
+    if (!r.data_real) return;
 
-    // 1) gerar lançamento
+    // 1️⃣ Criar transaction
     const { error: e1 } = await supabase.from("transactions").insert([{
       descricao: r.descricao,
       valor: Number(r.valor),
-      mes,
+      data_real: r.data_real,
       parcelas: r.recorrencia === "Parcelado" ? r.parcelas : "1/1",
       quem: r.quem || "Amanda",
       quem_paga: r.quem_paga || null,
@@ -162,12 +169,19 @@ export default function ReservasDrawer({ open, onClose }) {
       return;
     }
 
-    const novoUltimo = mes;
-    const prox = proximoMes({ ...r, ultimo_mes: novoUltimo });
+    // 2️⃣ Calcular próxima data
+    const proximaData = proximaDataReserva(r);
 
-    const payload = prox
-      ? { ultimo_mes: novoUltimo, parcelas: avancaParcela(r) }
-      : { ultimo_mes: novoUltimo, recorrencia: "Concluída" };
+    const payload = proximaData
+      ? {
+          ultimo_mes: r.data_real,
+          data_real: proximaData,
+          parcelas: avancaParcela(r)
+        }
+      : {
+          ultimo_mes: r.data_real,
+          recorrencia: "Concluída"
+        };
 
     const { error: e2 } = await supabase
       .from("reservations")
@@ -194,14 +208,12 @@ export default function ReservasDrawer({ open, onClose }) {
   return (
     <div className="drawer-overlay">
       <aside className="drawer">
-
         <div className="drawer-header">
           <h2>Reservas</h2>
           <button onClick={onClose}>✕</button>
         </div>
 
         <div className="drawer-content">
-
           <button className="primary-btn" onClick={() => setShowForm(v => !v)}>
             + Nova reserva
           </button>
@@ -213,7 +225,6 @@ export default function ReservasDrawer({ open, onClose }) {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
             >
-
               <input
                 placeholder="Descrição"
                 value={form.descricao}
@@ -231,9 +242,9 @@ export default function ReservasDrawer({ open, onClose }) {
               />
 
               <input
-                placeholder="Mês inicial (ex: Jan/26)"
-                value={form.mes}
-                onChange={e => setForm({ ...form, mes: e.target.value })}
+                type="date"
+                value={form.data_real}
+                onChange={e => setForm({ ...form, data_real: e.target.value })}
                 required
               />
 
@@ -293,7 +304,6 @@ export default function ReservasDrawer({ open, onClose }) {
                 <option>Ambos</option>
               </select>
 
-              {/* ✅ CATEGORIA VIA FK */}
               <select
                 value={form.category_id}
                 onChange={e => setForm({ ...form, category_id: e.target.value })}
@@ -316,16 +326,17 @@ export default function ReservasDrawer({ open, onClose }) {
           ) : (
             <div className="card-transactions">
               {reservas
-                .map(r => ({ ...r, proximo: proximoMes(r) }))
-                .filter(r => r.proximo)
-                .sort((a, b) => a.proximo.localeCompare(b.proximo))
+                .filter(r => r.recorrencia !== "Concluída")
                 .map(r => (
-                  <ReservaRow key={r.id} r={r} onProcessar={processarReserva} />
+                  <ReservaRow
+                    key={r.id}
+                    r={r}
+                    onProcessar={processarReserva}
+                  />
                 ))
               }
             </div>
           )}
-
         </div>
       </aside>
     </div>
@@ -333,7 +344,7 @@ export default function ReservasDrawer({ open, onClose }) {
 }
 
 /* ===============================
-   LINHA EXPANSÍVEL
+   LINHA
 ================================ */
 
 function ReservaRow({ r, onProcessar }) {
@@ -342,9 +353,10 @@ function ReservaRow({ r, onProcessar }) {
   return (
     <div className="history-row" onClick={() => setOpen(v => !v)}>
       <div className="history-desc reserva-row">
-        <span className="reserve-month">{r.proximo}</span>
+        <span className="reserve-month">{r.data_real}</span>
         <span className="title">{r.descricao}</span>
       </div>
+
       <strong className="amount">{money(r.valor)}</strong>
 
       {open && (
@@ -352,7 +364,7 @@ function ReservaRow({ r, onProcessar }) {
           <div><span>Origem</span><strong>{r.origem}</strong></div>
           <div><span>Quem paga</span><strong>{r.quem_paga || "-"}</strong></div>
           <div><span>Recorrência</span><strong>{r.recorrencia}</strong></div>
-          <div><span>Último mês</span><strong>{r.ultimo_mes || "-"}</strong></div>
+          <div><span>Última cobrança</span><strong>{r.ultimo_mes || "-"}</strong></div>
           <div><span>Categoria</span><strong>{r.categories?.name || "-"}</strong></div>
           {r.parcelas && <div><span>Parcelas</span><strong>{r.parcelas}</strong></div>}
 
