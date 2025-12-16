@@ -19,30 +19,25 @@ function formatarMesFatura(ano, mesIndex) {
 }
 
 function calcularMesFatura(dataISO, fechamento_dia, fechamento_offset = 0) {
-  // dataISO: "2025-12-15"
   if (!dataISO || !fechamento_dia) return "";
 
   const [ano, mesStr, diaStr] = dataISO.split("-").map(Number);
   const diaCompra = diaStr;
 
-  const diaCorte = fechamento_dia + (fechamento_offset || 0);
+  const diaCorte = fechamento_dia + (fechamento_offset || 0); // ex.: 31 + (-1) = 30
 
-  let anoFatura = ano;
-  let mesFaturaIndex;
+  const base = new Date(ano, mesStr - 1, 1);
 
-  if (diaCompra <= diaCorte) {
-    // até o corte → fatura do mês seguinte
-    const base = new Date(ano, mesStr - 1, 1);
+  if (diaCompra < diaCorte) {
+    // antes do dia de corte → pula 1 fatura (mês seguinte)
     base.setMonth(base.getMonth() + 1);
-    anoFatura = base.getFullYear();
-    mesFaturaIndex = base.getMonth();
   } else {
-    // depois do corte → fatura do outro mês ainda (2 meses à frente)
-    const base = new Date(ano, mesStr - 1, 1);
+    // dia de corte em diante → pula 2 faturas
     base.setMonth(base.getMonth() + 2);
-    anoFatura = base.getFullYear();
-    mesFaturaIndex = base.getMonth();
   }
+
+  const anoFatura = base.getFullYear();
+  const mesFaturaIndex = base.getMonth();
 
   return formatarMesFatura(anoFatura, mesFaturaIndex);
 }
@@ -411,5 +406,6 @@ console.log("activeCard em salvarCompra:", activeCard);
     </div>
   );
 }
+
 
 
