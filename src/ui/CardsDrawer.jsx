@@ -13,9 +13,16 @@ const nomesMeses = [
 ];
 
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+  const [pendentesGlobais, setPendentesGlobais] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [categories, setCategories] = useState([]);
+
   function formatarMes(mesISO) {
-    const [ano, mes] = mesISO.split("-");
-    return `${nomesMeses[Number(mes) - 1]}/${ano.slice(2)}`;
+    const [ano, mesStr] = mesISO.split("-");
+    return `${nomesMeses[Number(mesStr) - 1]}/${ano.slice(2)}`;
   }
 
   const [mesFiltro, setMesFiltro] = useState(() =>
@@ -111,12 +118,13 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     const inserts = [];
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
+      const numeroParcela = i + 1;
+
       inserts.push({
         descricao: form.descricao,
         valor: Number(form.valor),
         data_real: form.data_real,
-        parcela_index: i + 1,
-        total_parcelas: totalParcelas,
+        parcelas: `${numeroParcela}/${totalParcelas}`, // usa a coluna que já existe
         quem: form.quem,
         status: form.status,
         origem: form.origem,
@@ -357,4 +365,3 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
-
