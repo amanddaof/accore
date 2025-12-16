@@ -111,8 +111,6 @@ useEffect(() => {
 
     const inserts = [];
 
-    const inserts = [];
-
 for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
   inserts.push({
     descricao: form.descricao,
@@ -345,4 +343,5 @@ for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
     </div>
   );
 }
+
 
