@@ -3,6 +3,13 @@ import { supabase } from "../services/supabase";
 import "./CardTransactions.css";
 import { money } from "../utils/money";
 
+function formatarDataCurta(data) {
+  if (!data) return "";
+
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano.slice(2)}`;
+}
+
 export default function CardTransactions({ transactions = [] }) {
   const [openId, setOpenId] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
@@ -55,8 +62,8 @@ console.log("transactions em CardTransactions", transactions);
               <div>
                 <strong>{t.descricao}</strong>
                 <span className="txn-sub">
-  {t.data_real} • {t.origem} • {t.mes}
-</span>
+                  {formatarDataCurta(t.data_real)} • {t.origem} • {t.mes}
+                </span>
               </div>
 
               <div className={`txn-value ${t.status === "Pago" ? "pago" : "pendente"}`}>
@@ -115,5 +122,6 @@ console.log("transactions em CardTransactions", transactions);
     </div>
   );
 }
+
 
 
