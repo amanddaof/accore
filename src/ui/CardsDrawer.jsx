@@ -147,7 +147,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
   async function salvarCompra(e) {
     e.preventDefault();
-
+console.log("activeCard em salvarCompra:", activeCard);
     const [parcelaAtual, totalParcelas] = form.parcelas.split("/").map(Number);
 
     if (!totalParcelas || parcelaAtual > totalParcelas) {
@@ -161,7 +161,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     }
 
     const inserts = [];
-console.log("activeCard em salvarCompra:", activeCard);
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
       const numeroParcela = i + 1;
@@ -412,4 +411,5 @@ console.log("activeCard em salvarCompra:", activeCard);
     </div>
   );
 }
+
 
