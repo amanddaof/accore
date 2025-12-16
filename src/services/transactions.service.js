@@ -1,9 +1,8 @@
 import { supabase } from "./supabase";
-import { calcularMesFatura } from "../calculations/cardInvoice";
-import { getCards } from "./cards.service";
 
 /**
  * 🔹 BUSCAR TODAS AS TRANSAÇÕES (PAGINADO)
+ * (mantém como está, sem mudanças)
  */
 export async function getTransactions() {
   let todos = [];
@@ -36,21 +35,15 @@ export async function getTransactions() {
 
 /**
  * 🆕 CRIAR TRANSAÇÃO
- * - Recebe data_real
- * - Calcula automaticamente o mês da fatura
+ * ✅ Usa APENAS data_real
+ * ❌ Não calcula mês
+ * ❌ Não depende de cartão
+ * ❌ Não aplica regra de negócio
  */
 export async function createTransaction(payload) {
-  const cards = await getCards();
-  const card = cards.find(c => c.nome === payload.origem);
-
-  if (!card) {
-    throw new Error("Cartão não encontrado para calcular fatura");
+  if (!payload.data_real) {
+    throw new Error("Data real é obrigatória");
   }
-
-  const mes = calcularMesFatura({
-    dataReal: payload.data_real,
-    card
-  });
 
   const { error } = await supabase
     .from("transactions")
@@ -61,9 +54,12 @@ export async function createTransaction(payload) {
       category_id: payload.category_id || null,
       origem: payload.origem,
       data_real: payload.data_real,
-      mes,
+
+      // 🧯 legado — NÃO usado, NÃO calculado
+      mes: payload.mes || null,
+
       status: payload.status || "Pendente",
-      parcelas: payload.parcelas || "1/1"
+      parcelas: payload.parcelas || "1/1",
     });
 
   if (error) throw error;
