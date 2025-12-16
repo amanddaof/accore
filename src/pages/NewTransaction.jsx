@@ -11,7 +11,7 @@ export default function NewTransaction() {
     quem: "Amanda",
     categoria: "",
     origem: "",
-    data_real: new Date().toISOString().slice(0, 10)
+    data_real: new Date().toISOString().slice(0, 10),
   });
 
   useEffect(() => {
@@ -25,9 +25,30 @@ export default function NewTransaction() {
   async function submit(e) {
     e.preventDefault();
 
-    await createTransaction(form);
+    if (!form.data_real) {
+      alert("Informe a data da compra");
+      return;
+    }
 
-    alert("Lançamento salvo com fatura correta ✅");
+    const payload = {
+      ...form,
+      valor: Number(form.valor),
+
+      // ⚠️ COMPATIBILIDADE TEMPORÁRIA
+      // enquanto telas antigas ainda usam "mes"
+      mes: form.data_real.slice(0, 7),
+    };
+
+    await createTransaction(payload);
+
+    alert("Lançamento salvo com sucesso ✅");
+
+    // opcional: limpar formulário
+    setForm(prev => ({
+      ...prev,
+      descricao: "",
+      valor: "",
+    }));
   }
 
   return (
@@ -86,6 +107,7 @@ export default function NewTransaction() {
           type="date"
           value={form.data_real}
           onChange={e => setField("data_real", e.target.value)}
+          required
         />
 
         <button type="submit">Salvar lançamento</button>
