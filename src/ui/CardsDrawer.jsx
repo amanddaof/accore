@@ -106,12 +106,12 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   }, [open, activeCard, mesFiltro]);
 
   function addMeses(dataISO, qtdMeses) {
-  if (!dataISO) return "";
-  const [ano, mes, dia] = dataISO.split("-").map(Number);
-  const d = new Date(ano, mes - 1, dia);
-  d.setMonth(d.getMonth() + qtdMeses);
-  return d.toISOString().slice(0, 10);
-}
+    if (!dataISO) return "";
+    const [ano, mesStr, dia] = dataISO.split("-").map(Number);
+    const d = new Date(ano, mesStr - 1, dia);
+    d.setMonth(d.getMonth() + qtdMeses);
+    return d.toISOString().slice(0, 10);
+  }
 
   async function salvarCompra(e) {
     e.preventDefault();
@@ -126,23 +126,24 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     const inserts = [];
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
-  const numeroParcela = i + 1;
+      const numeroParcela = i + 1;
 
-  const dataDaParcela = addMeses(form.data_real, i); // 0 = mês atual, 1 = +1 mês...
+      // i = 0 → mês atual; i = 1 → +1 mês; etc.
+      const dataDaParcela = addMeses(form.data_real, i);
 
-  inserts.push({
-    descricao: form.descricao,
-    valor: Number(form.valor),
-    data_real: dataDaParcela,
-    parcelas: `${numeroParcela}/${totalParcelas}`,
-    // se ainda quiser preencher mes (enquanto existir no sistema):
-    // mes: calcularMesReferencia(dataDaParcela),
-    quem: form.quem,
-    status: form.status,
-    origem: form.origem,
-    category_id: form.category_id || null
-  });
-}
+      inserts.push({
+        descricao: form.descricao,
+        valor: Number(form.valor),
+        data_real: dataDaParcela,
+        parcelas: `${numeroParcela}/${totalParcelas}`,
+        // se ainda quiser popular o campo mes enquanto existir:
+        // mes: formatarMes(dataDaParcela.slice(0, 7)),
+        quem: form.quem,
+        status: form.status,
+        origem: form.origem,
+        category_id: form.category_id || null
+      });
+    }
 
     const { error } = await supabase.from("transactions").insert(inserts);
 
@@ -198,7 +199,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
   if (!open) return null;
 
-  // índices para flutuação
   const prevIndex = activeIndex > 0 ? activeIndex - 1 : null;
   const nextIndex = activeIndex < cards.length - 1 ? activeIndex + 1 : null;
 
@@ -345,7 +345,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 <option>Pago</option>
               </select>
 
-              {/* CATEGORIA VIA FK */}
               <select
                 value={form.category_id}
                 onChange={e => setForm({ ...form, category_id: e.target.value })}
@@ -377,4 +376,3 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
-
