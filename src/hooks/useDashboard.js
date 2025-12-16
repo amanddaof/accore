@@ -96,8 +96,10 @@ export function useDashboard() {
     transactions,
     bills,
     loans,
-    reservas: reservations
-  }), [transactions, bills, loans, reservations]);
+    reservas: reservations,
+    cards
+  }), [transactions, bills, loans, reservations, cards]);
+
 
   const mensal = useMemo(() => ({
     porPessoa: calcularGastosPorPessoa(mes, dados),
@@ -200,4 +202,5 @@ export function useDashboard() {
 };
 
 }
+
 
