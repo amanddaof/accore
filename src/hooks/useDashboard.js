@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { processarReservasPendentes } from "../services/reservations.processor";
 
 import {
   calcularGastosPorPessoa,
@@ -68,6 +69,10 @@ export function useDashboard() {
       getSavingsGoal(new Date(mes).getFullYear())
     ]);
 
+    // 🔁 PROCESSA RESERVAS AUTOMATICAMENTE
+    // (usa cartões já carregados)
+    await processarReservasPendentes(cardsData || []);
+
     setCards(cardsData || []);
     setLoans(loansData || []);
     setBills(billsData || []);
@@ -135,10 +140,10 @@ export function useDashboard() {
       .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
 
     const salarioAmanda =
-      registrosAno.filter(s => s.quem.toLowerCase() === "amanda")[0] || ultimoAmanda;
+      registrosAno.find(s => s.quem.toLowerCase() === "amanda") || ultimoAmanda;
 
     const salarioCelso =
-      registrosAno.filter(s => s.quem.toLowerCase() === "celso")[0] || ultimoCelso;
+      registrosAno.find(s => s.quem.toLowerCase() === "celso") || ultimoCelso;
 
     const gasto = mensal.porPessoa;
 
