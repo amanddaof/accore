@@ -37,7 +37,7 @@ export default function Header({
   const quantidade =
     [...dados.amanda, ...dados.celso, ...dados.geral]
       .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
-
+console.log("MENSAL 👉", mensal);
   return (
     <>
       <header className="header">
@@ -147,6 +147,7 @@ export default function Header({
     </>
   );
 }
+
 
 
 
