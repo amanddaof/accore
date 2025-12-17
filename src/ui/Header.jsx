@@ -111,7 +111,7 @@ export default function Header({
             onClick={onReload}
             title="Atualizar dados"
           >
-            🔄
+            ⟳
           </button>
 
           {/* SAIR */}
@@ -139,3 +139,4 @@ export default function Header({
     </>
   );
 }
+
