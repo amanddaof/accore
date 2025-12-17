@@ -1,0 +1,37 @@
+.global-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+
+  padding: 10px 14px;
+  width: 420px;
+
+  transition: all 0.2s ease;
+}
+
+.global-search:focus-within {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.global-search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+.global-search input::placeholder {
+  color: #64748b;
+}
+
+.search-icon {
+  color: #64748b;
+}
