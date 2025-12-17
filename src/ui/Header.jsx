@@ -3,9 +3,7 @@ import { useState, useMemo } from "react";
 import AlertsCenter from "../ui/AlertsCenter";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
 import { gerarAlertas } from "../services/alerts.service";
-import { logout } from "../services/auth";
-import GlobalSearch from "../components/GlobalSearch";
-import { RotateCw } from "lucide-react";
+import { logout } from "../services/auth"; // <-- IMPORTANTE
 import "./Header.css";
 
 export default function Header({
@@ -31,69 +29,67 @@ export default function Header({
   const [showAlerts, setShowAlerts] = useState(false);
   const [openSavings, setOpenSavings] = useState(false);
 
-  const dados = useMemo(
-    () => gerarAlertas({ mensal, salarios }),
-    [mensal, salarios]
-  );
+  const dados = useMemo(() => gerarAlertas({ mensal, salarios }), [mensal, salarios]);
 
   const quantidade =
     [...dados.amanda, ...dados.celso, ...dados.geral]
       .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
+
+  function ativo(path) {
+    if (path === "/") return pathname === "/";
+    return pathname.startsWith(path);
+  }
 
   return (
     <>
       <header className="header">
 
         {/* ESQUERDA */}
-        <div
-          className="header-left"
-          onClick={() => navigate("/")}
-          style={{ cursor: "pointer" }}
-        >
+        <div className="header-left" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           <div className="logo">A</div>
           <span className="title">ACCORE</span>
         </div>
 
         {/* MENU */}
         <nav className="nav">
+
           <button className={`nav-link ${isCardsOpen ? "active" : ""}`} onClick={onOpenCards}>
             CARTÕES
           </button>
+
           <button className={`nav-link ${isExternoOpen ? "active" : ""}`} onClick={onOpenExterno}>
             EXTERNO
           </button>
+
           <button className={`nav-link ${isReservasOpen ? "active" : ""}`} onClick={onOpenReservas}>
             RESERVAS
           </button>
+
           <button className={`nav-link ${isBillsOpen ? "active" : ""}`} onClick={onOpenBills}>
             CASA
           </button>
+
           <button className={`nav-link ${isIncomesOpen ? "active" : ""}`} onClick={onOpenIncomes}>
             ENTRADAS
           </button>
+
           <button className={`nav-link ${openSavings ? "active" : ""}`} onClick={() => setOpenSavings(true)}>
             ECONOMIA
           </button>
-        </nav>
 
-        {/* 🔍 BUSCA GLOBAL */}
-        <div className="header-search">
-          <GlobalSearch />
-        </div>
+        </nav>
 
         {/* DIREITA */}
         <div className="header-right">
 
-          {/* ALERTAS */}
+          {/* 🔔 ALERTAS */}
           <button
             className="alerts-btn"
             onClick={() => setShowAlerts(true)}
             title="Notificações"
           >
             🔔
-            {quantidade > 0 && (
-              <span className="alerts-badge">{quantidade}</span>
-            )}
+            {quantidade > 0 && <span className="alerts-badge">{quantidade}</span>}
           </button>
 
           <input
@@ -102,23 +98,19 @@ export default function Header({
             onChange={e => onMesChange(e.target.value)}
           />
 
-          {/* 🔄 ATUALIZAR (ÍCONE) */}
-          <button
-            className="icon-btn"
-            onClick={onReload}
-            title="Atualizar dados"
-          >
-            <RotateCw size={18} />
-          </button>
+          <button className="reload-btn" onClick={onReload}>Atualizar</button>
 
-          {/* SAIR */}
+          {/* 🔥 BOTÃO DE SAIR */}
           <button className="logout-btn" onClick={logout} title="Sair">
-            ⏻
-          </button>
+  ⏻
+</button>
+
+
         </div>
 
       </header>
 
+      {/* ALERTAS */}
       {showAlerts && (
         <AlertsCenter
           mensal={mensal}
@@ -127,6 +119,7 @@ export default function Header({
         />
       )}
 
+      {/* DRAWER DE ECONOMIA */}
       <SaveSavingsDrawer
         open={openSavings}
         onClose={() => setOpenSavings(false)}
