@@ -7,33 +7,48 @@ import CardsDrawer from "./ui/CardsDrawer";
 import ExternoDrawer from "./ui/ExternoDrawer";
 import ReservasDrawer from "./ui/ReservasDrawer";
 import BillsDrawer from "./ui/BillsDrawer";
-import IncomeDrawer from "./ui/IncomeDrawer"; // ✅ novo
+import IncomeDrawer from "./ui/IncomeDrawer";
 
-export default function Layout({ mes, setMes, reload, cards, mensal, salarios, transactions }) {
+export default function Layout({
+  mes,
+  setMes,
+  reload,
+  cards,
+  mensal,
+  salarios,
 
+  // 🔥 DADOS BRUTOS DO DASHBOARD
+  transactions,
+  reservations,
+  bills,
+  loans
+}) {
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
   const [openBills, setOpenBills] = useState(false);
-  const [openIncomes, setOpenIncomes] = useState(false); // ✅ novo
+  const [openIncomes, setOpenIncomes] = useState(false);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-
       {/* SIDEBAR FIXA */}
       <Sidebar />
 
       {/* ÁREA PRINCIPAL */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-		  
-		  mensal={mensal}
-		  salarios={salarios}
-		  transactions={transactions}
+
+          mensal={mensal}
+          salarios={salarios}
+
+          {/* 🔍 DADOS PARA BUSCA GLOBAL */}
+          transactions={transactions}
+          reservations={reservations}
+          bills={bills}
+          loans={loans}
 
           onOpenCards={() => setOpenCards(true)}
           isCardsOpen={openCards}
@@ -47,12 +62,11 @@ export default function Layout({ mes, setMes, reload, cards, mensal, salarios, t
           onOpenBills={() => setOpenBills(true)}
           isBillsOpen={openBills}
 
-          // ✅ RECEBIMENTOS
           onOpenIncomes={() => setOpenIncomes(true)}
           isIncomesOpen={openIncomes}
         />
 
-        {/* CONTEÚDO DAS PÁGINAS */}
+        {/* CONTEÚDO */}
         <main style={{ flex: 1 }}>
           <Outlet />
         </main>
@@ -64,13 +78,13 @@ export default function Layout({ mes, setMes, reload, cards, mensal, salarios, t
           open={openCards}
           onClose={() => setOpenCards(false)}
           cards={cards}
-		  mes={mes}
+          mes={mes}
         />
 
         <ExternoDrawer
           open={openExterno}
           onClose={() => setOpenExterno(false)}
-		  mes={mes}
+          mes={mes}
         />
 
         <ReservasDrawer
@@ -84,12 +98,10 @@ export default function Layout({ mes, setMes, reload, cards, mensal, salarios, t
           mes={mes}
         />
 
-        {/* ✅ DRAWER DE RECEBIMENTOS */}
         <IncomeDrawer
           open={openIncomes}
           onClose={() => setOpenIncomes(false)}
         />
-
       </div>
     </div>
   );
