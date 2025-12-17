@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
 import "./GlobalSearch.css";
 
 export default function GlobalSearch() {
@@ -7,7 +6,7 @@ export default function GlobalSearch() {
 
   return (
     <div className="global-search">
-      <Search size={18} className="search-icon" />
+      <span className="search-icon">🔍</span>
 
       <input
         type="text"
