@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-export async function logout() {
+export async function logout(navigate) {
   await supabase.auth.signOut();
-  window.location.href = "/login";
+  navigate("/login", { replace: true });
 }
