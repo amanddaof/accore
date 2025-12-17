@@ -248,18 +248,5 @@
   margin: 0 24px;
 }
 
-/* botão ícone (reutilizável) */
-.icon-btn {
-  background: transparent;
-  border: none;
-  color: #cbd5f5;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
 
-.icon-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
+
