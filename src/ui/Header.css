@@ -248,5 +248,28 @@
   margin: 0 24px;
 }
 
+.icon-btn {
+  background: transparent;
+  border: none;
 
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
 
+  padding: 6px 8px;
+  border-radius: 8px;
+
+  cursor: pointer;
+  opacity: 0.85;
+
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 1;
+}
+
+.icon-btn:active {
+  transform: rotate(90deg);
+}
