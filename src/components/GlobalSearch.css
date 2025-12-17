@@ -54,3 +54,26 @@
   font-size: 13px;
   color: #64748b;
 }
+
+.search-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.search-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.search-item strong {
+  display: block;
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+.search-item span {
+  font-size: 12px;
+  color: #64748b;
+}
+
