@@ -81,7 +81,12 @@ export default function Header({
 
         {/* 🔍 BUSCA GLOBAL */}
         <div className="header-search">
-          <GlobalSearch />
+          <GlobalSearch
+            transactions={mensal?.transactions || []}
+            reservations={mensal?.reservations || []}
+            bills={mensal?.houseBills || []}
+            loans={mensal?.loans || []}
+          />
         </div>
 
         {/* DIREITA */}
@@ -142,6 +147,7 @@ export default function Header({
     </>
   );
 }
+
 
 
 
