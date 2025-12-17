@@ -107,15 +107,18 @@ export default function Header({
 
           {/* 🔄 ATUALIZAR (ÍCONE) */}
           <button
-            className="icon-btn"
+            className="circle-icon-btn"
             onClick={onReload}
             title="Atualizar dados"
           >
             ⟳
           </button>
-
-          {/* SAIR */}
-          <button className="logout-btn" onClick={logout} title="Sair">
+          
+          <button
+            className="circle-icon-btn"
+            onClick={logout}
+            title="Sair"
+          >
             ⏻
           </button>
         </div>
@@ -139,4 +142,5 @@ export default function Header({
     </>
   );
 }
+
 
