@@ -59,9 +59,9 @@ export default function App() {
               mensal={mensal}
               salarios={salarios}
               transactions={transactions}
-              reservations={dashboard.reservations}
-              bills={dashboard.bills}
-              loans={dashboard.loans}
+              reservations={reservations}
+              bills={bills}
+              loans={loans}
             />
           </ProtectedRoute>
         }
@@ -103,4 +103,5 @@ export default function App() {
     </Routes>
   );
 }
+
 
