@@ -8,14 +8,7 @@
   border-radius: 14px;
 
   padding: 10px 14px;
-  width: 420px;
-
-  transition: all 0.2s ease;
-}
-
-.global-search:focus-within {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  width: 360px;
 }
 
 .global-search input {
@@ -33,5 +26,5 @@
 }
 
 .search-icon {
-  color: #64748b;
+  opacity: 0.6;
 }
