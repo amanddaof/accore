@@ -116,7 +116,7 @@ export default function Header({
           
           <button
             className="circle-icon-btn"
-            onClick={logout}
+            onClick={() => logout(navigate)}
             title="Sair"
           >
             ⏻
@@ -142,5 +142,6 @@ export default function Header({
     </>
   );
 }
+
 
 
