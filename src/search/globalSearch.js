@@ -1,21 +1,19 @@
 import { normalizeText } from "../utils/normalizeText";
-import { money } from "../utils/money";
 
 export function globalSearch({
   query,
   transactions = [],
   reservations = [],
-  loans = [],
-  houseBills = [],
+  bills = [],
+  loans = []
 }) {
   if (!query || query.length < 2) return [];
 
   const q = normalizeText(query);
-
   const results = [];
 
   // =========================
-  // TRANSACTIONS
+  // TRANSAÇÕES
   // =========================
   transactions.forEach(t => {
     const text = normalizeText(
@@ -28,21 +26,17 @@ export function globalSearch({
         id: t.id,
         title: t.descricao,
         subtitle: `${t.cartao || "Externo"} • ${t.mes}`,
-        value: t.valor,
-        date: t.data_real,
         route: `/history?mes=${t.mes}`,
-        weight: 3,
+        weight: 4
       });
     }
   });
 
   // =========================
-  // RESERVATIONS
+  // RESERVAS
   // =========================
   reservations.forEach(r => {
-    const text = normalizeText(
-      `${r.descricao} reserva`
-    );
+    const text = normalizeText(r.descricao);
 
     if (text.includes(q)) {
       results.push({
@@ -50,21 +44,35 @@ export function globalSearch({
         id: r.id,
         title: r.descricao,
         subtitle: "Reserva",
-        value: r.valor,
-        date: r.data,
         route: "/reservas",
-        weight: 2,
+        weight: 3
       });
     }
   });
 
   // =========================
-  // LOANS
+  // CONTAS DA CASA
+  // =========================
+  bills.forEach(b => {
+    const text = normalizeText(b.descricao);
+
+    if (text.includes(q)) {
+      results.push({
+        type: "bill",
+        id: b.id,
+        title: b.descricao,
+        subtitle: "Conta da casa",
+        route: "/casa",
+        weight: 2
+      });
+    }
+  });
+
+  // =========================
+  // EMPRÉSTIMOS
   // =========================
   loans.forEach(l => {
-    const text = normalizeText(
-      `${l.descricao} emprestimo`
-    );
+    const text = normalizeText(l.descricao);
 
     if (text.includes(q)) {
       results.push({
@@ -72,16 +80,12 @@ export function globalSearch({
         id: l.id,
         title: l.descricao,
         subtitle: "Empréstimo",
-        value: l.valor_total,
         route: "/emprestimos",
-        weight: 1,
+        weight: 1
       });
     }
   });
 
-  // =========================
-  // ORDER BY RELEVANCE
-  // =========================
   return results
     .sort((a, b) => b.weight - a.weight)
     .slice(0, 20);
