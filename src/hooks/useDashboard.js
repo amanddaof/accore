@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { processarReservasPendentes } from "../services/reservations.processor";
+import { calcularComparativoPorPessoa } from "../calculations/monthComparisonByPerson";
 
 import {
   calcularGastosPorPessoa,
@@ -168,56 +169,14 @@ export function useDashboard() {
      COMPARATIVO MENSAL
   ====================================================== */
   const comparativoMensal = useMemo(() => {
-    if (!mensal || !mensalAnterior) return null;
+    if (!mes || !mesAnterior) return null;
   
-    function montarComparativo(atual = 0, anterior = 0) {
-      const valor = atual - anterior;
-      return {
-        atual,
-        anterior,
-        valor,
-        percentual: anterior === 0 ? 0 : (valor / anterior) * 100
-      };
-    }
-  
-    function extrairTotais(lista = []) {
-      let amanda = 0;
-      let celso = 0;
-  
-      lista.forEach(p => {
-        if (!p) return;
-  
-        if (p.quem === "Amanda") amanda += p.total || 0;
-        if (p.quem === "Celso") celso += p.total || 0;
-  
-        // REGRA DO PROJETO
-        if (p.quem === "Ambos") {
-          amanda += p.total || 0;
-          celso += p.total || 0;
-        }
-      });
-  
-      return { amanda, celso };
-    }
-  
-    const atual = extrairTotais(mensal.porPessoa);
-    const anterior = extrairTotais(mensalAnterior.porPessoa);
-  
-    return {
+    return calcularComparativoPorPessoa({
       mesAtual: mes,
       mesAnterior,
-  
-      total: montarComparativo(
-        mensal.total,
-        mensalAnterior.total
-      ),
-  
-      porPessoa: {
-        amanda: montarComparativo(atual.amanda, anterior.amanda),
-        celso: montarComparativo(atual.celso, anterior.celso)
-      }
-    };
-  }, [mensal, mensalAnterior, mes, mesAnterior]);
+      dados
+    });
+  }, [mes, mesAnterior, dados]);
 
   /* ======================================================
      OUTROS CÁLCULOS
@@ -336,5 +295,6 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
 
 
