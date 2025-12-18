@@ -171,32 +171,25 @@ export function useDashboard() {
   const comparativoMensal = useMemo(() => {
     if (!mes || !mesAnterior) return null;
   
-    // total (já funcionava, NÃO MEXE)
     const totalAtual = calcularTotalMensal(mes, dados);
     const totalAnterior = calcularTotalMensal(mesAnterior, dados);
   
-    const total = {
-      atual: totalAtual,
-      anterior: totalAnterior,
-      valor: totalAtual - totalAnterior,
-      percentual:
-        totalAnterior === 0
-          ? 0
-          : ((totalAtual - totalAnterior) / totalAnterior) * 100
-    };
-  
-    // por pessoa (novo, isolado)
-    const porPessoa = calcularComparativoPorPessoa({
-      mesAtual: mes,
-      mesAnterior,
-      dados
-    }).porPessoa;
+    const valor = totalAtual - totalAnterior;
   
     return {
-      mesAtual: mes,
-      mesAnterior,
-      total,
-      porPessoa
+      mesAtual: {
+        label: mes,
+        total: totalAtual
+      },
+      mesAnterior: {
+        label: mesAnterior,
+        total: totalAnterior
+      },
+      variacao: {
+        valor,
+        percentual:
+          totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
+      }
     };
   }, [mes, mesAnterior, dados]);
 
@@ -317,6 +310,7 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
 
 
 
