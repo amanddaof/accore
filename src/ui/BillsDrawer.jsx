@@ -2,7 +2,11 @@ import "./CardsDrawer.css";
 import { useState, useEffect } from "react";
 import { getBills } from "../services/bills.service";
 import { supabase } from "../services/supabase";
-import { isoParaMesAbrev, mesAbrevParaISO, incrementarMes } from "../core/dates";
+import {
+  isoParaMesAbrev,
+  mesAbrevParaISO,
+  incrementarMes
+} from "../core/dates";
 import { money } from "../utils/money";
 
 export default function BillsDrawer({ open, onClose, mes }) {
@@ -11,6 +15,9 @@ export default function BillsDrawer({ open, onClose, mes }) {
 
   // filtro de mês interno
   const [mesFiltro, setMesFiltro] = useState(mes);
+
+  // 🔥 controle de expansão
+  const [expandedBillId, setExpandedBillId] = useState(null);
 
   useEffect(() => {
     setMesFiltro(mes);
@@ -47,23 +54,14 @@ export default function BillsDrawer({ open, onClose, mes }) {
     load();
   }, [open]);
 
-  const mesFmt = isoParaMesAbrev(mesFiltro); // "2025-12" -> "Dez/25"
+  const mesFmt = isoParaMesAbrev(mesFiltro);
 
-  // filtra só as do mês selecionado
   const lista = bills
     .filter(b => !mesFmt || b.mes === mesFmt)
     .sort((a, b) => {
-      const statusA = (a.status || "").toLowerCase();
-      const statusB = (b.status || "").toLowerCase();
-
-      const pagoA = statusA === "pago";
-      const pagoB = statusB === "pago";
-
-      if (pagoA !== pagoB) {
-        // pendentes primeiro
-        return pagoA ? 1 : -1;
-      }
-
+      const pagoA = (a.status || "").toLowerCase() === "pago";
+      const pagoB = (b.status || "").toLowerCase() === "pago";
+      if (pagoA !== pagoB) return pagoA ? 1 : -1;
       return (a.conta || "").localeCompare(b.conta || "");
     });
 
@@ -71,7 +69,6 @@ export default function BillsDrawer({ open, onClose, mes }) {
     setShowForm(v => {
       const novo = !v;
       if (novo) {
-        // ao abrir, preenche mês padrão
         setForm({
           conta: "",
           valor_previsto: "",
@@ -91,7 +88,7 @@ export default function BillsDrawer({ open, onClose, mes }) {
       conta: form.conta,
       valor_previsto: Number(form.valor_previsto),
       valor_real: form.valor_real ? Number(form.valor_real) : null,
-      mes: form.mes, // "Dez/25"
+      mes: form.mes,
       status: form.status,
     };
 
@@ -112,10 +109,10 @@ export default function BillsDrawer({ open, onClose, mes }) {
   }
 
   async function marcarComoPago(bill) {
-    // se já tiver valor_real, mantém. senão usa valor_previsto
-    const valor = bill.valor_real != null && bill.valor_real !== 0
-      ? bill.valor_real
-      : (bill.valor_previsto ?? 0);
+    const valor =
+      bill.valor_real != null && bill.valor_real !== 0
+        ? bill.valor_real
+        : bill.valor_previsto ?? 0;
 
     const { error } = await supabase
       .from("bills")
@@ -133,21 +130,21 @@ export default function BillsDrawer({ open, onClose, mes }) {
 
     setBills(prev =>
       prev.map(b =>
-        b.id === bill.id ? { ...b, valor_real: valor, status: "Pago" } : b
+        b.id === bill.id
+          ? { ...b, valor_real: valor, status: "Pago" }
+          : b
       )
     );
   }
 
   function mesAnterior() {
-    const atualAbrev = isoParaMesAbrev(mesFiltro); // "Dez/25"
-    const anteriorAbrev = incrementarMes(atualAbrev, -1);
-    setMesFiltro(mesAbrevParaISO(anteriorAbrev));
+    const atual = isoParaMesAbrev(mesFiltro);
+    setMesFiltro(mesAbrevParaISO(incrementarMes(atual, -1)));
   }
 
   function mesProximo() {
-    const atualAbrev = isoParaMesAbrev(mesFiltro);
-    const proxAbrev = incrementarMes(atualAbrev, 1);
-    setMesFiltro(mesAbrevParaISO(proxAbrev));
+    const atual = isoParaMesAbrev(mesFiltro);
+    setMesFiltro(mesAbrevParaISO(incrementarMes(atual, 1)));
   }
 
   if (!open) return null;
@@ -155,36 +152,30 @@ export default function BillsDrawer({ open, onClose, mes }) {
   return (
     <div className="drawer-overlay">
       <aside className="drawer">
-
         <div className="drawer-header">
           <h2>Contas da casa</h2>
           <button onClick={onClose}>✕</button>
         </div>
 
         <div className="drawer-content">
-
-          {/* FILTRO DE MÊS */}
           <div className="drawer-filter">
             <button onClick={mesAnterior}>◀</button>
             <strong>{mesFmt || "-"}</strong>
             <button onClick={mesProximo}>▶</button>
           </div>
 
-          {/* BOTÃO NOVA CONTA */}
-          <button
-            className="primary-btn"
-            onClick={toggleForm}
-          >
+          <button className="primary-btn" onClick={toggleForm}>
             {showForm ? "Fechar" : "+ Nova conta"}
           </button>
 
-          {/* FORM NOVA CONTA */}
           {showForm && (
             <form className="purchase-form" onSubmit={salvarConta}>
               <input
-                placeholder="Nome da conta (ex: Luz, Água...)"
+                placeholder="Nome da conta"
                 value={form.conta}
-                onChange={e => setForm({ ...form, conta: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, conta: e.target.value })
+                }
                 required
               />
 
@@ -193,7 +184,12 @@ export default function BillsDrawer({ open, onClose, mes }) {
                 step="0.01"
                 placeholder="Valor previsto"
                 value={form.valor_previsto}
-                onChange={e => setForm({ ...form, valor_previsto: e.target.value })}
+                onChange={e =>
+                  setForm({
+                    ...form,
+                    valor_previsto: e.target.value
+                  })
+                }
                 required
               />
 
@@ -202,19 +198,28 @@ export default function BillsDrawer({ open, onClose, mes }) {
                 step="0.01"
                 placeholder="Valor real (opcional)"
                 value={form.valor_real}
-                onChange={e => setForm({ ...form, valor_real: e.target.value })}
+                onChange={e =>
+                  setForm({
+                    ...form,
+                    valor_real: e.target.value
+                  })
+                }
               />
 
               <input
                 placeholder="Mês (ex: Dez/25)"
                 value={form.mes}
-                onChange={e => setForm({ ...form, mes: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, mes: e.target.value })
+                }
                 required
               />
 
               <select
                 value={form.status}
-                onChange={e => setForm({ ...form, status: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, status: e.target.value })
+                }
               >
                 <option>Pendente</option>
                 <option>Pago</option>
@@ -226,7 +231,6 @@ export default function BillsDrawer({ open, onClose, mes }) {
             </form>
           )}
 
-          {/* LISTA */}
           {loading ? (
             <div className="card-transactions empty">
               Carregando contas da casa...
@@ -237,44 +241,81 @@ export default function BillsDrawer({ open, onClose, mes }) {
             </div>
           ) : (
             <div className="card-transactions">
-              {lista.map(b => (
+              {lista.map(bill => (
                 <BillRow
-                  key={b.id}
-                  bill={b}
+                  key={bill.id}
+                  bill={bill}
+                  expanded={expandedBillId === bill.id}
+                  onToggle={() =>
+                    setExpandedBillId(prev =>
+                      prev === bill.id ? null : bill.id
+                    )
+                  }
                   onMarkPaid={marcarComoPago}
+                  onUpdate={updated =>
+                    setBills(prev =>
+                      prev.map(b =>
+                        b.id === updated.id ? updated : b
+                      )
+                    )
+                  }
                 />
               ))}
             </div>
           )}
-
         </div>
       </aside>
     </div>
   );
 }
 
-function BillRow({ bill, onMarkPaid }) {
-  const previsto = bill.valor_previsto ?? 0;
-  const real = bill.valor_real ?? null;
+function BillRow({
+  bill,
+  expanded,
+  onToggle,
+  onMarkPaid,
+  onUpdate
+}) {
+  const pago = (bill.status || "").toLowerCase() === "pago";
+  const [valorReal, setValorReal] = useState(
+    bill.valor_real ?? ""
+  );
 
-  const status = (bill.status || "").toLowerCase();
-	const pago = status === "pago";
+  async function salvarValorReal(e) {
+    e.stopPropagation();
 
-	// regra: se valor_real tiver valor, usa ele; se for 0/vazio, usa previsto
-	const valorMostrar =
-	  Number(bill.valor_real || 0) || Number(bill.valor_previsto || 0);
+    const valor = Number(valorReal);
 
+    const { data, error } = await supabase
+      .from("bills")
+      .update({ valor_real: valor })
+      .eq("id", bill.id)
+      .select()
+      .single();
+
+    if (error) {
+      alert("Erro ao salvar valor real");
+      console.error(error);
+      return;
+    }
+
+    onUpdate(data);
+  }
+
+  const valorMostrar =
+    Number(bill.valor_real || 0) ||
+    Number(bill.valor_previsto || 0);
 
   return (
-    <div className="history-row">
+    <div className="history-row" onClick={onToggle}>
       <div className="history-desc">
-        <span className="title">{bill.conta || "Conta"}</span>
+        <span className="title">{bill.conta}</span>
         <span className="sub">
           {bill.mes} • {pago ? "Pago" : "Pendente"}
         </span>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+      <div style={{ textAlign: "right" }}>
         <strong className="amount">
           {money(valorMostrar)}
         </strong>
@@ -291,6 +332,34 @@ function BillRow({ bill, onMarkPaid }) {
           </button>
         )}
       </div>
+
+      {expanded && (
+        <div
+          style={{
+            marginTop: 12,
+            paddingTop: 12,
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            width: "100%"
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <input
+            type="number"
+            step="0.01"
+            placeholder="Valor real"
+            value={valorReal}
+            onChange={e => setValorReal(e.target.value)}
+          />
+
+          <button
+            className="primary-btn"
+            style={{ marginTop: 8 }}
+            onClick={salvarValorReal}
+          >
+            Salvar valor real
+          </button>
+        </div>
+      )}
     </div>
   );
 }
