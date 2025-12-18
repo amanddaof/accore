@@ -12,36 +12,6 @@ const nomesMeses = [
   "Jul", "Ago", "Set", "Out", "Nov", "Dez"
 ];
 
-function formatarMesFatura(ano, mesIndex) {
-  const nome = nomesMeses[mesIndex];
-  const sufixo = String(ano).slice(2);
-  return `${nome}/${sufixo}`; // "Jan/26"
-}
-
-function calcularMesFatura(dataISO, fechamento_dia, fechamento_offset = 0) {
-  if (!dataISO || !fechamento_dia) return "";
-
-  const [ano, mesStr, diaStr] = dataISO.split("-").map(Number);
-  const diaCompra = diaStr;
-
-  const diaCorte = fechamento_dia + (fechamento_offset || 0); // ex.: 31 + (-1) = 30
-
-  const base = new Date(ano, mesStr - 1, 1);
-
-  if (diaCompra < diaCorte) {
-    // antes do dia de corte → pula 1 fatura (mês seguinte)
-    base.setMonth(base.getMonth() + 1);
-  } else {
-    // dia de corte em diante → pula 2 faturas
-    base.setMonth(base.getMonth() + 2);
-  }
-
-  const anoFatura = base.getFullYear();
-  const mesFaturaIndex = base.getMonth();
-
-  return formatarMesFatura(anoFatura, mesFaturaIndex);
-}
-
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -60,9 +30,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   );
 
   useEffect(() => {
-    if (mes) {
-      setMesFiltro(formatarMes(mes));
-    }
+    if (mes) setMesFiltro(formatarMes(mes));
   }, [mes]);
 
   const [form, setForm] = useState({
@@ -73,7 +41,8 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     quem: "Amanda",
     status: "Pendente",
     category_id: "",
-    origem: ""
+    origem: "",
+    mes: "" // 🔑 FATURA INFORMADA
   });
 
   useEffect(() => {
@@ -87,7 +56,8 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     .reduce((sum, t) => {
       const v = Number(t.valor);
       if (isNaN(v)) return sum;
-      const multiplicador = (t.quem || "").toLowerCase() === "ambos" ? 2 : 1;
+      const multiplicador =
+        (t.quem || "").toLowerCase() === "ambos" ? 2 : 1;
       return sum + v * multiplicador;
     }, 0);
 
@@ -104,9 +74,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
         .eq("mes", mesFiltro)
         .order("id", { ascending: false });
 
-      if (errMes) {
-        console.error("Erro ao buscar compras do mês:", errMes);
-      }
+      if (errMes) console.error(errMes);
 
       const { data: dataPend, error: errPend } = await supabase
         .from("transactions")
@@ -114,16 +82,15 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
         .eq("origem", activeCard.nome)
         .eq("status", "Pendente");
 
-      if (errPend) {
-        console.error("Erro ao buscar pendentes globais:", errPend);
-      }
+      if (errPend) console.error(errPend);
 
       setTransactions(dataMes || []);
       setPendentesGlobais(dataPend || []);
 
       setForm(f => ({
         ...f,
-        origem: activeCard.nome
+        origem: activeCard.nome,
+        mes: mesFiltro // 👈 pré-preenche a fatura atual
       }));
 
       setLoading(false);
@@ -133,7 +100,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   }, [open, activeCard, mesFiltro]);
 
   function addMeses(dataISO, qtdMeses) {
-    if (!dataISO) return "";
     const [ano, mesStr, dia] = dataISO.split("-").map(Number);
     const d = new Date(ano, mesStr - 1, dia);
     d.setMonth(d.getMonth() + qtdMeses);
@@ -142,16 +108,17 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
   async function salvarCompra(e) {
     e.preventDefault();
-console.log("activeCard em salvarCompra:", activeCard);
-    const [parcelaAtual, totalParcelas] = form.parcelas.split("/").map(Number);
+
+    const [parcelaAtual, totalParcelas] =
+      form.parcelas.split("/").map(Number);
 
     if (!totalParcelas || parcelaAtual > totalParcelas) {
       alert("Parcelas inválidas. Ex: 3/10");
       return;
     }
 
-    if (!activeCard) {
-      alert("Nenhum cartão ativo selecionado.");
+    if (!form.mes) {
+      alert("Informe a fatura (ex: Jan/26)");
       return;
     }
 
@@ -159,21 +126,14 @@ console.log("activeCard em salvarCompra:", activeCard);
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
       const numeroParcela = i + 1;
-
-      const dataDaParcela = addMeses(form.data_real, i);
-
-      const mesFatura = calcularMesFatura(
-        dataDaParcela,
-        activeCard.fechamento_dia,
-        activeCard.fechamento_offset
-      );
+      const dataParcela = addMeses(form.data_real, i);
 
       inserts.push({
         descricao: form.descricao,
         valor: Number(form.valor),
-        data_real: dataDaParcela,
+        data_real: dataParcela,
         parcelas: `${numeroParcela}/${totalParcelas}`,
-        mes: mesFatura,
+        mes: form.mes, // 🔑 SEMPRE MANUAL
         quem: form.quem,
         status: form.status,
         origem: form.origem,
@@ -181,25 +141,24 @@ console.log("activeCard em salvarCompra:", activeCard);
       });
     }
 
-    const { data: inseridos, error } = await supabase
+    const { data, error } = await supabase
       .from("transactions")
       .insert(inserts)
       .select("*");
 
     if (error) {
-      alert("Erro ao salvar parcelas");
+      alert("Erro ao salvar compra");
       console.error(error);
       return;
     }
 
-    setTransactions(prev => [inseridos[0], ...prev]);
-    setPendentesGlobais(prev => [...prev, ...inseridos]);
+    setTransactions(prev => [data[0], ...prev]);
+    setPendentesGlobais(prev => [...prev, ...data]);
 
     setForm(f => ({
       ...f,
       descricao: "",
       valor: "",
-      mes: "",
       parcelas: "1/1",
       category_id: ""
     }));
@@ -220,7 +179,7 @@ console.log("activeCard em salvarCompra:", activeCard);
     const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
     base.setMonth(base.getMonth() - 1);
     setMesFiltro(
-      nomesMeses[base.getMonth()] + "/" + String(base.getFullYear()).slice(2)
+      `${nomesMeses[base.getMonth()]}/${String(base.getFullYear()).slice(2)}`
     );
   }
 
@@ -229,7 +188,7 @@ console.log("activeCard em salvarCompra:", activeCard);
     const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
     base.setMonth(base.getMonth() + 1);
     setMesFiltro(
-      nomesMeses[base.getMonth()] + "/" + String(base.getFullYear()).slice(2)
+      `${nomesMeses[base.getMonth()]}/${String(base.getFullYear()).slice(2)}`
     );
   }
 
@@ -241,7 +200,6 @@ console.log("activeCard em salvarCompra:", activeCard);
   return (
     <div className="drawer-overlay">
       <aside className="drawer">
-
         <div className="drawer-header">
           <h2>Cartões</h2>
           <button onClick={onClose}>✕</button>
@@ -252,11 +210,7 @@ console.log("activeCard em salvarCompra:", activeCard);
           <div className="cards-stack-fm">
             {prevIndex !== null && (
               <motion.div className="card-ghost left">
-                <CreditCardFull
-                  card={cards[prevIndex]}
-                  transactions={[]}
-                  pendentesGlobais={[]}
-                />
+                <CreditCardFull card={cards[prevIndex]} />
               </motion.div>
             )}
 
@@ -282,11 +236,7 @@ console.log("activeCard em salvarCompra:", activeCard);
 
             {nextIndex !== null && (
               <motion.div className="card-ghost right">
-                <CreditCardFull
-                  card={cards[nextIndex]}
-                  transactions={[]}
-                  pendentesGlobais={[]}
-                />
+                <CreditCardFull card={cards[nextIndex]} />
               </motion.div>
             )}
           </div>
@@ -302,24 +252,6 @@ console.log("activeCard em salvarCompra:", activeCard);
           </div>
 
           <button
-            className="mark-month-btn"
-            onClick={async () => {
-              if (!window.confirm("Marcar TODAS as compras deste mês como pagas?")) return;
-
-              const { error } = await supabase
-                .from("transactions")
-                .update({ status: "Pago" })
-                .eq("origem", activeCard.nome)
-                .eq("mes", mesFiltro)
-                .eq("status", "Pendente");
-
-              if (!error) window.location.reload();
-            }}
-          >
-            Marcar mês como pago ✅
-          </button>
-
-          <button
             className="primary-btn"
             onClick={() => setShowForm(v => !v)}
           >
@@ -331,7 +263,9 @@ console.log("activeCard em salvarCompra:", activeCard);
               <input
                 placeholder="Descrição"
                 value={form.descricao}
-                onChange={e => setForm({ ...form, descricao: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, descricao: e.target.value })
+                }
                 required
               />
 
@@ -340,27 +274,42 @@ console.log("activeCard em salvarCompra:", activeCard);
                 step="0.01"
                 placeholder="Valor da parcela"
                 value={form.valor}
-                onChange={e => setForm({ ...form, valor: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, valor: e.target.value })
+                }
                 required
               />
 
               <input
                 type="date"
                 value={form.data_real}
-                onChange={e => setForm({ ...form, data_real: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, data_real: e.target.value })
+                }
                 required
               />
 
               <input
                 placeholder="Parcelas (3/10)"
                 value={form.parcelas}
-                onChange={e => setForm({ ...form, parcelas: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, parcelas: e.target.value })
+                }
+                required
+              />
+
+              <input
+                placeholder="Fatura (ex: Jan/26)"
+                value={form.mes}
+                onChange={e => setForm({ ...form, mes: e.target.value })}
                 required
               />
 
               <select
                 value={form.quem}
-                onChange={e => setForm({ ...form, quem: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, quem: e.target.value })
+                }
               >
                 <option>Amanda</option>
                 <option>Celso</option>
@@ -370,7 +319,9 @@ console.log("activeCard em salvarCompra:", activeCard);
 
               <select
                 value={form.status}
-                onChange={e => setForm({ ...form, status: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, status: e.target.value })
+                }
               >
                 <option>Pendente</option>
                 <option>Pago</option>
@@ -378,12 +329,16 @@ console.log("activeCard em salvarCompra:", activeCard);
 
               <select
                 value={form.category_id}
-                onChange={e => setForm({ ...form, category_id: e.target.value })}
+                onChange={e =>
+                  setForm({ ...form, category_id: e.target.value })
+                }
                 required
               >
                 <option value="">Categoria</option>
                 {categories.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
 
@@ -396,16 +351,14 @@ console.log("activeCard em salvarCompra:", activeCard);
           )}
 
           {loading ? (
-            <div className="card-transactions empty">Carregando...</div>
+            <div className="card-transactions empty">
+              Carregando...
+            </div>
           ) : (
             <CardTransactions transactions={transactions} />
           )}
-
         </div>
       </aside>
     </div>
   );
 }
-
-
-
