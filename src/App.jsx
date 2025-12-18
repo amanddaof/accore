@@ -81,7 +81,7 @@ export default function App() {
           element={
             <Home
               mensal={mensal}
-              comparativoMensal={comparativoMensal}  {/* ✅ AQUI */}
+              comparativoMensal={comparativoMensal}  
               dividas={dividas}
               categorias={categorias}
               cards={cards}
@@ -112,3 +112,4 @@ export default function App() {
     </Routes>
   );
 }
+
