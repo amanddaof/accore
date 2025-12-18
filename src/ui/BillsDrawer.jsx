@@ -315,23 +315,30 @@ function BillRow({
         </span>
       </div>
 
-      <div style={{ textAlign: "right" }}>
-        <strong className="amount">
-          {money(valorMostrar)}
-        </strong>
+      <div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-end",
+    gap: 6
+  }}
+>
+  <strong className="amount">
+    {money(valorMostrar)}
+  </strong>
 
-        {!pago && (
-          <button
-            className="mark-paid-btn"
-            onClick={e => {
-              e.stopPropagation();
-              onMarkPaid(bill);
-            }}
-          >
-            Marcar como pago ✅
-          </button>
-        )}
-      </div>
+  {!pago && (
+    <button
+      className="mark-paid-btn"
+      onClick={e => {
+        e.stopPropagation();
+        onMarkPaid(bill);
+      }}
+    >
+      Marcar como pago ✅
+    </button>
+  )}
+</div>
 
       {expanded && (
         <div
@@ -366,6 +373,7 @@ function BillRow({
     </div>
   );
 }
+
 
 
 
