@@ -2,51 +2,61 @@ import { money } from "../utils/money";
 import "./MonthComparisonCard.css";
 
 export default function MonthComparisonCard({ data }) {
-  if (!data) {
-    return (
-      <section className="month-compare-card neutral">
-        <header className="title">Comparativo mensal</header>
-        <div className="variation neutral">Carregando…</div>
-      </section>
-    );
-  }
+  if (!data) return null;
 
-  const { mesAtual, mesAnterior, porPessoa } = data;
+  const { mesAtual, mesAnterior, total, porPessoa } = data;
 
-  function renderLinha(nome, info) {
-    if (!info) return null;
-
-    const subiu = info.valor > 0;
-    const igual = info.valor === 0;
-
-    return (
-      <div className="person-compare">
-        <strong>{nome}</strong>
-
-        {igual && (
-          <span className="neutral">sem variação</span>
-        )}
-
-        {!igual && (
-          <span className={subiu ? "up" : "down"}>
-            {subiu ? "▲" : "▼"} {money(Math.abs(info.valor))}
-          </span>
-        )}
-      </div>
-    );
-  }
+  const subiuTotal = total.valor > 0;
+  const igualTotal = total.valor === 0;
 
   return (
     <section className="month-compare-card">
       <header className="title">Comparativo mensal</header>
 
-      <div className="months-label">
-        {mesAnterior} → {mesAtual}
+      {/* TOTAL */}
+      <div className="months">
+        <div>
+          <span>{mesAtual}</span>
+          <strong>{money(total.atual)}</strong>
+        </div>
+
+        <div>
+          <span>{mesAnterior}</span>
+          <strong>{money(total.anterior)}</strong>
+        </div>
       </div>
 
+      {igualTotal && (
+        <div className="variation neutral">
+          Sem variação em relação ao mês passado
+        </div>
+      )}
+
+      {!igualTotal && (
+        <div className="variation">
+          <span className="arrow">{subiuTotal ? "▲" : "▼"}</span>
+          <strong>{money(Math.abs(total.valor))}</strong>
+          <span className="text">
+            {subiuTotal ? "a mais" : "a menos"} que no mês passado
+          </span>
+        </div>
+      )}
+
+      {/* POR PESSOA */}
       <div className="people-variation">
-        {renderLinha("Amanda", porPessoa.amanda)}
-        {renderLinha("Celso", porPessoa.celso)}
+        <div>
+          <strong>Amanda</strong>{" "}
+          {porPessoa.amanda.valor === 0
+            ? "sem variação"
+            : money(porPessoa.amanda.valor)}
+        </div>
+
+        <div>
+          <strong>Celso</strong>{" "}
+          {porPessoa.celso.valor === 0
+            ? "sem variação"
+            : money(porPessoa.celso.valor)}
+        </div>
       </div>
     </section>
   );
