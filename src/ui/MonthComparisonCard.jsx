@@ -2,13 +2,25 @@ import { money } from "../utils/money";
 import "./MonthComparisonCard.css";
 
 export default function MonthComparisonCard({ data }) {
-  // 🔒 guarda máxima
-  if (!data || !data.variacao) return null;
+  // Se não tem nada, não renderiza
+  if (!data) return null;
 
-  const { mesAtual, mesAnterior, variacao } = data;
+  // Aceita os dois formatos (defensivo)
+  const mesAtual = data.mesAtual?.label ?? data.mesAtual ?? "";
+  const mesAnterior = data.mesAnterior?.label ?? data.mesAnterior ?? "";
 
-  const subiu = variacao.valor > 0;
-  const igual = variacao.valor === 0;
+  // PRIORIDADE: comparativo TOTAL (o que já funcionava)
+  const totalAtual = data.mesAtual?.total ?? data.total?.atual ?? 0;
+  const totalAnterior = data.mesAnterior?.total ?? data.total?.anterior ?? 0;
+
+  const valor =
+    data.variacao?.valor ??
+    (typeof totalAtual === "number" && typeof totalAnterior === "number"
+      ? totalAtual - totalAnterior
+      : 0);
+
+  const subiu = valor > 0;
+  const igual = valor === 0;
 
   return (
     <section
@@ -18,15 +30,16 @@ export default function MonthComparisonCard({ data }) {
     >
       <header className="title">Comparativo mensal</header>
 
+      {/* TOTAL */}
       <div className="months">
         <div>
-          <span>{mesAtual.label}</span>
-          <strong>{money(mesAtual.total)}</strong>
+          <span>{mesAtual}</span>
+          <strong>{money(totalAtual)}</strong>
         </div>
 
         <div>
-          <span>{mesAnterior.label}</span>
-          <strong>{money(mesAnterior.total)}</strong>
+          <span>{mesAnterior}</span>
+          <strong>{money(totalAnterior)}</strong>
         </div>
       </div>
 
@@ -37,7 +50,7 @@ export default function MonthComparisonCard({ data }) {
       ) : (
         <div className="variation">
           <span className="arrow">{subiu ? "▲" : "▼"}</span>
-          <strong>{money(Math.abs(variacao.valor))}</strong>
+          <strong>{money(Math.abs(valor))}</strong>
           <span className="text">
             {subiu ? "a mais" : "a menos"} que no mês passado
           </span>
