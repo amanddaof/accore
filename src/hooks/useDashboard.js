@@ -180,12 +180,28 @@ export function useDashboard() {
       };
     }
   
-    // 🔑 PADRÃO REAL DO PROJETO (posicional)
-    const amandaAtual = mensal.porPessoa?.[0]?.total || 0;
-    const celsoAtual  = mensal.porPessoa?.[1]?.total || 0;
+    function extrairTotais(lista = []) {
+      let amanda = 0;
+      let celso = 0;
   
-    const amandaAnterior = mensalAnterior.porPessoa?.[0]?.total || 0;
-    const celsoAnterior  = mensalAnterior.porPessoa?.[1]?.total || 0;
+      lista.forEach(p => {
+        if (!p) return;
+  
+        if (p.quem === "Amanda") amanda += p.total || 0;
+        if (p.quem === "Celso") celso += p.total || 0;
+  
+        // REGRA DO PROJETO
+        if (p.quem === "Ambos") {
+          amanda += p.total || 0;
+          celso += p.total || 0;
+        }
+      });
+  
+      return { amanda, celso };
+    }
+  
+    const atual = extrairTotais(mensal.porPessoa);
+    const anterior = extrairTotais(mensalAnterior.porPessoa);
   
     return {
       mesAtual: mes,
@@ -197,8 +213,8 @@ export function useDashboard() {
       ),
   
       porPessoa: {
-        amanda: montarComparativo(amandaAtual, amandaAnterior),
-        celso: montarComparativo(celsoAtual, celsoAnterior)
+        amanda: montarComparativo(atual.amanda, anterior.amanda),
+        celso: montarComparativo(atual.celso, anterior.celso)
       }
     };
   }, [mensal, mensalAnterior, mes, mesAnterior]);
@@ -320,4 +336,5 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
 
