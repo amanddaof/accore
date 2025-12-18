@@ -1,27 +1,29 @@
-const ordemMeses = [
+const meses = [
   "Jan","Fev","Mar","Abr","Mai","Jun",
   "Jul","Ago","Set","Out","Nov","Dez"
 ];
 
-export function mesAnteriorLabel(mesAtual) {
-  if (!mesAtual || typeof mesAtual !== "string") return null;
+export function isoMesParaLabel(isoMes) {
+  if (!isoMes || typeof isoMes !== "string") return "—";
 
-  // normaliza: remove espaços e padroniza
-  const normalizado = mesAtual.replace(/\s/g, "");
+  const [ano, mes] = isoMes.split("-");
+  const index = Number(mes) - 1;
 
-  const [mesAbrevRaw, anoCurto] = normalizado.split("/");
-  if (!mesAbrevRaw || !anoCurto) return null;
+  if (index < 0 || index > 11) return "—";
 
-  const mesAbrev =
-    mesAbrevRaw.charAt(0).toUpperCase() +
-    mesAbrevRaw.slice(1, 3).toLowerCase();
+  return `${meses[index]}/${ano.slice(2)}`;
+}
 
-  const index = ordemMeses.indexOf(mesAbrev);
-  if (index === -1) return null;
+export function mesIsoAnterior(isoMes) {
+  if (!isoMes) return null;
 
-  if (index === 0) {
-    return `Dez/${String(Number(anoCurto) - 1).padStart(2, "0")}`;
+  let [ano, mes] = isoMes.split("-").map(Number);
+
+  mes -= 1;
+  if (mes === 0) {
+    mes = 12;
+    ano -= 1;
   }
 
-  return `${ordemMeses[index - 1]}/${anoCurto}`;
+  return `${ano}-${String(mes).padStart(2, "0")}`;
 }
