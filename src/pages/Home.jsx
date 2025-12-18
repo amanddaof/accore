@@ -137,6 +137,9 @@ export default function Home({
           <AnnualSavingsGoal
             salarios={salarios}
             dadosMensais={{
+              transactions: [],
+              reservas: [],
+              bills: [],
               loans
             }}
             savingsGoal={savingsGoal}
@@ -177,3 +180,4 @@ export default function Home({
     </div>
   );
 }
+
