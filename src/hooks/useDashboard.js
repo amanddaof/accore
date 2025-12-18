@@ -38,28 +38,26 @@ function mesAnteriorISO(mes) {
 }
 
 /* ======================================================
-   Helper: normaliza porPessoa garantindo Amanda e Celso
+   Helper: extrai totais por pessoa
    REGRA: Ambos conta valor cheio para os dois
 ====================================================== */
-function normalizarPorPessoa(lista = []) {
+function extrairTotaisPorPessoa(lista = []) {
   let amanda = 0;
   let celso = 0;
 
   lista.forEach(p => {
     if (!p) return;
 
-    // padrão real do projeto: p.quem pode ser "Amanda", "Celso" ou "Ambos"
     if (p.quem === "Amanda") amanda += p.total || 0;
     if (p.quem === "Celso") celso += p.total || 0;
 
-    // 🔥 REGRA IMPORTANTE
     if (p.quem === "Ambos") {
       amanda += p.total || 0;
       celso += p.total || 0;
     }
   });
 
-  return [amanda, celso];
+  return { amanda, celso };
 }
 
 export function useDashboard() {
@@ -146,25 +144,17 @@ export function useDashboard() {
   }), [transactions, bills, loans, reservations, cards]);
 
   /* ======================================================
-     MENSAL ATUAL
+     MENSAL ATUAL (❗ NÃO MEXER NO FORMATO)
   ====================================================== */
-  const mensal = useMemo(() => {
-    const bruto = calcularGastosPorPessoa(mes, dados);
-    const [amanda, celso] = normalizarPorPessoa(bruto);
-
-    return {
-      porPessoa: [
-        { total: amanda },
-        { total: celso }
-      ],
-      total: calcularTotalMensal(mes, dados),
-      projecao: calcularProjecaoMensal(mes, dados),
-      porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
-    };
-  }, [mes, dados]);
+  const mensal = useMemo(() => ({
+    porPessoa: calcularGastosPorPessoa(mes, dados),
+    total: calcularTotalMensal(mes, dados),
+    projecao: calcularProjecaoMensal(mes, dados),
+    porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
+  }), [mes, dados]);
 
   /* ======================================================
-     MENSAL ANTERIOR
+     MENSAL ANTERIOR (mesmo formato)
   ====================================================== */
   const mesAnterior = useMemo(
     () => mesAnteriorISO(mes),
@@ -174,20 +164,14 @@ export function useDashboard() {
   const mensalAnterior = useMemo(() => {
     if (!mesAnterior) return null;
 
-    const bruto = calcularGastosPorPessoa(mesAnterior, dados);
-    const [amanda, celso] = normalizarPorPessoa(bruto);
-
     return {
-      porPessoa: [
-        { total: amanda },
-        { total: celso }
-      ],
+      porPessoa: calcularGastosPorPessoa(mesAnterior, dados),
       total: calcularTotalMensal(mesAnterior, dados)
     };
   }, [mesAnterior, dados]);
 
   /* ======================================================
-     COMPARATIVO MENSAL (TOTAL + POR PESSOA) ✅
+     COMPARATIVO MENSAL (TOTAL + POR PESSOA)
   ====================================================== */
   const comparativoMensal = useMemo(() => {
     if (!mensal || !mensalAnterior) return null;
@@ -202,11 +186,8 @@ export function useDashboard() {
       };
     }
 
-    const amandaAtual = mensal.porPessoa[0]?.total || 0;
-    const celsoAtual  = mensal.porPessoa[1]?.total || 0;
-
-    const amandaAnterior = mensalAnterior.porPessoa[0]?.total || 0;
-    const celsoAnterior  = mensalAnterior.porPessoa[1]?.total || 0;
+    const atual = extrairTotaisPorPessoa(mensal.porPessoa);
+    const anterior = extrairTotaisPorPessoa(mensalAnterior.porPessoa);
 
     return {
       mesAtual: mes,
@@ -218,14 +199,14 @@ export function useDashboard() {
       ),
 
       porPessoa: {
-        amanda: montarComparativo(amandaAtual, amandaAnterior),
-        celso: montarComparativo(celsoAtual, celsoAnterior)
+        amanda: montarComparativo(atual.amanda, anterior.amanda),
+        celso: montarComparativo(atual.celso, anterior.celso)
       }
     };
   }, [mensal, mensalAnterior, mes, mesAnterior]);
 
   /* ======================================================
-     OUTROS CÁLCULOS (inalterados)
+     OUTROS CÁLCULOS
   ====================================================== */
   const dividas = useMemo(
     () => calcularDividasMes(mes, dados),
@@ -269,25 +250,24 @@ export function useDashboard() {
     const salarioCelso =
       registrosAno.find(s => s.quem.toLowerCase() === "celso") || ultimoCelso;
 
-    const amandaGasto = mensal.porPessoa[0]?.total || 0;
-    const celsoGasto  = mensal.porPessoa[1]?.total || 0;
+    const gastos = extrairTotaisPorPessoa(mensal.porPessoa);
 
     return {
       amanda: {
         salario: salarioAmanda?.valor || 0,
-        gasto: amandaGasto,
-        sobra: (salarioAmanda?.valor || 0) - amandaGasto
+        gasto: gastos.amanda,
+        sobra: (salarioAmanda?.valor || 0) - gastos.amanda
       },
       celso: {
         salario: salarioCelso?.valor || 0,
-        gasto: celsoGasto,
-        sobra: (salarioCelso?.valor || 0) - celsoGasto
+        gasto: gastos.celso,
+        sobra: (salarioCelso?.valor || 0) - gastos.celso
       }
     };
   }, [salaryHistory, mensal, mes]);
 
   /* ======================================================
-     EXPORT DO DASHBOARD
+     EXPORT
   ====================================================== */
   return {
     loading,
