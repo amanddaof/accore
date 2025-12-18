@@ -3,6 +3,7 @@ import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
 import Footer from "./ui/Footer";
 import { Outlet } from "react-router-dom";
+
 import CardsDrawer from "./ui/CardsDrawer";
 import ExternoDrawer from "./ui/ExternoDrawer";
 import ReservasDrawer from "./ui/ReservasDrawer";
@@ -29,6 +30,32 @@ export default function Layout({
   const [openBills, setOpenBills] = useState(false);
   const [openIncomes, setOpenIncomes] = useState(false);
 
+  // 🔥 BUSCA GLOBAL → DECIDE QUAL DRAWER ABRIR
+  function handleGlobalSelect(item) {
+    // opcional: fecha tudo antes
+    setOpenCards(false);
+    setOpenExterno(false);
+    setOpenReservas(false);
+    setOpenBills(false);
+    setOpenIncomes(false);
+
+    if (item.type === "transaction") {
+      setOpenIncomes(true); // drawer de lançamentos
+    }
+
+    if (item.type === "reservation") {
+      setOpenReservas(true);
+    }
+
+    if (item.type === "bill") {
+      setOpenBills(true);
+    }
+
+    if (item.type === "loan") {
+      setOpenCards(true);
+    }
+  }
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* SIDEBAR FIXA */}
@@ -43,11 +70,13 @@ export default function Layout({
 
           mensal={mensal}
           salarios={salarios}
-         
+
           transactions={transactions}
           reservations={reservations}
           bills={bills}
           loans={loans}
+
+          onGlobalSelect={handleGlobalSelect} // 🔥 AQUI
 
           onOpenCards={() => setOpenCards(true)}
           isCardsOpen={openCards}
@@ -105,4 +134,3 @@ export default function Layout({
     </div>
   );
 }
-
