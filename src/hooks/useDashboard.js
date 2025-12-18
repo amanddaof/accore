@@ -38,14 +38,28 @@ function mesAnteriorISO(mes) {
 }
 
 /* ======================================================
-   Helper: pega total por pessoa com segurança
+   Helper: normaliza porPessoa garantindo Amanda e Celso
+   REGRA: Ambos conta valor cheio para os dois
 ====================================================== */
-function totalPorPessoa(lista = [], nome) {
-  return (
-    lista.find(
-      p => p?.quem?.toLowerCase() === nome.toLowerCase()
-    )?.total || 0
-  );
+function normalizarPorPessoa(lista = []) {
+  let amanda = 0;
+  let celso = 0;
+
+  lista.forEach(p => {
+    if (!p) return;
+
+    // padrão real do projeto: p.quem pode ser "Amanda", "Celso" ou "Ambos"
+    if (p.quem === "Amanda") amanda += p.total || 0;
+    if (p.quem === "Celso") celso += p.total || 0;
+
+    // 🔥 REGRA IMPORTANTE
+    if (p.quem === "Ambos") {
+      amanda += p.total || 0;
+      celso += p.total || 0;
+    }
+  });
+
+  return [amanda, celso];
 }
 
 export function useDashboard() {
@@ -134,12 +148,20 @@ export function useDashboard() {
   /* ======================================================
      MENSAL ATUAL
   ====================================================== */
-  const mensal = useMemo(() => ({
-    porPessoa: calcularGastosPorPessoa(mes, dados),
-    total: calcularTotalMensal(mes, dados),
-    projecao: calcularProjecaoMensal(mes, dados),
-    porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
-  }), [mes, dados]);
+  const mensal = useMemo(() => {
+    const bruto = calcularGastosPorPessoa(mes, dados);
+    const [amanda, celso] = normalizarPorPessoa(bruto);
+
+    return {
+      porPessoa: [
+        { total: amanda },
+        { total: celso }
+      ],
+      total: calcularTotalMensal(mes, dados),
+      projecao: calcularProjecaoMensal(mes, dados),
+      porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
+    };
+  }, [mes, dados]);
 
   /* ======================================================
      MENSAL ANTERIOR
@@ -152,9 +174,15 @@ export function useDashboard() {
   const mensalAnterior = useMemo(() => {
     if (!mesAnterior) return null;
 
+    const bruto = calcularGastosPorPessoa(mesAnterior, dados);
+    const [amanda, celso] = normalizarPorPessoa(bruto);
+
     return {
-      total: calcularTotalMensal(mesAnterior, dados),
-      porPessoa: calcularGastosPorPessoa(mesAnterior, dados)
+      porPessoa: [
+        { total: amanda },
+        { total: celso }
+      ],
+      total: calcularTotalMensal(mesAnterior, dados)
     };
   }, [mesAnterior, dados]);
 
@@ -174,14 +202,11 @@ export function useDashboard() {
       };
     }
 
-    const atual = mensal.porPessoa || [];
-    const anterior = mensalAnterior.porPessoa || [];
+    const amandaAtual = mensal.porPessoa[0]?.total || 0;
+    const celsoAtual  = mensal.porPessoa[1]?.total || 0;
 
-    const amandaAtual = totalPorPessoa(atual, "Amanda");
-    const celsoAtual  = totalPorPessoa(atual, "Celso");
-
-    const amandaAnterior = totalPorPessoa(anterior, "Amanda");
-    const celsoAnterior  = totalPorPessoa(anterior, "Celso");
+    const amandaAnterior = mensalAnterior.porPessoa[0]?.total || 0;
+    const celsoAnterior  = mensalAnterior.porPessoa[1]?.total || 0;
 
     return {
       mesAtual: mes,
@@ -244,18 +269,19 @@ export function useDashboard() {
     const salarioCelso =
       registrosAno.find(s => s.quem.toLowerCase() === "celso") || ultimoCelso;
 
-    const gasto = mensal.porPessoa || [];
+    const amandaGasto = mensal.porPessoa[0]?.total || 0;
+    const celsoGasto  = mensal.porPessoa[1]?.total || 0;
 
     return {
       amanda: {
         salario: salarioAmanda?.valor || 0,
-        gasto: totalPorPessoa(gasto, "Amanda"),
-        sobra: (salarioAmanda?.valor || 0) - totalPorPessoa(gasto, "Amanda")
+        gasto: amandaGasto,
+        sobra: (salarioAmanda?.valor || 0) - amandaGasto
       },
       celso: {
         salario: salarioCelso?.valor || 0,
-        gasto: totalPorPessoa(gasto, "Celso"),
-        sobra: (salarioCelso?.valor || 0) - totalPorPessoa(gasto, "Celso")
+        gasto: celsoGasto,
+        sobra: (salarioCelso?.valor || 0) - celsoGasto
       }
     };
   }, [salaryHistory, mensal, mes]);
