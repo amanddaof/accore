@@ -43,8 +43,7 @@ export default function Layout({
 
           mensal={mensal}
           salarios={salarios}
-
-          {/* 🔍 DADOS PARA BUSCA GLOBAL */}
+         
           transactions={transactions}
           reservations={reservations}
           bills={bills}
@@ -106,3 +105,4 @@ export default function Layout({
     </div>
   );
 }
+
