@@ -32,27 +32,31 @@ export default function Layout({
 
   // 🔥 BUSCA GLOBAL → DECIDE QUAL DRAWER ABRIR
   function handleGlobalSelect(item) {
-    // opcional: fecha tudo antes
+    // fecha todos antes
     setOpenCards(false);
     setOpenExterno(false);
     setOpenReservas(false);
     setOpenBills(false);
     setOpenIncomes(false);
-
+  
     if (item.type === "transaction") {
-      setOpenIncomes(true); // drawer de lançamentos
+      setOpenCards(true);      // ✅ TRANSAÇÕES → CARDS
     }
-
+  
+    if (item.type === "externo") {
+      setOpenExterno(true);    // ✅ EXTERNO → EXTERNO
+    }
+  
     if (item.type === "reservation") {
-      setOpenReservas(true);
+      setOpenReservas(true);   // ✅ RESERVAS
     }
-
+  
     if (item.type === "bill") {
-      setOpenBills(true);
+      setOpenBills(true);      // ✅ CONTAS DA CASA
     }
-
-    if (item.type === "loan") {
-      setOpenCards(true);
+  
+    if (item.type === "income") {
+      setOpenIncomes(true);    // ✅ RECEBIMENTOS
     }
   }
 
@@ -134,3 +138,4 @@ export default function Layout({
     </div>
   );
 }
+
