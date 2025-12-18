@@ -38,26 +38,14 @@ function mesAnteriorISO(mes) {
 }
 
 /* ======================================================
-   Helper: extrai totais por pessoa
-   REGRA: Ambos conta valor cheio para os dois
+   Helper: pega total por pessoa com segurança
 ====================================================== */
-function extrairTotaisPorPessoa(lista = []) {
-  let amanda = 0;
-  let celso = 0;
-
-  lista.forEach(p => {
-    if (!p) return;
-
-    if (p.quem === "Amanda") amanda += p.total || 0;
-    if (p.quem === "Celso") celso += p.total || 0;
-
-    if (p.quem === "Ambos") {
-      amanda += p.total || 0;
-      celso += p.total || 0;
-    }
-  });
-
-  return { amanda, celso };
+function totalPorPessoa(lista = [], nome) {
+  return (
+    lista.find(
+      p => p?.quem?.toLowerCase() === nome.toLowerCase()
+    )?.total || 0
+  );
 }
 
 export function useDashboard() {
@@ -144,7 +132,7 @@ export function useDashboard() {
   }), [transactions, bills, loans, reservations, cards]);
 
   /* ======================================================
-     MENSAL ATUAL (❗ NÃO MEXER NO FORMATO)
+     MENSAL ATUAL
   ====================================================== */
   const mensal = useMemo(() => ({
     porPessoa: calcularGastosPorPessoa(mes, dados),
@@ -154,7 +142,7 @@ export function useDashboard() {
   }), [mes, dados]);
 
   /* ======================================================
-     MENSAL ANTERIOR (mesmo formato)
+     MENSAL ANTERIOR
   ====================================================== */
   const mesAnterior = useMemo(
     () => mesAnteriorISO(mes),
@@ -165,13 +153,13 @@ export function useDashboard() {
     if (!mesAnterior) return null;
 
     return {
-      porPessoa: calcularGastosPorPessoa(mesAnterior, dados),
-      total: calcularTotalMensal(mesAnterior, dados)
+      total: calcularTotalMensal(mesAnterior, dados),
+      porPessoa: calcularGastosPorPessoa(mesAnterior, dados)
     };
   }, [mesAnterior, dados]);
 
   /* ======================================================
-     COMPARATIVO MENSAL (TOTAL + POR PESSOA)
+     COMPARATIVO MENSAL (TOTAL + POR PESSOA) ✅
   ====================================================== */
   const comparativoMensal = useMemo(() => {
     if (!mensal || !mensalAnterior) return null;
@@ -186,8 +174,14 @@ export function useDashboard() {
       };
     }
 
-    const atual = extrairTotaisPorPessoa(mensal.porPessoa);
-    const anterior = extrairTotaisPorPessoa(mensalAnterior.porPessoa);
+    const atual = mensal.porPessoa || [];
+    const anterior = mensalAnterior.porPessoa || [];
+
+    const amandaAtual = totalPorPessoa(atual, "Amanda");
+    const celsoAtual  = totalPorPessoa(atual, "Celso");
+
+    const amandaAnterior = totalPorPessoa(anterior, "Amanda");
+    const celsoAnterior  = totalPorPessoa(anterior, "Celso");
 
     return {
       mesAtual: mes,
@@ -199,14 +193,14 @@ export function useDashboard() {
       ),
 
       porPessoa: {
-        amanda: montarComparativo(atual.amanda, anterior.amanda),
-        celso: montarComparativo(atual.celso, anterior.celso)
+        amanda: montarComparativo(amandaAtual, amandaAnterior),
+        celso: montarComparativo(celsoAtual, celsoAnterior)
       }
     };
   }, [mensal, mensalAnterior, mes, mesAnterior]);
 
   /* ======================================================
-     OUTROS CÁLCULOS
+     OUTROS CÁLCULOS (inalterados)
   ====================================================== */
   const dividas = useMemo(
     () => calcularDividasMes(mes, dados),
@@ -250,24 +244,24 @@ export function useDashboard() {
     const salarioCelso =
       registrosAno.find(s => s.quem.toLowerCase() === "celso") || ultimoCelso;
 
-    const gastos = extrairTotaisPorPessoa(mensal.porPessoa);
+    const gasto = mensal.porPessoa || [];
 
     return {
       amanda: {
         salario: salarioAmanda?.valor || 0,
-        gasto: gastos.amanda,
-        sobra: (salarioAmanda?.valor || 0) - gastos.amanda
+        gasto: totalPorPessoa(gasto, "Amanda"),
+        sobra: (salarioAmanda?.valor || 0) - totalPorPessoa(gasto, "Amanda")
       },
       celso: {
         salario: salarioCelso?.valor || 0,
-        gasto: gastos.celso,
-        sobra: (salarioCelso?.valor || 0) - gastos.celso
+        gasto: totalPorPessoa(gasto, "Celso"),
+        sobra: (salarioCelso?.valor || 0) - totalPorPessoa(gasto, "Celso")
       }
     };
   }, [salaryHistory, mensal, mes]);
 
   /* ======================================================
-     EXPORT
+     EXPORT DO DASHBOARD
   ====================================================== */
   return {
     loading,
