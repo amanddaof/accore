@@ -23,6 +23,9 @@ export default function Header({
   onOpenIncomes,
   isIncomesOpen,
 
+  // 🔥 callback da busca global
+  onGlobalSelect,
+
   mensal,
   salarios,
 
@@ -46,14 +49,6 @@ export default function Header({
   const quantidade =
     [...dados.amanda, ...dados.celso, ...dados.geral]
       .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
-
-  // 🔍 DEBUG (opcional – pode remover depois)
-  console.log("📤 Header -> GlobalSearch", {
-    transactions,
-    reservations,
-    bills,
-    loans
-  });
 
   return (
     <>
@@ -114,13 +109,14 @@ export default function Header({
           </button>
         </nav>
 
-        {/* 🔍 BUSCA GLOBAL — AGORA CORRETA */}
+        {/* 🔍 BUSCA GLOBAL (abre drawers) */}
         <div className="header-search">
           <GlobalSearch
             transactions={transactions}
             reservations={reservations}
             bills={bills}
             loans={loans}
+            onSelect={onGlobalSelect}
           />
         </div>
 
