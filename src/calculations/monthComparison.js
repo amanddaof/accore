@@ -13,20 +13,22 @@ export function compararMesAtualAnterior({
   transactions = [],
   reservations = []
 }) {
+  if (!mes || typeof mes !== "string") {
+    return null;
+  }
+
   function totalDoMes(mesRef) {
     let total = 0;
 
-    // transactions
     transactions.forEach(t => {
       if (t.mes === mesRef) {
-        total += safeNumber(t.valor);
+        total += Number(t.valor) || 0;
       }
     });
 
-    // reservas
     reservations.forEach(r => {
       if (r.mes === mesRef) {
-        total += safeNumber(r.valor);
+        total += Number(r.valor) || 0;
       }
     });
 
@@ -49,11 +51,11 @@ export function compararMesAtualAnterior({
 
   return {
     mesAtual: {
-      label: isoParaMesAbrev(`${mes}-01`),
+      label: mes,
       total: totalAtual
     },
     mesAnterior: {
-      label: isoParaMesAbrev(`${mesAnterior}-01`),
+      label: mesAnterior,
       total: totalAnterior
     },
     variacao: {
@@ -62,3 +64,4 @@ export function compararMesAtualAnterior({
     }
   };
 }
+
