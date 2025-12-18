@@ -24,19 +24,23 @@ export default function App() {
     loading,
     mes,
     setMes,
+
+    // 🔥 DASHBOARD
     mensal,
+    mensalAnterior,
+    comparativoMensal, // ✅ AQUI
+
     dividas,
     categorias,
     cards,
 
-    // 🔥 DADOS BRUTOS (BUSCA GLOBAL)
+    // 🔍 DADOS BRUTOS (BUSCA GLOBAL)
     transactions,
     reservations,
     bills,
     loans,
 
     salarios,
-    cofre,
     reload,
 
     savingsGoal,
@@ -77,11 +81,11 @@ export default function App() {
           element={
             <Home
               mensal={mensal}
+              comparativoMensal={comparativoMensal}  {/* ✅ AQUI */}
               dividas={dividas}
               categorias={categorias}
               cards={cards}
               salarios={salarios}
-              cofre={cofre}
               loans={loans}
               mes={mes}
               savingsGoal={savingsGoal}
