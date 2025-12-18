@@ -16,6 +16,23 @@ import { getTransactions } from "../services/transactions.service";
 import { getReservations } from "../services/reservations.service";
 import { getBills } from "../services/bills.service";
 
+// ===============================
+// util simples para mês anterior
+// ===============================
+function mesAnteriorISO(mes) {
+  if (!mes) return null;
+
+  let [ano, mesNum] = mes.split("-").map(Number);
+  mesNum -= 1;
+
+  if (mesNum === 0) {
+    mesNum = 12;
+    ano -= 1;
+  }
+
+  return `${ano}-${String(mesNum).padStart(2, "0")}`;
+}
+
 export default function Home({
   mensal,
   dividas,
@@ -37,9 +54,9 @@ export default function Home({
   const [showDebts, setShowDebts] = useState(false);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  // =====================
-  // Dados globais (meta anual)
-  // =====================
+  // ===============================
+  // dados globais (meta anual)
+  // ===============================
   const [transactions, setTransactions] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [bills, setBills] = useState([]);
@@ -64,16 +81,43 @@ export default function Home({
     loans
   };
 
-  // =====================
-  // Comparativo mensal (Item 8)
-  // =====================
+  // ===============================
+  // 🔴 MÊS ANTERIOR (AQUI É O PONTO-CHAVE)
+  // ===============================
+  const [mensalAnterior, setMensalAnterior] = useState(null);
+
+  useEffect(() => {
+    if (!mes) return;
+
+    async function carregarMesAnterior() {
+      const mesAnterior = mesAnteriorISO(mes);
+
+      if (!mesAnterior) return;
+
+      // ⚠️ TODO IMPORTANTE:
+      // Use A MESMA função que já monta o `mensal` atual
+      // Exemplo (ajuste para o nome real do seu projeto):
+      //
+      // const anterior = await getMonthlyData(mesAnterior);
+      //
+      // setMensalAnterior(anterior);
+
+      setMensalAnterior(null); // placeholder até plugar a função real
+    }
+
+    carregarMesAnterior();
+  }, [mes]);
+
+  // ===============================
+  // comparativo mensal (correto)
+  // ===============================
   const comparativo = useMemo(() => {
     return compararMesAtualAnterior({
       mes,
-      transactions: mensal?.transactions || [],
-      reservations: mensal?.reservations || []
+      totalAtual: mensal?.total || 0,
+      totalAnterior: mensalAnterior?.total || 0
     });
-  }, [mes, mensal]);
+  }, [mes, mensal, mensalAnterior]);
 
   return (
     <div className="home-shell two-columns">
@@ -191,7 +235,6 @@ export default function Home({
         <section className="home-card">
           <header className="section-title category-header">
             Gastos por categoria
-
             <div className="category-tabs">
               {["Amanda", "Celso", "Ambos"].map(p => (
                 <button
@@ -209,15 +252,10 @@ export default function Home({
             data={categorias?.[pessoaCategorias.toLowerCase()] || []}
           />
 
-          <MonthSummary
-            categorias={categorias}
-            pessoa={pessoaCategorias}
-          />
+          <MonthSummary categorias={categorias} pessoa={pessoaCategorias} />
         </section>
 
       </div>
     </div>
   );
 }
-
-
