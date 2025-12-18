@@ -567,10 +567,6 @@ select option {
   font-size: 14px;
 }
 
-.bill-expanded-row input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
 .bill-expanded-row button {
   height: 40px;
   padding: 0 18px;
@@ -581,10 +577,5 @@ select option {
   color: #fff;
   border: none;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.bill-expanded-row button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
