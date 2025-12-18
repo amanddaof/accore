@@ -4,9 +4,17 @@ const ordemMeses = [
 ];
 
 export function mesAnteriorLabel(mesAtual) {
-  if (!mesAtual) return null;
+  if (!mesAtual || typeof mesAtual !== "string") return null;
 
-  const [mesAbrev, anoCurto] = mesAtual.split("/");
+  // normaliza: remove espaços e padroniza
+  const normalizado = mesAtual.replace(/\s/g, "");
+
+  const [mesAbrevRaw, anoCurto] = normalizado.split("/");
+  if (!mesAbrevRaw || !anoCurto) return null;
+
+  const mesAbrev =
+    mesAbrevRaw.charAt(0).toUpperCase() +
+    mesAbrevRaw.slice(1, 3).toLowerCase();
 
   const index = ordemMeses.indexOf(mesAbrev);
   if (index === -1) return null;
