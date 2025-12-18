@@ -1,29 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { globalSearch } from "../search/globalSearch";
 import "./GlobalSearch.css";
 
 export default function GlobalSearch({
   transactions = [],
   reservations = [],
   bills = [],
-  loans = []
+  loans = [],
+  onSelect
 }) {
-
-  // 🔍 LOG 1 — assim que o componente renderiza
-  console.log("🔍 GlobalSearch props:", {
-    transactions,
-    reservations,
-    bills,
-    loans
-  });
-
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
-
   const ref = useRef(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -32,47 +20,72 @@ export default function GlobalSearch({
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   function handleChange(e) {
     const v = e.target.value;
     setValue(v);
 
-    if (v.length > 1) {
-
-      // 🔍 LOG 2 — quando você digita
-      console.log("⌨️ Digitado:", v);
-      console.log("📦 Dados enviados para globalSearch:", {
-        transactions,
-        reservations,
-        bills,
-        loans
-      });
-
-      const res = globalSearch({
-        query: v,
-        transactions,
-        reservations,
-        bills,
-        loans
-      });
-
-      // 🔍 LOG 3 — resultado da busca
-      console.log("🎯 Resultado da busca:", res);
-
-      setResults(res);
-      setOpen(true);
-    } else {
+    if (v.length < 2) {
       setOpen(false);
+      return;
     }
+
+    const res = [];
+
+    transactions.forEach(t => {
+      if ((t.descricao || "").toLowerCase().includes(v.toLowerCase())) {
+        res.push({
+          type: "transaction",
+          id: t.id,
+          title: t.descricao,
+          subtitle: "Transação"
+        });
+      }
+    });
+
+    reservations.forEach(r => {
+      if ((r.descricao || "").toLowerCase().includes(v.toLowerCase())) {
+        res.push({
+          type: "reservation",
+          id: r.id,
+          title: r.descricao,
+          subtitle: "Reserva"
+        });
+      }
+    });
+
+    bills.forEach(b => {
+      if ((b.descricao || b.nome || "").toLowerCase().includes(v.toLowerCase())) {
+        res.push({
+          type: "bill",
+          id: b.id,
+          title: b.descricao || b.nome,
+          subtitle: "Conta da casa"
+        });
+      }
+    });
+
+    loans.forEach(l => {
+      if ((l.descricao || l.nome || "").toLowerCase().includes(v.toLowerCase())) {
+        res.push({
+          type: "loan",
+          id: l.id,
+          title: l.descricao || l.nome,
+          subtitle: "Empréstimo"
+        });
+      }
+    });
+
+    setResults(res);
+    setOpen(true);
   }
 
   function handleSelect(item) {
     setOpen(false);
     setValue("");
-    navigate(item.route);
+    onSelect(item); // 🔥 não navega, delega
   }
 
   return (
@@ -89,9 +102,7 @@ export default function GlobalSearch({
       {open && (
         <div className="search-dropdown">
           {results.length === 0 && (
-            <div className="search-empty">
-              Nenhum resultado encontrado
-            </div>
+            <div className="search-empty">Nenhum resultado</div>
           )}
 
           {results.map(item => (
