@@ -2,15 +2,45 @@ import { money } from "../utils/money";
 import "./MonthComparisonCard.css";
 
 export default function MonthComparisonCard({ data }) {
-  if (!data) return null;
+  // =====================
+  // Estado inicial / carregando
+  // =====================
+  if (!data) {
+    return (
+      <section className="month-compare-card neutral">
+        <header className="title">Comparativo mensal</header>
+
+        <div className="months">
+          <div>
+            <span>—</span>
+            <strong>R$ —</strong>
+          </div>
+
+          <div>
+            <span>—</span>
+            <strong>R$ —</strong>
+          </div>
+        </div>
+
+        <div className="variation neutral">
+          Carregando comparativo…
+        </div>
+      </section>
+    );
+  }
 
   const { mesAtual, mesAnterior, variacao } = data;
 
   const subiu = variacao.valor > 0;
   const igual = variacao.valor === 0;
 
+  const cardClass = [
+    "month-compare-card",
+    igual ? "neutral" : subiu ? "up" : "down"
+  ].join(" ");
+
   return (
-    <section className={`month-compare-card ${subiu ? "up" : "down"}`}>
+    <section className={cardClass}>
       <header className="title">Comparativo mensal</header>
 
       <div className="months">
@@ -28,9 +58,9 @@ export default function MonthComparisonCard({ data }) {
       {!igual && (
         <div className="variation">
           <span className="arrow">{subiu ? "▲" : "▼"}</span>
-          <strong>
-            {money(Math.abs(variacao.valor))}
-          </strong>
+
+          <strong>{money(Math.abs(variacao.valor))}</strong>
+
           <span className="text">
             {subiu ? "a mais" : "a menos"} que no mês passado
           </span>
