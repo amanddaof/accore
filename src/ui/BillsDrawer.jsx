@@ -335,27 +335,38 @@ function BillRow({
 
       {expanded && (
         <div
-          className="bill-expanded"
+          className="reservation-expanded"
           onClick={e => e.stopPropagation()}
         >
-          <div className="bill-expanded-row">
-            <input
-              type="number"
-              step="0.01"
-              placeholder="Valor real"
-              value={valorReal}
-              onChange={e => setValorReal(e.target.value)}
-            />
+          <div className="reservation-grid">
+            <div>
+              <span className="label">Valor previsto</span>
+              <strong>{money(bill.valor_previsto)}</strong>
+            </div>
       
-            <button onClick={salvarValorReal}>
-              Salvar valor real
-            </button>
+            <div>
+              <span className="label">Valor real</span>
+              <input
+                type="number"
+                step="0.01"
+                value={valorReal}
+                onChange={e => setValorReal(e.target.value)}
+              />
+            </div>
           </div>
+      
+          <button
+            className="primary-btn full"
+            onClick={salvarValorReal}
+          >
+            Salvar
+          </button>
         </div>
       )}
     </div>
   );
 }
+
 
 
 
