@@ -139,11 +139,9 @@ export default function Home({
           </div>
         </section>
 
-        {comparativo && (
-          <section className="home-card">
-            <MonthComparisonCard data={comparativo} />
-          </section>
-        )}
+        <section className="home-card">
+          <MonthComparisonCard data={comparativo} />
+        </section>
 
         <section className="home-card">
           <header className="section-title">Evolução anual</header>
@@ -223,3 +221,4 @@ export default function Home({
     </div>
   );
 }
+
