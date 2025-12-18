@@ -28,13 +28,17 @@ export default function App() {
     dividas,
     categorias,
     cards,
+
+    // 🔥 DADOS BRUTOS (BUSCA GLOBAL)
     transactions,
+    reservations,
+    bills,
+    loans,
+
     salarios,
     cofre,
-    loans,
     reload,
 
-    // ⭐ ADICIONADO
     savingsGoal,
     setSavingsGoal
   } = useDashboard();
@@ -43,8 +47,7 @@ export default function App() {
 
   return (
     <Routes>
-
-      {/* 🔓 ROTA SEM LOGIN */}
+      {/* 🔓 LOGIN */}
       <Route path="/login" element={<Login />} />
 
       {/* 🔒 ROTAS PROTEGIDAS */}
@@ -58,6 +61,8 @@ export default function App() {
               cards={cards}
               mensal={mensal}
               salarios={salarios}
+
+              /* 🔍 BUSCA GLOBAL */
               transactions={transactions}
               reservations={reservations}
               bills={bills}
@@ -66,7 +71,7 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-
+        {/* HOME */}
         <Route
           index
           element={
@@ -79,29 +84,27 @@ export default function App() {
               cofre={cofre}
               loans={loans}
               mes={mes}
-
-              // ⭐ AGORA A HOME RECEBE A META ANUAL!
               savingsGoal={savingsGoal}
               setSavingsGoal={setSavingsGoal}
             />
           }
         />
 
+        {/* PÁGINAS */}
         <Route path="cards" element={<Cards cards={cards} />} />
         <Route path="externo" element={<Externo />} />
         <Route path="reservas" element={<Reservas />} />
         <Route path="contas" element={<ContasCasa />} />
 
+        {/* SETTINGS */}
         <Route path="settings/cards" element={<Limits />} />
         <Route path="settings/loans" element={<Loans />} />
         <Route path="settings/categories" element={<Categories />} />
         <Route path="settings/salaries" element={<Salaries />} />
 
+        {/* NOVO LANÇAMENTO */}
         <Route path="new" element={<NewTransaction />} />
-
       </Route>
     </Routes>
   );
 }
-
-
