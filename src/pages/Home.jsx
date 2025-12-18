@@ -9,6 +9,8 @@ import AnnualEvolutionChart from "../ui/AnnualEvolutionChart";
 import CategoryPieChart from "../components/CategoryPieChart";
 import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
+import MonthComparisonCard from "../ui/MonthComparisonCard";
+import { compararMesAtualAnterior } from "../calculations/monthComparison";
 
 import { getTransactions } from "../services/transactions.service";
 import { getReservations } from "../services/reservations.service";
@@ -38,6 +40,12 @@ export default function Home({
   const [transactions, setTransactions] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [bills, setBills] = useState([]);
+
+  const comparativo = compararMesAtualAnterior({
+    mesAtual: mes,
+    transactions: mensal?.transactions || [],
+    reservations: mensal?.reservations || []
+  });
 
   useEffect(() => {
     async function carregarTudo() {
@@ -122,6 +130,10 @@ export default function Home({
         </section>
 
         <section className="home-card">
+          <MonthComparisonCard data={comparativo} />
+        </section>
+
+        <section className="home-card">
           <header className="section-title">Evolução anual</header>
           <div className="evolution-chart-wrapper">
             <AnnualEvolutionChart />
@@ -195,3 +207,4 @@ export default function Home({
     </div>
   );
 }
+
