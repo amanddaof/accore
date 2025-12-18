@@ -12,6 +12,9 @@ export default function NewTransaction() {
     categoria: "",
     origem: "",
     data_real: new Date().toISOString().slice(0, 10),
+
+    // 🔑 AGORA A FATURA É INFORMADA
+    mes: "",
   });
 
   useEffect(() => {
@@ -30,20 +33,25 @@ export default function NewTransaction() {
       return;
     }
 
+    if (!form.mes) {
+      alert("Informe a fatura (ex: Jan/26)");
+      return;
+    }
+
     const payload = {
       ...form,
       valor: Number(form.valor),
 
-      // ⚠️ COMPATIBILIDADE TEMPORÁRIA
-      // enquanto telas antigas ainda usam "mes"
-      mes: form.data_real.slice(0, 7),
+      // ⚠️ IMPORTANTE
+      // NÃO calculamos mais a fatura automaticamente
+      mes: form.mes,
     };
 
     await createTransaction(payload);
 
     alert("Lançamento salvo com sucesso ✅");
 
-    // opcional: limpar formulário
+    // limpa campos principais
     setForm(prev => ({
       ...prev,
       descricao: "",
@@ -88,7 +96,7 @@ export default function NewTransaction() {
           required
         />
 
-        {/* 🔑 ORIGEM / CARTÃO */}
+        {/* 🔑 CARTÃO / ORIGEM */}
         <select
           value={form.origem}
           onChange={e => setField("origem", e.target.value)}
@@ -107,6 +115,14 @@ export default function NewTransaction() {
           type="date"
           value={form.data_real}
           onChange={e => setField("data_real", e.target.value)}
+          required
+        />
+
+        {/* 🧾 FATURA (MES) */}
+        <input
+          placeholder="Fatura (ex: Jan/26)"
+          value={form.mes}
+          onChange={e => setField("mes", e.target.value)}
           required
         />
 
