@@ -68,12 +68,10 @@ export default function Home({
   // Comparativo mensal (Item 8)
   // =====================
   const comparativo = useMemo(() => {
-    if (!mes || !mensal) return null;
-
     return compararMesAtualAnterior({
       mes,
-      transactions: mensal.transactions || [],
-      reservations: mensal.reservations || []
+      transactions: mensal?.transactions || [],
+      reservations: mensal?.reservations || []
     });
   }, [mes, mensal]);
 
@@ -221,4 +219,5 @@ export default function Home({
     </div>
   );
 }
+
 
