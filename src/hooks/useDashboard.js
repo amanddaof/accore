@@ -20,6 +20,23 @@ import { getSalaryHistory } from "../services/salary.service";
 import { getTransactions } from "../services/transactions.service";
 import { getSavingsGoal } from "../services/savingsGoal";
 
+/* ======================================================
+   Utilitário: mês anterior (YYYY-MM)
+====================================================== */
+function mesAnteriorISO(mes) {
+  if (!mes) return null;
+
+  let [ano, mesNum] = mes.split("-").map(Number);
+  mesNum -= 1;
+
+  if (mesNum === 0) {
+    mesNum = 12;
+    ano -= 1;
+  }
+
+  return `${ano}-${String(mesNum).padStart(2, "0")}`;
+}
+
 export function useDashboard() {
   const [cards, setCards] = useState([]);
   const [loans, setLoans] = useState([]);
@@ -30,6 +47,9 @@ export function useDashboard() {
   const [savingsGoal, setSavingsGoal] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  /* ======================================================
+     MÊS ATUAL (regra do dia 7)
+  ====================================================== */
   const [mes, setMes] = useState(() => {
     const hoje = new Date();
     const diaVirada = 7;
@@ -48,6 +68,9 @@ export function useDashboard() {
     return `${ano}-${String(mesAtual + 1).padStart(2, "0")}`;
   });
 
+  /* ======================================================
+     LOAD BASE
+  ====================================================== */
   async function loadAll() {
     setLoading(true);
 
@@ -70,7 +93,6 @@ export function useDashboard() {
     ]);
 
     // 🔁 PROCESSA RESERVAS AUTOMATICAMENTE
-    // (usa cartões já carregados)
     await processarReservasPendentes(cardsData || []);
 
     setCards(cardsData || []);
@@ -88,6 +110,9 @@ export function useDashboard() {
     loadAll();
   }, [mes]);
 
+  /* ======================================================
+     BASE DE DADOS UNIFICADA
+  ====================================================== */
   const dados = useMemo(() => ({
     transactions,
     bills,
@@ -96,6 +121,9 @@ export function useDashboard() {
     cards
   }), [transactions, bills, loans, reservations, cards]);
 
+  /* ======================================================
+     MENSAL ATUAL
+  ====================================================== */
   const mensal = useMemo(() => ({
     porPessoa: calcularGastosPorPessoa(mes, dados),
     total: calcularTotalMensal(mes, dados),
@@ -103,6 +131,53 @@ export function useDashboard() {
     porPessoaProjecao: calcularProjecaoPorPessoa(mes, dados)
   }), [mes, dados]);
 
+  /* ======================================================
+     MENSAL ANTERIOR
+  ====================================================== */
+  const mesAnterior = useMemo(
+    () => mesAnteriorISO(mes),
+    [mes]
+  );
+
+  const mensalAnterior = useMemo(() => {
+    if (!mesAnterior) return null;
+
+    return {
+      total: calcularTotalMensal(mesAnterior, dados)
+    };
+  }, [mesAnterior, dados]);
+
+  /* ======================================================
+     COMPARATIVO MENSAL ✅
+  ====================================================== */
+  const comparativoMensal = useMemo(() => {
+    if (!mensal || !mensalAnterior) return null;
+
+    const diferenca = mensal.total - mensalAnterior.total;
+    const percentual =
+      mensalAnterior.total === 0
+        ? 0
+        : (diferenca / mensalAnterior.total) * 100;
+
+    return {
+      mesAtual: {
+        label: mes,
+        total: mensal.total
+      },
+      mesAnterior: {
+        label: mesAnterior,
+        total: mensalAnterior.total
+      },
+      variacao: {
+        valor: diferenca,
+        percentual
+      }
+    };
+  }, [mensal, mensalAnterior, mes, mesAnterior]);
+
+  /* ======================================================
+     OUTROS CÁLCULOS (inalterados)
+  ====================================================== */
   const dividas = useMemo(
     () => calcularDividasMes(mes, dados),
     [mes, dados]
@@ -161,6 +236,9 @@ export function useDashboard() {
     };
   }, [salaryHistory, mensal, mes]);
 
+  /* ======================================================
+     EXPORT DO DASHBOARD
+  ====================================================== */
   return {
     loading,
     cards,
@@ -172,6 +250,8 @@ export function useDashboard() {
     mes,
     setMes,
     mensal,
+    mensalAnterior,
+    comparativoMensal, // 👈 AQUI ESTÁ O QUE O CARD USA
     dividas,
     categorias,
     anual,
