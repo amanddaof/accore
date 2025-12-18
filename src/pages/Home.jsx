@@ -42,7 +42,7 @@ export default function Home({
   const [bills, setBills] = useState([]);
 
   const comparativo = compararMesAtualAnterior({
-    mesAtual: mes,
+    mes,
     transactions: mensal?.transactions || [],
     reservations: mensal?.reservations || []
   });
@@ -207,4 +207,5 @@ export default function Home({
     </div>
   );
 }
+
 
