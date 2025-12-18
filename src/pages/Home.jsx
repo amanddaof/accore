@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import CardsGrid from "../ui/CardsGrid";
 import LoansSummary from "../ui/LoansSummary";
@@ -37,15 +37,12 @@ export default function Home({
   const [showDebts, setShowDebts] = useState(false);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
+  // =====================
+  // Dados globais (meta anual)
+  // =====================
   const [transactions, setTransactions] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [bills, setBills] = useState([]);
-
-  const comparativo = compararMesAtualAnterior({
-    mes,
-    transactions: mensal?.transactions || [],
-    reservations: mensal?.reservations || []
-  });
 
   useEffect(() => {
     async function carregarTudo() {
@@ -66,6 +63,19 @@ export default function Home({
     bills,
     loans
   };
+
+  // =====================
+  // Comparativo mensal (Item 8)
+  // =====================
+  const comparativo = useMemo(() => {
+    if (!mes || !mensal) return null;
+
+    return compararMesAtualAnterior({
+      mes,
+      transactions: mensal.transactions || [],
+      reservations: mensal.reservations || []
+    });
+  }, [mes, mensal]);
 
   return (
     <div className="home-shell two-columns">
@@ -129,9 +139,11 @@ export default function Home({
           </div>
         </section>
 
-        <section className="home-card">
-          <MonthComparisonCard data={comparativo} />
-        </section>
+        {comparativo && (
+          <section className="home-card">
+            <MonthComparisonCard data={comparativo} />
+          </section>
+        )}
 
         <section className="home-card">
           <header className="section-title">Evolução anual</header>
@@ -166,7 +178,6 @@ export default function Home({
           </div>
         </section>
 
-        {/* ⭐ AQUI ESTÁ SUA META ANUAL */}
         <section className="home-card">
           <AnnualSavingsGoal
             salarios={salarios}
@@ -198,14 +209,17 @@ export default function Home({
             </div>
           </header>
 
-          <CategoryPieChart data={categorias?.[pessoaCategorias.toLowerCase()] || []} />
+          <CategoryPieChart
+            data={categorias?.[pessoaCategorias.toLowerCase()] || []}
+          />
 
-          <MonthSummary categorias={categorias} pessoa={pessoaCategorias} />
+          <MonthSummary
+            categorias={categorias}
+            pessoa={pessoaCategorias}
+          />
         </section>
 
       </div>
     </div>
   );
 }
-
-
