@@ -52,3 +52,28 @@
 .month-compare-card .neutral {
   opacity: 0.6;
 }
+
+.people-comparison {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.person-compare {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+}
+
+.person-name {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.person-values {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
