@@ -1,7 +1,9 @@
+/* CONTEXTO LOCAL DA BUSCA */
 .global-search-wrapper {
   position: relative;
 }
 
+/* INPUT */
 .global-search {
   display: flex;
   align-items: center;
@@ -44,7 +46,9 @@
   border-radius: 14px;
 
   padding: 12px;
-  z-index: 50;
+
+  /* 🔥 z-index alto apenas AQUI */
+  z-index: 100;
 
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
@@ -76,4 +80,3 @@
   font-size: 12px;
   color: #64748b;
 }
-
