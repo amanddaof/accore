@@ -4,13 +4,14 @@ import AlertsCenter from "../ui/AlertsCenter";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
 import { gerarAlertas } from "../services/alerts.service";
 import { logout } from "../services/auth";
-import GlobalSearch from "../components/GlobalSearch"; // ajuste o caminho se necessário
+import GlobalSearch from "../components/GlobalSearch";
 import "./Header.css";
 
 export default function Header({
   mes,
   onMesChange,
   onReload,
+
   onOpenCards,
   isCardsOpen,
   onOpenExterno,
@@ -21,11 +22,19 @@ export default function Header({
   isBillsOpen,
   onOpenIncomes,
   isIncomesOpen,
+
   mensal,
-  salarios
+  salarios,
+
+  // 🔥 DADOS BRUTOS (BUSCA GLOBAL)
+  transactions,
+  reservations,
+  bills,
+  loans
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
   const [showAlerts, setShowAlerts] = useState(false);
   const [openSavings, setOpenSavings] = useState(false);
 
@@ -37,7 +46,15 @@ export default function Header({
   const quantidade =
     [...dados.amanda, ...dados.celso, ...dados.geral]
       .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
-console.log("MENSAL 👉", mensal);
+
+  // 🔍 DEBUG (opcional – pode remover depois)
+  console.log("📤 Header -> GlobalSearch", {
+    transactions,
+    reservations,
+    bills,
+    loans
+  });
+
   return (
     <>
       <header className="header">
@@ -54,38 +71,56 @@ console.log("MENSAL 👉", mensal);
 
         {/* MENU */}
         <nav className="nav">
-          <button className={`nav-link ${isCardsOpen ? "active" : ""}`} onClick={onOpenCards}>
+          <button
+            className={`nav-link ${isCardsOpen ? "active" : ""}`}
+            onClick={onOpenCards}
+          >
             CARTÕES
           </button>
 
-          <button className={`nav-link ${isExternoOpen ? "active" : ""}`} onClick={onOpenExterno}>
+          <button
+            className={`nav-link ${isExternoOpen ? "active" : ""}`}
+            onClick={onOpenExterno}
+          >
             EXTERNO
           </button>
 
-          <button className={`nav-link ${isReservasOpen ? "active" : ""}`} onClick={onOpenReservas}>
+          <button
+            className={`nav-link ${isReservasOpen ? "active" : ""}`}
+            onClick={onOpenReservas}
+          >
             RESERVAS
           </button>
 
-          <button className={`nav-link ${isBillsOpen ? "active" : ""}`} onClick={onOpenBills}>
+          <button
+            className={`nav-link ${isBillsOpen ? "active" : ""}`}
+            onClick={onOpenBills}
+          >
             CASA
           </button>
 
-          <button className={`nav-link ${isIncomesOpen ? "active" : ""}`} onClick={onOpenIncomes}>
+          <button
+            className={`nav-link ${isIncomesOpen ? "active" : ""}`}
+            onClick={onOpenIncomes}
+          >
             ENTRADAS
           </button>
 
-          <button className={`nav-link ${openSavings ? "active" : ""}`} onClick={() => setOpenSavings(true)}>
+          <button
+            className={`nav-link ${openSavings ? "active" : ""}`}
+            onClick={() => setOpenSavings(true)}
+          >
             ECONOMIA
           </button>
         </nav>
 
-        {/* 🔍 BUSCA GLOBAL */}
+        {/* 🔍 BUSCA GLOBAL — AGORA CORRETA */}
         <div className="header-search">
           <GlobalSearch
-            transactions={mensal?.transactions || []}
-            reservations={mensal?.reservations || []}
-            bills={mensal?.houseBills || []}
-            loans={mensal?.loans || []}
+            transactions={transactions}
+            reservations={reservations}
+            bills={bills}
+            loans={loans}
           />
         </div>
 
@@ -110,7 +145,7 @@ console.log("MENSAL 👉", mensal);
             onChange={e => onMesChange(e.target.value)}
           />
 
-          {/* 🔄 ATUALIZAR (ÍCONE) */}
+          {/* ATUALIZAR */}
           <button
             className="circle-icon-btn"
             onClick={onReload}
@@ -118,7 +153,8 @@ console.log("MENSAL 👉", mensal);
           >
             ⟳
           </button>
-          
+
+          {/* SAIR */}
           <button
             className="circle-icon-btn"
             onClick={() => logout(navigate)}
@@ -127,7 +163,6 @@ console.log("MENSAL 👉", mensal);
             ⏻
           </button>
         </div>
-
       </header>
 
       {/* ALERTAS */}
@@ -147,8 +182,3 @@ console.log("MENSAL 👉", mensal);
     </>
   );
 }
-
-
-
-
-
