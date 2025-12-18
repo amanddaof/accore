@@ -348,7 +348,7 @@ function BillRow({
             />
       
             <button onClick={salvarValorReal}>
-              Salvar
+              Salvar valor real
             </button>
           </div>
         </div>
@@ -356,5 +356,6 @@ function BillRow({
     </div>
   );
 }
+
 
 
