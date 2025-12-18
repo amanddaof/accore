@@ -4,60 +4,42 @@ import "./MonthComparisonCard.css";
 export default function MonthComparisonCard({ data }) {
   if (!data) return null;
 
-  const { mesAtual, mesAnterior, total, porPessoa } = data;
+  const { mesAtual, mesAnterior, variacao } = data;
 
-  const subiuTotal = total.valor > 0;
-  const igualTotal = total.valor === 0;
+  const subiu = variacao.valor > 0;
+  const igual = variacao.valor === 0;
 
   return (
-    <section className="month-compare-card">
+    <section className={`month-compare-card ${igual ? "neutral" : subiu ? "up" : "down"}`}>
       <header className="title">Comparativo mensal</header>
 
-      {/* TOTAL */}
       <div className="months">
         <div>
-          <span>{mesAtual}</span>
-          <strong>{money(total.atual)}</strong>
+          <span>{mesAtual.label}</span>
+          <strong>{money(mesAtual.total)}</strong>
         </div>
 
         <div>
-          <span>{mesAnterior}</span>
-          <strong>{money(total.anterior)}</strong>
+          <span>{mesAnterior.label}</span>
+          <strong>{money(mesAnterior.total)}</strong>
         </div>
       </div>
 
-      {igualTotal && (
+      {igual && (
         <div className="variation neutral">
           Sem variação em relação ao mês passado
         </div>
       )}
 
-      {!igualTotal && (
+      {!igual && (
         <div className="variation">
-          <span className="arrow">{subiuTotal ? "▲" : "▼"}</span>
-          <strong>{money(Math.abs(total.valor))}</strong>
+          <span className="arrow">{subiu ? "▲" : "▼"}</span>
+          <strong>{money(Math.abs(variacao.valor))}</strong>
           <span className="text">
-            {subiuTotal ? "a mais" : "a menos"} que no mês passado
+            {subiu ? "a mais" : "a menos"} que no mês passado
           </span>
         </div>
       )}
-
-      {/* POR PESSOA */}
-      <div className="people-variation">
-        <div>
-          <strong>Amanda</strong>{" "}
-          {porPessoa.amanda.valor === 0
-            ? "sem variação"
-            : money(porPessoa.amanda.valor)}
-        </div>
-
-        <div>
-          <strong>Celso</strong>{" "}
-          {porPessoa.celso.valor === 0
-            ? "sem variação"
-            : money(porPessoa.celso.valor)}
-        </div>
-      </div>
     </section>
   );
 }
