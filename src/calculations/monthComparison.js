@@ -1,12 +1,11 @@
 import { safeNumber } from "../core/helpers";
-import { mesAnteriorLabel } from "../core/months";
+import { isoMesParaLabel, mesIsoAnterior } from "../core/months";
 
 export function compararMesAtualAnterior({
-  mes,
+  mes, // YYYY-MM
   transactions = [],
   reservations = []
 }) {
-  // se não tiver mes ainda, retorna estrutura vazia (não null)
   if (!mes) {
     return {
       mesAtual: { label: "—", total: 0 },
@@ -15,19 +14,19 @@ export function compararMesAtualAnterior({
     };
   }
 
-  const mesAnterior = mesAnteriorLabel(mes) || "—";
+  const mesAnterior = mesIsoAnterior(mes);
 
-  function totalDoMes(label) {
+  function totalDoMes(mesRef) {
     let total = 0;
 
     transactions.forEach(t => {
-      if (t?.mes === label) {
+      if (t.mes === mesRef) {
         total += safeNumber(t.valor);
       }
     });
 
     reservations.forEach(r => {
-      if (r?.mes === label) {
+      if (r.mes === mesRef) {
         total += safeNumber(r.valor);
       }
     });
@@ -36,7 +35,7 @@ export function compararMesAtualAnterior({
   }
 
   const totalAtual = totalDoMes(mes);
-  const totalAnterior = mesAnterior === "—" ? 0 : totalDoMes(mesAnterior);
+  const totalAnterior = mesAnterior ? totalDoMes(mesAnterior) : 0;
 
   const diferenca = totalAtual - totalAnterior;
   const percentual =
@@ -44,11 +43,11 @@ export function compararMesAtualAnterior({
 
   return {
     mesAtual: {
-      label: mes,
+      label: isoMesParaLabel(mes),
       total: totalAtual
     },
     mesAnterior: {
-      label: mesAnterior,
+      label: isoMesParaLabel(mesAnterior),
       total: totalAnterior
     },
     variacao: {
