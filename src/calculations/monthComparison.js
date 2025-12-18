@@ -1,30 +1,33 @@
 import { safeNumber } from "../core/helpers";
 import { mesAnteriorLabel } from "../core/months";
 
-/**
- * Comparativo mensal usando mes = "Jan/26"
- */
 export function compararMesAtualAnterior({
   mes,
   transactions = [],
   reservations = []
 }) {
-  if (!mes) return null;
+  // se não tiver mes ainda, retorna estrutura vazia (não null)
+  if (!mes) {
+    return {
+      mesAtual: { label: "—", total: 0 },
+      mesAnterior: { label: "—", total: 0 },
+      variacao: { valor: 0, percentual: 0 }
+    };
+  }
 
-  const mesAnterior = mesAnteriorLabel(mes);
-  if (!mesAnterior) return null;
+  const mesAnterior = mesAnteriorLabel(mes) || "—";
 
   function totalDoMes(label) {
     let total = 0;
 
     transactions.forEach(t => {
-      if (t.mes === label) {
+      if (t?.mes === label) {
         total += safeNumber(t.valor);
       }
     });
 
     reservations.forEach(r => {
-      if (r.mes === label) {
+      if (r?.mes === label) {
         total += safeNumber(r.valor);
       }
     });
@@ -33,7 +36,7 @@ export function compararMesAtualAnterior({
   }
 
   const totalAtual = totalDoMes(mes);
-  const totalAnterior = totalDoMes(mesAnterior);
+  const totalAnterior = mesAnterior === "—" ? 0 : totalDoMes(mesAnterior);
 
   const diferenca = totalAtual - totalAnterior;
   const percentual =
