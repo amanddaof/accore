@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { processarReservasPendentes } from "../services/reservations.processor";
-import { calcularComparativoPorPessoa } from "../calculations/monthComparisonByPerson";
 
 import {
   calcularGastosPorPessoa,
@@ -169,29 +168,29 @@ export function useDashboard() {
      COMPARATIVO MENSAL
   ====================================================== */
   const comparativoMensal = useMemo(() => {
-    if (!mes || !mesAnterior) return null;
-  
-    const totalAtual = calcularTotalMensal(mes, dados);
-    const totalAnterior = calcularTotalMensal(mesAnterior, dados);
-  
-    const valor = totalAtual - totalAnterior;
-  
-    return {
-      mesAtual: {
-        label: mes,
-        total: totalAtual
-      },
-      mesAnterior: {
-        label: mesAnterior,
-        total: totalAnterior
-      },
-      variacao: {
-        valor,
-        percentual:
-          totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
-      }
-    };
-  }, [mes, mesAnterior, dados]);
+  if (!mes || !mesAnterior) return null;
+
+  const totalAtual = calcularTotalMensal(mes, dados);
+  const totalAnterior = calcularTotalMensal(mesAnterior, dados);
+
+  const valor = totalAtual - totalAnterior;
+
+  return {
+    mesAtual: {
+      label: mes,
+      total: totalAtual
+    },
+    mesAnterior: {
+      label: mesAnterior,
+      total: totalAnterior
+    },
+    variacao: {
+      valor,
+      percentual:
+        totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
+    }
+  };
+}, [mes, mesAnterior, dados]);
 
   /* ======================================================
      OUTROS CÁLCULOS
@@ -310,6 +309,7 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
 
 
 
