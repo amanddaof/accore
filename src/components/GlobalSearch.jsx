@@ -9,6 +9,15 @@ export default function GlobalSearch({
   bills = [],
   loans = []
 }) {
+
+  // 🔍 LOG 1 — assim que o componente renderiza
+  console.log("🔍 GlobalSearch props:", {
+    transactions,
+    reservations,
+    bills,
+    loans
+  });
+
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
@@ -23,7 +32,8 @@ export default function GlobalSearch({
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   function handleChange(e) {
@@ -31,6 +41,16 @@ export default function GlobalSearch({
     setValue(v);
 
     if (v.length > 1) {
+
+      // 🔍 LOG 2 — quando você digita
+      console.log("⌨️ Digitado:", v);
+      console.log("📦 Dados enviados para globalSearch:", {
+        transactions,
+        reservations,
+        bills,
+        loans
+      });
+
       const res = globalSearch({
         query: v,
         transactions,
@@ -38,6 +58,10 @@ export default function GlobalSearch({
         bills,
         loans
       });
+
+      // 🔍 LOG 3 — resultado da busca
+      console.log("🎯 Resultado da busca:", res);
+
       setResults(res);
       setOpen(true);
     } else {
