@@ -335,31 +335,25 @@ function BillRow({
 
       {expanded && (
         <div
-          style={{
-            marginTop: 12,
-            paddingTop: 12,
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            width: "100%"
-          }}
+          className="bill-expanded"
           onClick={e => e.stopPropagation()}
         >
-          <input
-            type="number"
-            step="0.01"
-            placeholder="Valor real"
-            value={valorReal}
-            onChange={e => setValorReal(e.target.value)}
-          />
-
-          <button
-            className="primary-btn"
-            style={{ marginTop: 8 }}
-            onClick={salvarValorReal}
-          >
-            Salvar valor real
-          </button>
+          <div className="bill-expanded-row">
+            <input
+              type="number"
+              step="0.01"
+              placeholder="Valor real"
+              value={valorReal}
+              onChange={e => setValorReal(e.target.value)}
+            />
+      
+            <button onClick={salvarValorReal}>
+              Salvar
+            </button>
+          </div>
         </div>
       )}
     </div>
   );
 }
+
