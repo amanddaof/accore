@@ -141,9 +141,10 @@ export function useDashboard() {
 
   const mensalAnterior = useMemo(() => {
     if (!mesAnterior) return null;
-
+  
     return {
-      total: calcularTotalMensal(mesAnterior, dados)
+      total: calcularTotalMensal(mesAnterior, dados),
+      porPessoa: calcularGastosPorPessoa(mesAnterior, dados)
     };
   }, [mesAnterior, dados]);
 
@@ -152,25 +153,38 @@ export function useDashboard() {
   ====================================================== */
   const comparativoMensal = useMemo(() => {
     if (!mensal || !mensalAnterior) return null;
-
-    const diferenca = mensal.total - mensalAnterior.total;
-    const percentual =
-      mensalAnterior.total === 0
-        ? 0
-        : (diferenca / mensalAnterior.total) * 100;
-
+  
+    function montarComparativo(atual = 0, anterior = 0) {
+      const valor = atual - anterior;
+      return {
+        atual,
+        anterior,
+        valor,
+        percentual: anterior === 0 ? 0 : (valor / anterior) * 100
+      };
+    }
+  
+    const pessoaAtual = mensal.porPessoa || [];
+    const pessoaAnterior = mensalAnterior.porPessoa || [];
+  
+    const amandaAtual = pessoaAtual.find(p => p.quem === "Amanda")?.total || 0;
+    const celsoAtual  = pessoaAtual.find(p => p.quem === "Celso")?.total || 0;
+  
+    const amandaAnterior = pessoaAnterior.find(p => p.quem === "Amanda")?.total || 0;
+    const celsoAnterior  = pessoaAnterior.find(p => p.quem === "Celso")?.total || 0;
+  
     return {
-      mesAtual: {
-        label: mes,
-        total: mensal.total
-      },
-      mesAnterior: {
-        label: mesAnterior,
-        total: mensalAnterior.total
-      },
-      variacao: {
-        valor: diferenca,
-        percentual
+      mesAtual: mes,
+      mesAnterior,
+  
+      total: montarComparativo(
+        mensal.total,
+        mensalAnterior.total
+      ),
+  
+      porPessoa: {
+        amanda: montarComparativo(amandaAtual, amandaAnterior),
+        celso: montarComparativo(celsoAtual, celsoAnterior)
       }
     };
   }, [mensal, mensalAnterior, mes, mesAnterior]);
@@ -261,3 +275,4 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
