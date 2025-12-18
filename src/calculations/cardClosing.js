@@ -6,7 +6,7 @@ export function calcularMesFatura({ dataReal, card }) {
   const data = new Date(dataReal);
 
   let ano = data.getFullYear();
-  let mes = data.getMonth();
+  let mes = data.getMonth(); // 0–11
   const diaCompra = data.getDate();
 
   let fechamento = card.fechamento_dia;
@@ -17,11 +17,13 @@ export function calcularMesFatura({ dataReal, card }) {
 
   fechamento += card.fechamento_offset || 0;
 
+  // 1️⃣ mês do fechamento
   let mesFechamento = mes;
   if (diaCompra > fechamento) {
     mesFechamento = mes + 1;
   }
 
+  // 2️⃣ fatura = mês seguinte ao fechamento
   let mesFatura = mesFechamento + 1;
 
   if (mesFatura > 11) {
@@ -29,5 +31,8 @@ export function calcularMesFatura({ dataReal, card }) {
     ano += 1;
   }
 
-  return isoParaMesAbrev(new Date(ano, mesFatura, 1));
+  // 🔑 RETORNA STRING ISO (contrato antigo)
+  const iso = `${ano}-${String(mesFatura + 1).padStart(2, "0")}`;
+
+  return isoParaMesAbrev(iso);
 }
