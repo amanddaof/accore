@@ -37,6 +37,17 @@ function mesAnteriorISO(mes) {
   return `${ano}-${String(mesNum).padStart(2, "0")}`;
 }
 
+/* ======================================================
+   Helper: pega total por pessoa com segurança
+====================================================== */
+function totalPorPessoa(lista = [], nome) {
+  return (
+    lista.find(
+      p => p?.quem?.toLowerCase() === nome.toLowerCase()
+    )?.total || 0
+  );
+}
+
 export function useDashboard() {
   const [cards, setCards] = useState([]);
   const [loans, setLoans] = useState([]);
@@ -92,7 +103,6 @@ export function useDashboard() {
       getSavingsGoal(new Date(mes).getFullYear())
     ]);
 
-    // 🔁 PROCESSA RESERVAS AUTOMATICAMENTE
     await processarReservasPendentes(cardsData || []);
 
     setCards(cardsData || []);
@@ -141,7 +151,7 @@ export function useDashboard() {
 
   const mensalAnterior = useMemo(() => {
     if (!mesAnterior) return null;
-  
+
     return {
       total: calcularTotalMensal(mesAnterior, dados),
       porPessoa: calcularGastosPorPessoa(mesAnterior, dados)
@@ -149,11 +159,11 @@ export function useDashboard() {
   }, [mesAnterior, dados]);
 
   /* ======================================================
-     COMPARATIVO MENSAL ✅
+     COMPARATIVO MENSAL (TOTAL + POR PESSOA) ✅
   ====================================================== */
   const comparativoMensal = useMemo(() => {
     if (!mensal || !mensalAnterior) return null;
-  
+
     function montarComparativo(atual = 0, anterior = 0) {
       const valor = atual - anterior;
       return {
@@ -163,25 +173,25 @@ export function useDashboard() {
         percentual: anterior === 0 ? 0 : (valor / anterior) * 100
       };
     }
-  
-    const pessoaAtual = mensal.porPessoa || [];
-    const pessoaAnterior = mensalAnterior.porPessoa || [];
-  
-    const amandaAtual = pessoaAtual.find(p => p.quem === "Amanda")?.total || 0;
-    const celsoAtual  = pessoaAtual.find(p => p.quem === "Celso")?.total || 0;
-  
-    const amandaAnterior = pessoaAnterior.find(p => p.quem === "Amanda")?.total || 0;
-    const celsoAnterior  = pessoaAnterior.find(p => p.quem === "Celso")?.total || 0;
-  
+
+    const atual = mensal.porPessoa || [];
+    const anterior = mensalAnterior.porPessoa || [];
+
+    const amandaAtual = totalPorPessoa(atual, "Amanda");
+    const celsoAtual  = totalPorPessoa(atual, "Celso");
+
+    const amandaAnterior = totalPorPessoa(anterior, "Amanda");
+    const celsoAnterior  = totalPorPessoa(anterior, "Celso");
+
     return {
       mesAtual: mes,
       mesAnterior,
-  
+
       total: montarComparativo(
         mensal.total,
         mensalAnterior.total
       ),
-  
+
       porPessoa: {
         amanda: montarComparativo(amandaAtual, amandaAnterior),
         celso: montarComparativo(celsoAtual, celsoAnterior)
@@ -234,18 +244,18 @@ export function useDashboard() {
     const salarioCelso =
       registrosAno.find(s => s.quem.toLowerCase() === "celso") || ultimoCelso;
 
-    const gasto = mensal.porPessoa;
+    const gasto = mensal.porPessoa || [];
 
     return {
       amanda: {
         salario: salarioAmanda?.valor || 0,
-        gasto: gasto[0]?.total || 0,
-        sobra: (salarioAmanda?.valor || 0) - (gasto[0]?.total || 0)
+        gasto: totalPorPessoa(gasto, "Amanda"),
+        sobra: (salarioAmanda?.valor || 0) - totalPorPessoa(gasto, "Amanda")
       },
       celso: {
         salario: salarioCelso?.valor || 0,
-        gasto: gasto[1]?.total || 0,
-        sobra: (salarioCelso?.valor || 0) - (gasto[1]?.total || 0)
+        gasto: totalPorPessoa(gasto, "Celso"),
+        sobra: (salarioCelso?.valor || 0) - totalPorPessoa(gasto, "Celso")
       }
     };
   }, [salaryHistory, mensal, mes]);
@@ -265,7 +275,7 @@ export function useDashboard() {
     setMes,
     mensal,
     mensalAnterior,
-    comparativoMensal, // 👈 AQUI ESTÁ O QUE O CARD USA
+    comparativoMensal,
     dividas,
     categorias,
     anual,
@@ -275,4 +285,3 @@ export function useDashboard() {
     reload: loadAll
   };
 }
-
