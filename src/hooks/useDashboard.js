@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { processarReservasPendentes } from "../services/reservations.processor";
 import { compararMediaMeses } from "../calculations/monthComparisonAverage";
+import { compararPeriodos } from "../calculations/monthComparisonPeriods";
 
 import {
   calcularGastosPorPessoa,
@@ -207,19 +208,20 @@ export function useDashboard() {
      COMPARATIVOS POR MÉDIA (3 / 6 / 12)
   ====================================================== */
   const comparativo3Meses = useMemo(
-    () => compararMediaMeses({ mesAtual: mes, meses: 3, dados }),
-    [mes, dados]
-  );
+  () => compararPeriodos({ mesAtual: mes, meses: 3, dados }),
+  [mes, dados]
+);
 
-  const comparativo6Meses = useMemo(
-    () => compararMediaMeses({ mesAtual: mes, meses: 6, dados }),
-    [mes, dados]
-  );
+const comparativo6Meses = useMemo(
+  () => compararPeriodos({ mesAtual: mes, meses: 6, dados }),
+  [mes, dados]
+);
 
-  const comparativo12Meses = useMemo(
-    () => compararMediaMeses({ mesAtual: mes, meses: 12, dados }),
-    [mes, dados]
-  );
+const comparativo12Meses = useMemo(
+  () => compararPeriodos({ mesAtual: mes, meses: 12, dados }),
+  [mes, dados]
+);
+
 
   const comparativos = useMemo(
     () => ({
@@ -335,3 +337,4 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
