@@ -20,11 +20,15 @@ function agruparPorOrigem(itens = []) {
         ? "Conta da casa"
         : i.item.origem || "Externo";
 
-    let valor =
-      i.item.valor ??
-      i.item.valor_real ??
-      i.item.valor_previsto ??
-      0;
+    let valor;
+
+if (i.tipo === "Conta da casa") {
+  const real = Number(i.item.valor_real || 0);
+  const previsto = Number(i.item.valor_previsto || 0);
+  valor = real > 0 ? real : previsto;
+} else {
+  valor = Number(i.item.valor || 0);
+}
 
     // 🔑 contas da casa entram pela metade no gasto
     if (i.tipo === "Conta da casa") {
@@ -246,3 +250,4 @@ export default function Home({
     </div>
   );
 }
+
