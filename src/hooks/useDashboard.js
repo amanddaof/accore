@@ -172,25 +172,39 @@ export function useDashboard() {
 
   const totalAtual = calcularTotalMensal(mes, dados);
   const totalAnterior = calcularTotalMensal(mesAnterior, dados);
-
   const valor = totalAtual - totalAnterior;
 
-  return {
-    mesAtual: {
-      label: mes,
-      total: totalAtual
-    },
-    mesAnterior: {
-      label: mesAnterior,
-      total: totalAnterior
-    },
+  const total = {
+    mesAtual: { label: mes, total: totalAtual },
+    mesAnterior: { label: mesAnterior, total: totalAnterior },
     variacao: {
       valor,
-      percentual:
-        totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
+      percentual: totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
     }
   };
+
+  const [amandaAtual, celsoAtual] = calcularGastosPorPessoa(mes, dados);
+  const [amandaAnt, celsoAnt] =
+    mesAnterior ? calcularGastosPorPessoa(mesAnterior, dados) : [{ total: 0 }, { total: 0 }];
+
+  const montar = (atual, anterior) => {
+    const diff = atual - anterior;
+    return {
+      atual,
+      anterior,
+      valor: diff,
+      percentual: anterior === 0 ? 0 : (diff / anterior) * 100
+    };
+  };
+
+  const porPessoa = {
+    amanda: montar(amandaAtual?.total || 0, amandaAnt?.total || 0),
+    celso:  montar(celsoAtual?.total || 0,  celsoAnt?.total || 0)
+  };
+
+  return { total, porPessoa };
 }, [mes, mesAnterior, dados]);
+
 
   /* ======================================================
      OUTROS CÁLCULOS
