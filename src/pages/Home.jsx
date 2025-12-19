@@ -11,9 +11,9 @@ import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
 import MonthComparisonCard from "../ui/MonthComparisonCard";
 
-/* ======================================================
-   🔧 Agrupa itens do gasto por origem (somente UI)
-====================================================== */
+/* ===============================
+   🔧 AUXILIAR — AGRUPAR POR ORIGEM
+================================ */
 function agruparPorOrigem(itens = []) {
   const mapa = {};
 
@@ -23,11 +23,16 @@ function agruparPorOrigem(itens = []) {
         ? "Conta da casa"
         : i.item.origem || "Externo";
 
-    const valor =
+    let valor =
       i.item.valor ??
       i.item.valor_real ??
       i.item.valor_previsto ??
       0;
+
+    // 🔑 Conta da casa → metade por pessoa (apenas visual)
+    if (origem === "Conta da casa") {
+      valor = valor / 2;
+    }
 
     if (!mapa[origem]) {
       mapa[origem] = 0;
@@ -87,77 +92,73 @@ export default function Home({
         <section className="home-card people-section">
           <header className="section-title">Resumo por pessoa</header>
 
-          <div className="people-grid">
+          {/* ===================== AMANDA ===================== */}
+          <div
+            className="person-box amanda"
+            onClick={() => setShowAmandaDetails(v => !v)}
+            style={{ cursor: "pointer" }}
+          >
+            <h3>Amanda</h3>
 
-            {/* ===================== AMANDA ===================== */}
-            <div
-              className="person-box amanda"
-              onClick={() => setShowAmandaDetails(v => !v)}
-              style={{ cursor: "pointer" }}
-            >
-              <h3>Amanda</h3>
-
-              <div className="person-row">
-                <span>Salário</span>
-                <strong>{money(amanda.salario)}</strong>
-              </div>
-
-              <div className="person-row">
-                <span>Gasto</span>
-                <strong>{money(amanda.gasto)}</strong>
-              </div>
-
-              <div className={`person-result ${amanda.sobra < 0 ? "neg" : "ok"}`}>
-                {amanda.sobra < 0 ? "Déficit" : "Sobra"}: {money(amanda.sobra)}
-              </div>
+            <div className="person-row">
+              <span>Salário</span>
+              <strong>{money(amanda.salario)}</strong>
             </div>
 
-            {showAmandaDetails && amandaMensal?.itens?.length > 0 && (
-              <section className="home-card">
-                {agruparPorOrigem(amandaMensal.itens).map((i, idx) => (
-                  <div key={idx} className="bill-row">
-                    <span>{i.origem}</span>
-                    <strong>{money(i.total)}</strong>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {/* ===================== CELSO ===================== */}
-            <div
-              className="person-box celso"
-              onClick={() => setShowCelsoDetails(v => !v)}
-              style={{ cursor: "pointer" }}
-            >
-              <h3>Celso</h3>
-
-              <div className="person-row">
-                <span>Salário</span>
-                <strong>{money(celso.salario)}</strong>
-              </div>
-
-              <div className="person-row">
-                <span>Gasto</span>
-                <strong>{money(celso.gasto)}</strong>
-              </div>
-
-              <div className={`person-result ${celso.sobra < 0 ? "neg" : "ok"}`}>
-                {celso.sobra < 0 ? "Déficit" : "Sobra"}: {money(celso.sobra)}
-              </div>
+            <div className="person-row">
+              <span>Gasto</span>
+              <strong>{money(amanda.gasto)}</strong>
             </div>
 
-            {showCelsoDetails && celsoMensal?.itens?.length > 0 && (
-              <section className="home-card">
-                {agruparPorOrigem(celsoMensal.itens).map((i, idx) => (
-                  <div key={idx} className="bill-row">
-                    <span>{i.origem}</span>
-                    <strong>{money(i.total)}</strong>
-                  </div>
-                ))}
-              </section>
-            )}
-
+            <div className={`person-result ${amanda.sobra < 0 ? "neg" : "ok"}`}>
+              {amanda.sobra < 0 ? "Déficit" : "Sobra"}: {money(amanda.sobra)}
+            </div>
           </div>
+
+          {showAmandaDetails && amandaMensal?.itens?.length > 0 && (
+            <section className="home-card">
+              {agruparPorOrigem(amandaMensal.itens).map((i, idx) => (
+                <div key={idx} className="bill-row">
+                  <span>{i.origem}</span>
+                  <strong>{money(i.total)}</strong>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* ===================== CELSO ===================== */}
+          <div
+            className="person-box celso"
+            onClick={() => setShowCelsoDetails(v => !v)}
+            style={{ cursor: "pointer" }}
+          >
+            <h3>Celso</h3>
+
+            <div className="person-row">
+              <span>Salário</span>
+              <strong>{money(celso.salario)}</strong>
+            </div>
+
+            <div className="person-row">
+              <span>Gasto</span>
+              <strong>{money(celso.gasto)}</strong>
+            </div>
+
+            <div className={`person-result ${celso.sobra < 0 ? "neg" : "ok"}`}>
+              {celso.sobra < 0 ? "Déficit" : "Sobra"}: {money(celso.sobra)}
+            </div>
+          </div>
+
+          {showCelsoDetails && celsoMensal?.itens?.length > 0 && (
+            <section className="home-card">
+              {agruparPorOrigem(celsoMensal.itens).map((i, idx) => (
+                <div key={idx} className="bill-row">
+                  <span>{i.origem}</span>
+                  <strong>{money(i.total)}</strong>
+                </div>
+              ))}
+            </section>
+          )}
         </section>
 
         <section className="home-card">
@@ -179,12 +180,7 @@ export default function Home({
         <section className="home-card">
           <AnnualSavingsGoal
             salarios={salarios}
-            dadosMensais={{
-              transactions: [],
-              reservas: [],
-              bills: [],
-              loans
-            }}
+            dadosMensais={{ transactions: [], reservas: [], bills: [], loans }}
             savingsGoal={savingsGoal}
             setSavingsGoal={setSavingsGoal}
             mes={mes}
