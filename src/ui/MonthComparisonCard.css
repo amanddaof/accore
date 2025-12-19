@@ -140,6 +140,14 @@
 
 /* === SETA COM COR APENAS NO INDIVIDUAL === */
 
+/* ===== RESET DE COR NO INDIVIDUAL ===== */
+.variation.tiny.up,
+.variation.tiny.down {
+  color: rgba(255,255,255,0.85);
+}
+
+
+/* ===== SETA COLORIDA NO INDIVIDUAL ===== */
 .variation.tiny.up .arrow {
   color: #ef4444;
 }
@@ -148,3 +156,6 @@
   color: #22c55e;
 }
 
+.variation.tiny .arrow {
+  opacity: 0.9;
+}
