@@ -137,3 +137,13 @@
   flex-direction: column;
   gap: 2px;
 }
+
+/* === SETA COM COR APENAS NO INDIVIDUAL === */
+
+.variation.tiny.up .arrow {
+  color: #ef4444; /* gastou mais */
+}
+
+.variation.tiny.down .arrow {
+  color: #22c55e; /* gastou menos */
+}
