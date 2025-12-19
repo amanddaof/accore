@@ -1,76 +1,60 @@
-export function calcularComparativoPorPessoa({
-  mesAtual,
-  mesAnterior,
-  dados
+import { money } from "../utils/money";
+import "./MonthComparisonCard.css";
+
+export default function MonthComparisonByPersonCard({
+  data,
+  mesAtualLabel,
+  mesAnteriorLabel
 }) {
-  function somarPorPessoa(mes) {
-    let amanda = 0;
-    let celso = 0;
+  if (!data) return null;
 
-    // Transactions
-    dados.transactions?.forEach(t => {
-      if (t.mes !== mes) return;
+  const { amanda, celso } = data;
 
-      const v = Number(t.valor) || 0;
+  const renderLinha = (nome, info) => {
+    const subiu = info.valor > 0;
+    const igual = info.valor === 0;
 
-      if (t.quem === "Amanda") amanda += v;
-      else if (t.quem === "Celso") celso += v;
-      else if (t.quem === "Ambos") {
-        amanda += v;
-        celso += v;
-      }
-    });
+    return (
+      <div className="person-block">
+        <header className="person-name">{nome}</header>
 
-    // Bills
-    dados.bills?.forEach(b => {
-      if (b.mes !== mes) return;
+        <div className="months">
+          <div>
+            <span>{mesAtualLabel}</span>
+            <strong>{money(info.atual)}</strong>
+          </div>
 
-      const v = Number(b.valor) || 0;
+          <div>
+            <span>{mesAnteriorLabel}</span>
+            <strong>{money(info.anterior)}</strong>
+          </div>
+        </div>
 
-      if (b.quem === "Amanda") amanda += v;
-      else if (b.quem === "Celso") celso += v;
-      else if (b.quem === "Ambos") {
-        amanda += v;
-        celso += v;
-      }
-    });
-
-    // Reservations (já processadas)
-    dados.reservas?.forEach(r => {
-      if (r.mes !== mes) return;
-
-      const v = Number(r.valor) || 0;
-
-      if (r.quem === "Amanda") amanda += v;
-      else if (r.quem === "Celso") celso += v;
-      else if (r.quem === "Ambos") {
-        amanda += v;
-        celso += v;
-      }
-    });
-
-    return { amanda, celso };
-  }
-
-  function montar(atual, anterior) {
-    const valor = atual - anterior;
-    return {
-      atual,
-      anterior,
-      valor,
-      percentual: anterior === 0 ? 0 : (valor / anterior) * 100
-    };
-  }
-
-  const atual = somarPorPessoa(mesAtual);
-  const anterior = somarPorPessoa(mesAnterior);
-
-  return {
-    mesAtual,
-    mesAnterior,
-    porPessoa: {
-      amanda: montar(atual.amanda, anterior.amanda),
-      celso: montar(atual.celso, anterior.celso)
-    }
+        {igual ? (
+          <div className="variation neutral">
+            Sem variação em relação ao mês passado
+          </div>
+        ) : (
+          <div className="variation">
+            <span className="arrow">{subiu ? "▲" : "▼"}</span>
+            <strong>{money(Math.abs(info.valor))}</strong>
+            <span className="text">
+              {subiu ? "a mais" : "a menos"} que no mês passado
+            </span>
+          </div>
+        )}
+      </div>
+    );
   };
+
+  return (
+    <section className="month-compare-card">
+      <header className="title">Comparativo mensal por pessoa</header>
+
+      <div className="people-compare">
+        {renderLinha("Amanda", amanda)}
+        {renderLinha("Celso", celso)}
+      </div>
+    </section>
+  );
 }
