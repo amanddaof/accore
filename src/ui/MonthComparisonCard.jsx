@@ -8,6 +8,16 @@ export default function MonthComparisonCard({ data, porPessoa }) {
   const subiu = variacao.valor > 0;
   const igual = variacao.valor === 0;
 
+  function formatarMes(label) {
+  if (!label) return "";
+  const [ano, mes] = label.split("-");
+  const meses = [
+    "Jan","Fev","Mar","Abr","Mai","Jun",
+    "Jul","Ago","Set","Out","Nov","Dez"
+  ];
+  return `${meses[Number(mes) - 1]}/${ano.slice(2)}`;
+}
+
   return (
     <section className="month-compare-card">
       <header className="title">Comparativo mensal</header>
@@ -15,12 +25,12 @@ export default function MonthComparisonCard({ data, porPessoa }) {
       {/* TOTAL */}
       <div className="months">
         <div>
-          <span>{mesAtual.label}</span>
+          <span>{formatarMes(mesAtual.label)}</span>
           <strong>{money(mesAtual.total)}</strong>
         </div>
 
         <div>
-          <span>{mesAnterior.label}</span>
+          <span>{formatarMes(mesAnterior.label)}</span>
           <strong>{money(mesAnterior.total)}</strong>
         </div>
       </div>
@@ -56,12 +66,12 @@ export default function MonthComparisonCard({ data, porPessoa }) {
 
                 <div className="months small">
                   <div>
-                    <span>{mesAtual.label}</span>
+                    <span>{formatarMes(mesAtual.label)}</span>
                     <strong>{money(info.atual)}</strong>
                   </div>
 
                   <div>
-                    <span>{mesAnterior.label}</span>
+                    <span>{formatarMes(mesAnterior.label)}</span>
                     <strong>{money(info.anterior)}</strong>
                   </div>
                 </div>
