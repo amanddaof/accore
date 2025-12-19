@@ -1,143 +1,153 @@
+/* =====================================================
+   MONTH COMPARISON CARD — PREMIUM
+===================================================== */
+
 .month-compare-card {
-  background: linear-gradient(135deg, #111827, #0f172a);
-  border-radius: 16px;
-  padding: 20px;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  position: relative;
+  background:
+    radial-gradient(
+      120% 120% at 0% 0%,
+      #1e293b 0%,
+      #020617 60%
+    );
+  border-radius: 18px;
+  padding: 22px 24px;
+  color: #f8fafc;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 20px 40px rgba(0,0,0,0.45);
 }
 
+
+/* =====================================================
+   TITLE
+===================================================== */
+
 .month-compare-card .title {
-  font-size: 14px;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  opacity: 0.7;
-  margin-bottom: 12px;
+  opacity: 0.65;
+  margin-bottom: 14px;
 }
+
+
+/* =====================================================
+   TOTAL — MONTHS
+===================================================== */
 
 .month-compare-card .months {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 14px;
+  align-items: flex-end;
+  gap: 16px;
 }
 
 .month-compare-card .months span {
-  font-size: 13px;
-  opacity: 0.6;
+  font-size: 0.75rem;
+  opacity: 0.55;
 }
 
 .month-compare-card .months strong {
-  display: block;
-  font-size: 18px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-.month-compare-card .variation {
+
+/* =====================================================
+   VARIATION (TOTAL)
+===================================================== */
+
+.variation {
+  margin-top: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
-  margin-top: 6px;
+  font-size: 0.9rem;
 }
 
-.month-compare-card .arrow {
-  font-size: 18px;
+.variation .arrow {
+  font-size: 1.1rem;
 }
 
-.month-compare-card.up .variation {
+.variation.up {
   color: #ef4444; /* gastou mais */
 }
 
-.month-compare-card.down .variation {
+.variation.down {
   color: #22c55e; /* gastou menos */
 }
 
-.month-compare-card .neutral {
-  opacity: 0.6;
+.variation.neutral {
+  color: rgba(255,255,255,0.55);
 }
 
-.people-comparison {
-  margin-top: 12px;
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+.people-compare-inline {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+
+/* =====================================================
+   PERSON BLOCK
+===================================================== */
+
+.person-block {
+  background: rgba(255,255,255,0.025);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.person-name {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 6px;
+}
+
+
+/* =====================================================
+   PERSON — MONTH VALUES
+===================================================== */
+
+.months.small {
   display: flex;
+  justify-content: space-between;
   gap: 12px;
 }
 
-.person-compare {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-}
-
-.person-name {
-  display: block;
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.person-values {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.people-compare.inline {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,0.04);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.person-block {
-  border-radius: 12px;
-  padding: 8px 10px;
-  background: rgba(255,255,255,0.02);
-}
-
-.person-name {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.7;
-  margin-bottom: 4px;
-}
-
 .months.small span {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+  opacity: 0.5;
 }
+
+.months.small strong {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   PERSON VARIATION
+===================================================== */
 
 .variation.tiny {
   margin-top: 6px;
   font-size: 0.72rem;
 }
 
-.people-compare-inline {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.person-block {
-  border-radius: 12px;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.person-name {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.7;
-  margin-bottom: 4px;
-}
-
-.months.small span {
-  font-size: 0.72rem;
-}
-
-.variation.tiny {
-  margin-top: 6px;
-  font-size: 0.72rem;
+.variation.tiny .arrow {
+  font-size: 0.9rem;
 }
