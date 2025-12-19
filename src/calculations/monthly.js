@@ -84,7 +84,6 @@ export function calcularGastosPorPessoa(
   mesFiltroISO,
   { transactions = [], bills = [], loans = [], reservas = [], cards = [] }
 ) {
-
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
 
   const total = {
@@ -92,16 +91,29 @@ export function calcularGastosPorPessoa(
     Celso: { pessoais: 0, contas: 0, emprestimos: 0 }
   };
 
+  const itens = {
+    Amanda: [],
+    Celso: []
+  };
+
   // 🧾 TRANSAÇÕES
   transactions.forEach(t => {
     if (t.mes !== mesFmt) return;
     const v = safeNumber(t.valor);
 
-    if (t.quem === "Amanda") total.Amanda.pessoais += v;
-    else if (t.quem === "Celso") total.Celso.pessoais += v;
+    if (t.quem === "Amanda") {
+      total.Amanda.pessoais += v;
+      itens.Amanda.push({ tipo: "Transação", item: t });
+    }
+    else if (t.quem === "Celso") {
+      total.Celso.pessoais += v;
+      itens.Celso.push({ tipo: "Transação", item: t });
+    }
     else if (t.quem === "Ambos") {
       total.Amanda.pessoais += v;
       total.Celso.pessoais += v;
+      itens.Amanda.push({ tipo: "Transação", item: t });
+      itens.Celso.push({ tipo: "Transação", item: t });
     }
   });
 
@@ -113,12 +125,18 @@ export function calcularGastosPorPessoa(
 
     total.Amanda.contas += metade;
     total.Celso.contas += metade;
+
+    itens.Amanda.push({ tipo: "Conta da casa", item: b });
+    itens.Celso.push({ tipo: "Conta da casa", item: b });
   });
 
   // 💳 EMPRÉSTIMOS
   loans.forEach(l => {
     if (l.mes !== mesFmt) return;
-    total.Celso.emprestimos += safeNumber(l.valor);
+    const v = safeNumber(l.valor);
+
+    total.Celso.emprestimos += v;
+    itens.Celso.push({ tipo: "Empréstimo", item: l });
   });
 
   // 🔁 RESERVAS PROJETADAS
@@ -126,23 +144,36 @@ export function calcularGastosPorPessoa(
     .forEach(r => {
       const v = safeNumber(r.valor);
 
-      if (r.quem === "Amanda") total.Amanda.pessoais += v;
-      else if (r.quem === "Celso") total.Celso.pessoais += v;
+      if (r.quem === "Amanda") {
+        total.Amanda.pessoais += v;
+        itens.Amanda.push({ tipo: "Reserva", item: r });
+      }
+      else if (r.quem === "Celso") {
+        total.Celso.pessoais += v;
+        itens.Celso.push({ tipo: "Reserva", item: r });
+      }
       else if (r.quem === "Ambos") {
         total.Amanda.pessoais += v;
         total.Celso.pessoais += v;
+        itens.Amanda.push({ tipo: "Reserva", item: r });
+        itens.Celso.push({ tipo: "Reserva", item: r });
       }
     });
 
   const pessoa = nome => ({
     nome,
     ...total[nome],
-    total: total[nome].pessoais + total[nome].contas + total[nome].emprestimos
+    total:
+      total[nome].pessoais +
+      total[nome].contas +
+      total[nome].emprestimos,
+
+    // 🔑 NOVO (não interfere no cálculo)
+    itens: itens[nome]
   });
 
   return [pessoa("Amanda"), pessoa("Celso")];
 }
-
 
 // ========================
 // 💰 TOTAL MENSAL
@@ -305,5 +336,6 @@ export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
     celso: { total: C, media: C / dia, projecao: (C / dia) * diasMes }
   };
 }
+
 
 
