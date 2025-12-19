@@ -11,6 +11,37 @@ import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
 import MonthComparisonCard from "../ui/MonthComparisonCard";
 
+/* ======================================================
+   🔧 Agrupa itens do gasto por origem (somente UI)
+====================================================== */
+function agruparPorOrigem(itens = []) {
+  const mapa = {};
+
+  itens.forEach(i => {
+    const origem =
+      i.tipo === "Conta da casa"
+        ? "Conta da casa"
+        : i.item.origem || "Externo";
+
+    const valor =
+      i.item.valor ??
+      i.item.valor_real ??
+      i.item.valor_previsto ??
+      0;
+
+    if (!mapa[origem]) {
+      mapa[origem] = 0;
+    }
+
+    mapa[origem] += Number(valor);
+  });
+
+  return Object.entries(mapa).map(([origem, total]) => ({
+    origem,
+    total
+  }));
+}
+
 export default function Home({
   mensal,
   comparativoMensal,
@@ -28,8 +59,6 @@ export default function Home({
   const [amandaMensal, celsoMensal] = mensal?.porPessoa || [];
 
   const [showDebts, setShowDebts] = useState(false);
-
-  // 🔽 NOVO: toggles dos detalhes
   const [showAmandaDetails, setShowAmandaDetails] = useState(false);
   const [showCelsoDetails, setShowCelsoDetails] = useState(false);
 
@@ -83,18 +112,15 @@ export default function Home({
               </div>
             </div>
 
-            {/* 🔽 LISTA AMANDA */}
             {showAmandaDetails && amandaMensal?.itens?.length > 0 && (
-              <div className="home-card">
-                {amandaMensal.itens.map((i, idx) => (
+              <section className="home-card">
+                {agruparPorOrigem(amandaMensal.itens).map((i, idx) => (
                   <div key={idx} className="bill-row">
-                    <span>
-                      {i.tipo} — {i.item.descricao || i.item.conta || "-"}
-                    </span>
-                    <strong>{money(i.item.valor)}</strong>
+                    <span>{i.origem}</span>
+                    <strong>{money(i.total)}</strong>
                   </div>
                 ))}
-              </div>
+              </section>
             )}
 
             {/* ===================== CELSO ===================== */}
@@ -120,18 +146,15 @@ export default function Home({
               </div>
             </div>
 
-            {/* 🔽 LISTA CELSO */}
             {showCelsoDetails && celsoMensal?.itens?.length > 0 && (
-              <div className="home-card">
-                {celsoMensal.itens.map((i, idx) => (
+              <section className="home-card">
+                {agruparPorOrigem(celsoMensal.itens).map((i, idx) => (
                   <div key={idx} className="bill-row">
-                    <span>
-                      {i.tipo} — {i.item.descricao || i.item.conta || "-"}
-                    </span>
-                    <strong>{money(i.item.valor)}</strong>
+                    <span>{i.origem}</span>
+                    <strong>{money(i.total)}</strong>
                   </div>
                 ))}
-              </div>
+              </section>
             )}
 
           </div>
@@ -156,7 +179,12 @@ export default function Home({
         <section className="home-card">
           <AnnualSavingsGoal
             salarios={salarios}
-            dadosMensais={{ transactions: [], reservas: [], bills: [], loans }}
+            dadosMensais={{
+              transactions: [],
+              reservas: [],
+              bills: [],
+              loans
+            }}
             savingsGoal={savingsGoal}
             setSavingsGoal={setSavingsGoal}
             mes={mes}
