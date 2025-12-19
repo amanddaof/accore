@@ -1,59 +1,34 @@
 /* =====================================================
-   MONTH COMPARISON — BAFÔNICO
+   MONTH COMPARISON — CLEAN PREMIUM
 ===================================================== */
 
 .month-compare-card {
-  position: relative;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.06), transparent 40%),
-    radial-gradient(140% 140% at 0% 0%, #1e293b 0%, #020617 55%);
-  border-radius: 22px;
-  padding: 26px 28px;
+    radial-gradient(120% 120% at 0% 0%, #1e293b 0%, #020617 60%);
+  border-radius: 18px;
+  padding: 22px 26px;
   color: #f8fafc;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    0 30px 60px rgba(0,0,0,0.6);
-  overflow: hidden;
-}
-
-.month-compare-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.06),
-    transparent
-  );
-  opacity: 0.6;
-  pointer-events: none;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45);
 }
 
 
-/* =====================================================
-   TITLE
-===================================================== */
+/* TITLE */
 
 .month-compare-card .title {
   font-size: 0.7rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   opacity: 0.6;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 
-/* =====================================================
-   TOTAL — HEADLINE
-===================================================== */
+/* TOTAL */
 
 .month-compare-card .months {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 20px;
 }
 
 .month-compare-card .months span {
@@ -62,119 +37,87 @@
 }
 
 .month-compare-card .months strong {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 
-/* =====================================================
-   VARIATION — ALERT STYLE
-===================================================== */
+/* VARIATION INLINE */
 
 .variation {
-  margin-top: 14px;
-  display: inline-flex;
+  margin-top: 8px;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(6px);
-}
-
-.variation .arrow {
-  font-size: 1.1rem;
+  gap: 6px;
+  font-size: 0.9rem;
 }
 
 .variation.up {
   color: #ef4444;
-  box-shadow: inset 0 0 0 1px rgba(239,68,68,0.25);
 }
 
 .variation.down {
   color: #22c55e;
-  box-shadow: inset 0 0 0 1px rgba(34,197,94,0.25);
 }
 
 .variation.neutral {
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.55);
+}
+
+.variation .arrow {
+  font-size: 1rem;
 }
 
 
-/* =====================================================
-   DIVIDER
-===================================================== */
+/* DIVIDER */
 
 .people-compare-inline {
-  margin-top: 26px;
-  padding-top: 22px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
 
 
-/* =====================================================
-   PERSON BLOCK
-===================================================== */
+/* PERSON BLOCK — MAIS INTEGRADO */
 
 .person-block {
-  position: relative;
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.02)
-  );
-  border-radius: 16px;
-  padding: 14px 16px;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.06),
-    0 10px 20px rgba(0,0,0,0.35);
+  padding: 10px 12px;
 }
 
 .person-name {
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  opacity: 0.65;
-  margin-bottom: 8px;
+  opacity: 0.55;
+  margin-bottom: 6px;
 }
 
 
-/* =====================================================
-   PERSON VALUES
-===================================================== */
+/* PERSON VALUES */
 
 .months.small {
   display: flex;
   justify-content: space-between;
-  gap: 14px;
 }
 
 .months.small span {
-  font-size: 0.7rem;
-  opacity: 0.55;
+  font-size: 0.68rem;
+  opacity: 0.5;
 }
 
 .months.small strong {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
 
-/* =====================================================
-   PERSON VARIATION
-===================================================== */
+/* PERSON VARIATION */
 
 .variation.tiny {
-  margin-top: 8px;
+  margin-top: 4px;
   font-size: 0.75rem;
-  padding: 6px 12px;
-}
-
-.variation.tiny .arrow {
-  font-size: 0.9rem;
 }
