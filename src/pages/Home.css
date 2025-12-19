@@ -600,4 +600,34 @@
   letter-spacing: 0.02em;
 }
 
+.compare-tabs {
+  display: inline-flex;
+  gap: 0;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
 
+.compare-tabs button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.compare-tabs button:hover {
+  color: #fff;
+}
+
+.compare-tabs button.active {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
