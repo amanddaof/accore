@@ -141,9 +141,10 @@
 /* === SETA COM COR APENAS NO INDIVIDUAL === */
 
 .variation.tiny.up .arrow {
-  color: #ef4444; /* gastou mais */
+  color: #ef4444;
 }
 
 .variation.tiny.down .arrow {
-  color: #22c55e; /* gastou menos */
+  color: #22c55e;
 }
+
