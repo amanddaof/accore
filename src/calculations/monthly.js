@@ -230,6 +230,13 @@ export function calcularProjecaoMensal(mesFiltroISO, dados) {
 // 🔮 PROJEÇÃO POR PESSOA (ANUAL)
 // ========================
 export function calcularProjecaoPorPessoaAnual(mesFiltroISO, dados) {
+	
+	if (!dados) {
+    return {
+      amanda: { total: 0, projecao: 0 },
+      celso: { total: 0, projecao: 0 }
+    };
+  }
 
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
 
