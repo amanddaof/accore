@@ -17,27 +17,23 @@ function agruparPorOrigem(itens = []) {
   itens.forEach(i => {
     let origem;
     let valor;
-    
+
     if (i.tipo === "Conta da casa") {
       origem = "Conta da casa";
-    
+
       const real = Number(i.item.valor_real || 0);
       const previsto = Number(i.item.valor_previsto || 0);
       valor = real > 0 ? real : previsto;
-    
-      // metade para cada pessoa
+
       valor = valor / 2;
-    
     } else if (i.tipo === "Empréstimo") {
       origem = "Empréstimos";
       valor = Number(i.item.valor || 0);
-    
     } else {
       origem = i.item.origem || "Externo";
       valor = Number(i.item.valor || 0);
     }
 
-    // 🔑 contas da casa entram pela metade no gasto
     if (i.tipo === "Conta da casa") {
       valor = Number(valor) / 2;
     }
@@ -53,7 +49,8 @@ function agruparPorOrigem(itens = []) {
 
 export default function Home({
   mensal,
-  comparativoMensal,
+  comparativoMensal,   // mantém compatibilidade
+  comparativos,        // 🔑 NOVO (mensal / media3 / media6 / media12)
   dividas,
   salarios,
   loans,
@@ -73,10 +70,11 @@ export default function Home({
 
   const [showDebts, setShowDebts] = useState(false);
 
-  // 🔽 novo: quem está com detalhes abertos
   const [detalhePessoa, setDetalhePessoa] = useState(null);
-
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
+
+  /* ===================== NOVO (isolado) ===================== */
+  const [periodoComparativo, setPeriodoComparativo] = useState("mensal");
 
   function togglePessoa(nome) {
     setDetalhePessoa(prev => (prev === nome ? null : nome));
@@ -88,13 +86,15 @@ export default function Home({
       : detalhePessoa === "Celso"
       ? agruparPorOrigem(celsoMensal?.itens || [])
       : [];
-	
-	  const comparativoTotal =
-    comparativoMensal?.total || comparativoMensal || null;
 
-  const comparativoPorPessoa =
-    comparativoMensal?.porPessoa || null;
+  /* ===================== FONTE DO COMPARATIVO ===================== */
+  const comparativoAtivo =
+    comparativos?.[periodoComparativo] ||
+    comparativoMensal ||
+    null;
 
+  const comparativoTotal = comparativoAtivo?.total || null;
+  const comparativoPorPessoa = comparativoAtivo?.porPessoa || null;
 
   return (
     <div className="home-shell two-columns">
@@ -167,7 +167,6 @@ export default function Home({
             </div>
           </div>
 
-          {/* 🔽 DETALHAMENTO ABAIXO DOS DOIS CARDS */}
           {detalhePessoa && itensDetalhe.length > 0 && (
             <div className="home-card person-details">
               <header className="section-title">
@@ -184,13 +183,15 @@ export default function Home({
           )}
         </section>
 
-                <section className="home-card">
+        {/* ===================== COMPARATIVO (única área alterada) ===================== */}
+        <section className="home-card">
           <MonthComparisonCard
             data={comparativoTotal}
             porPessoa={comparativoPorPessoa}
+            periodo={periodoComparativo}
+            onChangePeriodo={setPeriodoComparativo}
           />
         </section>
-
 
         <section className="home-card">
           <header className="section-title">Evolução anual</header>
@@ -204,7 +205,6 @@ export default function Home({
       {/* ===================== COLUNA DIREITA ===================== */}
       <div className="home-column right">
 
-        {/* 🔒 CARD DE CONTAS DA CASA — RESTAURADO */}
         <section className="home-card">
           <header className="section-title">Contas da casa</header>
 
@@ -268,5 +268,3 @@ export default function Home({
     </div>
   );
 }
-
-
