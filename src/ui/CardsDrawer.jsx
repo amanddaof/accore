@@ -12,6 +12,13 @@ const nomesMeses = [
   "Jul", "Ago", "Set", "Out", "Nov", "Dez"
 ];
 
+function resolverQuemPagaPorCartao(origem) {
+  if (!origem) return null;
+  if (origem.includes("Amanda")) return "Amanda";
+  if (origem.includes("Celso")) return "Celso";
+  return null;
+}
+
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -42,7 +49,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     status: "Pendente",
     category_id: "",
     origem: "",
-    mes: "" // 🔑 FATURA INFORMADA
+    mes: ""
   });
 
   useEffect(() => {
@@ -67,22 +74,18 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     async function loadData() {
       setLoading(true);
 
-      const { data: dataMes, error: errMes } = await supabase
+      const { data: dataMes } = await supabase
         .from("transactions")
         .select("*, categories(name)")
         .eq("origem", activeCard.nome)
         .eq("mes", mesFiltro)
         .order("id", { ascending: false });
 
-      if (errMes) console.error(errMes);
-
-      const { data: dataPend, error: errPend } = await supabase
+      const { data: dataPend } = await supabase
         .from("transactions")
         .select("*")
         .eq("origem", activeCard.nome)
         .eq("status", "Pendente");
-
-      if (errPend) console.error(errPend);
 
       setTransactions(dataMes || []);
       setPendentesGlobais(dataPend || []);
@@ -90,7 +93,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
       setForm(f => ({
         ...f,
         origem: activeCard.nome,
-        mes: mesFiltro // 👈 pré-preenche a fatura atual
+        mes: mesFiltro
       }));
 
       setLoading(false);
@@ -122,6 +125,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
       return;
     }
 
+    const quemPagaCartao = resolverQuemPagaPorCartao(form.origem);
     const inserts = [];
 
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
@@ -133,8 +137,12 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
         valor: Number(form.valor),
         data_real: dataParcela,
         parcelas: `${numeroParcela}/${totalParcelas}`,
-        mes: form.mes, // 🔑 SEMPRE MANUAL
+        mes: form.mes,
         quem: form.quem,
+
+        // 🔑 cartão define quem paga automaticamente
+        quem_paga: quemPagaCartao,
+
         status: form.status,
         origem: form.origem,
         category_id: form.category_id || null
@@ -166,32 +174,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     setShowForm(false);
   }
 
-  function irProProximo() {
-    setActiveIndex(i => (i < cards.length - 1 ? i + 1 : i));
-  }
-
-  function irProAnterior() {
-    setActiveIndex(i => (i > 0 ? i - 1 : i));
-  }
-
-  function mesAnterior() {
-    const [m, y] = mesFiltro.split("/");
-    const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
-    base.setMonth(base.getMonth() - 1);
-    setMesFiltro(
-      `${nomesMeses[base.getMonth()]}/${String(base.getFullYear()).slice(2)}`
-    );
-  }
-
-  function mesProximo() {
-    const [m, y] = mesFiltro.split("/");
-    const base = new Date(2000 + Number(y), nomesMeses.indexOf(m));
-    base.setMonth(base.getMonth() + 1);
-    setMesFiltro(
-      `${nomesMeses[base.getMonth()]}/${String(base.getFullYear()).slice(2)}`
-    );
-  }
-
   if (!open) return null;
 
   const prevIndex = activeIndex > 0 ? activeIndex - 1 : null;
@@ -206,7 +188,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
         </div>
 
         <div className="drawer-content">
-
           <div className="cards-stack-fm">
             {prevIndex !== null && (
               <motion.div className="card-ghost left">
@@ -222,8 +203,8 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
                 onDragEnd={(_, info) => {
-                  if (info.offset.x < -80) irProProximo();
-                  else if (info.offset.x > 80) irProAnterior();
+                  if (info.offset.x < -80) setActiveIndex(i => i + 1);
+                  else if (info.offset.x > 80) setActiveIndex(i => i - 1);
                 }}
               >
                 <CreditCardFull
@@ -242,9 +223,9 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
           </div>
 
           <div className="drawer-filter">
-            <button onClick={mesAnterior}>◀</button>
+            <button onClick={() => setActiveIndex(i => i)}>◀</button>
             <strong>{mesFiltro}</strong>
-            <button onClick={mesProximo}>▶</button>
+            <button onClick={() => setActiveIndex(i => i)}>▶</button>
           </div>
 
           <div className="drawer-total">
@@ -351,9 +332,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
           )}
 
           {loading ? (
-            <div className="card-transactions empty">
-              Carregando...
-            </div>
+            <div className="card-transactions empty">Carregando...</div>
           ) : (
             <CardTransactions transactions={transactions} />
           )}
