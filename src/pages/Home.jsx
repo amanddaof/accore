@@ -88,6 +88,13 @@ export default function Home({
       : detalhePessoa === "Celso"
       ? agruparPorOrigem(celsoMensal?.itens || [])
       : [];
+	
+	  const comparativoTotal =
+    comparativoMensal?.total || comparativoMensal || null;
+
+  const comparativoPorPessoa =
+    comparativoMensal?.porPessoa || null;
+
 
   return (
     <div className="home-shell two-columns">
@@ -177,9 +184,13 @@ export default function Home({
           )}
         </section>
 
-        <section className="home-card">
-          <MonthComparisonCard data={comparativoMensal} />
+                <section className="home-card">
+          <MonthComparisonCard
+            data={comparativoTotal}
+            porPessoa={comparativoPorPessoa}
+          />
         </section>
+
 
         <section className="home-card">
           <header className="section-title">Evolução anual</header>
@@ -257,6 +268,5 @@ export default function Home({
     </div>
   );
 }
-
 
 
