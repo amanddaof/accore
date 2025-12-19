@@ -155,13 +155,13 @@ export default function Home({
 
           {/* 🔽 DETALHAMENTO ABAIXO DOS DOIS CARDS */}
           {detalhePessoa && itensDetalhe.length > 0 && (
-            <div className="home-card">
+            <div className="home-card person-details">
               <header className="section-title">
                 Detalhamento — {detalhePessoa}
               </header>
 
               {itensDetalhe.map((i, idx) => (
-                <div key={idx} className="bill-row">
+                <div key={idx} className="person-detail-row">
                   <span>{i.origem}</span>
                   <strong>{money(i.total)}</strong>
                 </div>
@@ -250,4 +250,5 @@ export default function Home({
     </div>
   );
 }
+
 
