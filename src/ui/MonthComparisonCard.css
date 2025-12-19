@@ -77,3 +77,67 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.people-compare.inline {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.person-block {
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.02);
+}
+
+.person-name {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.months.small span {
+  font-size: 0.72rem;
+}
+
+.variation.tiny {
+  margin-top: 6px;
+  font-size: 0.72rem;
+}
+
+.people-compare-inline {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.person-block {
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.person-name {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.months.small span {
+  font-size: 0.72rem;
+}
+
+.variation.tiny {
+  margin-top: 6px;
+  font-size: 0.72rem;
+}
