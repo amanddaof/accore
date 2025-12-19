@@ -1,26 +1,27 @@
 import { isoParaMesAbrev } from "../core/dates";
 import { safeNumber } from "../core/helpers";
 
-
 // ========================
 // 💸 DÍVIDAS ENTRE PESSOAS
 // ========================
 export function calcularDividasMes(
   mesFiltroISO,
-  { transactions = [], bills = [], loans = [], reservas = [] }
+  { transactions = [], bills = [], loans = [] }
 ) {
-
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
 
   let deveAmanda = 0;
   let deveCelso = 0;
   const detalhes = [];
 
-  const todos = [...transactions, ...reservas];
-
-  todos.forEach(item => {
-    if (!item.mes || item.mes !== mesFmt) return;
+  // ========================
+  // 🧾 TRANSAÇÕES (somente elas)
+  // ========================
+  transactions.forEach(item => {
+    if (!item.mes) return;
+    if (item.mes !== mesFmt) return;
     if (!item.quem || !item.quem_paga) return;
+    if (item.quem === item.quem_paga) return;
 
     const valor = safeNumber(item.valor);
     let devedor = null;
@@ -28,22 +29,26 @@ export function calcularDividasMes(
 
     if (item.quem === "Amanda" && item.quem_paga === "Celso") {
       deveAmanda += valor;
-      devedor = "Amanda"; credor = "Celso";
+      devedor = "Amanda";
+      credor = "Celso";
     }
 
     if (item.quem === "Celso" && item.quem_paga === "Amanda") {
       deveCelso += valor;
-      devedor = "Celso"; credor = "Amanda";
+      devedor = "Celso";
+      credor = "Amanda";
     }
 
     if (item.quem === "Ambos") {
       if (item.quem_paga === "Amanda") {
         deveCelso += valor;
-        devedor = "Celso"; credor = "Amanda";
+        devedor = "Celso";
+        credor = "Amanda";
       }
       if (item.quem_paga === "Celso") {
         deveAmanda += valor;
-        devedor = "Amanda"; credor = "Celso";
+        devedor = "Amanda";
+        credor = "Celso";
       }
     }
 
@@ -59,10 +64,20 @@ export function calcularDividasMes(
     }
   });
 
-  // contas da casa — Amanda reembolsa metade
+  // ========================
+  // 🏠 CONTAS DA CASA
+  // Amanda reembolsa metade
+  // ========================
   bills.forEach(b => {
     if (b.mes !== mesFmt) return;
-    const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto || 0);
+
+    const valor =
+      safeNumber(b.valor_real) ||
+      safeNumber(b.valor_previsto) ||
+      0;
+
+    if (!valor) return;
+
     const metade = valor / 2;
     deveAmanda += metade;
 
@@ -76,30 +91,54 @@ export function calcularDividasMes(
     });
   });
 
-  // empréstimos Nubank — Celso → Amanda
+  // ========================
+  // 💳 EMPRÉSTIMOS NUBANK
+  // Celso → Amanda
+  // ========================
   loans.forEach(l => {
-    if (l.mes === mesFmt && l.descricao?.toLowerCase().includes("nubank")) {
-      const valor = safeNumber(l.valor);
-      deveCelso += valor;
+    if (l.mes !== mesFmt) return;
+    if (!l.descricao?.toLowerCase().includes("nubank")) return;
 
-      detalhes.push({
-        tipo: "Empréstimo",
-        origem: "Nubank",
-        devedor: "Celso",
-        credor: "Amanda",
-        valor,
-        descricao: l.descricao || ""
-      });
-    }
+    const valor = safeNumber(l.valor);
+    if (!valor) return;
+
+    deveCelso += valor;
+
+    detalhes.push({
+      tipo: "Empréstimo",
+      origem: "Nubank",
+      devedor: "Celso",
+      credor: "Amanda",
+      valor,
+      descricao: l.descricao || ""
+    });
   });
 
+  // ========================
+  // 🔢 RESULTADO FINAL
+  // ========================
   if (deveAmanda > deveCelso) {
-    return { devedor: "Amanda", credor: "Celso", valor: deveAmanda - deveCelso, detalhes };
+    return {
+      devedor: "Amanda",
+      credor: "Celso",
+      valor: deveAmanda - deveCelso,
+      detalhes
+    };
   }
 
   if (deveCelso > deveAmanda) {
-    return { devedor: "Celso", credor: "Amanda", valor: deveCelso - deveAmanda, detalhes };
+    return {
+      devedor: "Celso",
+      credor: "Amanda",
+      valor: deveCelso - deveAmanda,
+      detalhes
+    };
   }
 
-  return { devedor: null, credor: null, valor: 0, detalhes };
+  return {
+    devedor: null,
+    credor: null,
+    valor: 0,
+    detalhes
+  };
 }
