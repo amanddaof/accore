@@ -18,9 +18,7 @@ function formatarMes(label) {
 
 export default function MonthComparisonCard({
   data,
-  porPessoa,
-  periodo = "mensal",
-  onChangePeriodo
+  porPessoa
 }) {
   if (!data) return null;
 
@@ -29,33 +27,9 @@ export default function MonthComparisonCard({
   const subiu = variacao?.valor > 0;
   const igual = variacao?.valor === 0;
 
-  const titulo =
-    periodo === "mensal"
-      ? "Comparativo mensal"
-      : `Comparativo vs média ${periodo.replace("media", "")} meses`;
-
   return (
     <section className="month-compare-card">
-      <header className="title">{titulo}</header>
-
-      {/* ===================== TABS ===================== */}
-      <div className="compare-tabs">
-        {[
-          { key: "mensal", label: "Mês" },
-          { key: "media3", label: "3m" },
-          { key: "media6", label: "6m" },
-          { key: "media12", label: "12m" }
-        ].map(t => (
-          <button
-            key={t.key}
-            className={periodo === t.key ? "active" : ""}
-            onClick={() => onChangePeriodo?.(t.key)}
-            type="button"
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <header className="title">Comparativo mensal</header>
 
       {/* ===================== TOTAL ===================== */}
       <div className="months">
@@ -65,27 +39,22 @@ export default function MonthComparisonCard({
         </div>
 
         <div>
-          <span>
-            {periodo === "mensal"
-              ? formatarMes(mesAnterior?.label)
-              : "Média"}
-          </span>
-          <strong>{money(mesAnterior?.total || mesAnterior?.media || 0)}</strong>
+          <span>{formatarMes(mesAnterior?.label)}</span>
+          <strong>{money(mesAnterior?.total || 0)}</strong>
         </div>
       </div>
 
       {/* ===================== VARIAÇÃO TOTAL ===================== */}
       {igual ? (
         <div className="variation neutral">
-          Sem variação em relação ao período anterior
+          Sem variação em relação ao mês passado
         </div>
       ) : (
         <div className={`variation ${subiu ? "up" : "down"}`}>
           <span className="arrow">{subiu ? "▲" : "▼"}</span>
           <strong>{money(Math.abs(variacao.valor))}</strong>
           <span className="text">
-            {subiu ? "a mais" : "a menos"} que{" "}
-            {periodo === "mensal" ? "no mês passado" : "a média"}
+            {subiu ? "a mais" : "a menos"} que no mês passado
           </span>
         </div>
       )}
@@ -112,10 +81,8 @@ export default function MonthComparisonCard({
                   </div>
 
                   <div>
-                    <span>
-                      {periodo === "mensal" ? "Anterior" : "Média"}
-                    </span>
-                    <strong>{money(info.anterior || info.media || 0)}</strong>
+                    <span>{formatarMes(mesAnterior?.label)}</span>
+                    <strong>{money(info.anterior || 0)}</strong>
                   </div>
                 </div>
 
