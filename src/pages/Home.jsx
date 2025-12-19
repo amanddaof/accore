@@ -49,8 +49,7 @@ function agruparPorOrigem(itens = []) {
 
 export default function Home({
   mensal,
-  comparativoMensal,   // mantém compatibilidade
-  comparativos,        // 🔑 NOVO (mensal / media3 / media6 / media12)
+  comparativoMensal,   // 🔑 único comparativo usado
   dividas,
   salarios,
   loans,
@@ -73,9 +72,6 @@ export default function Home({
   const [detalhePessoa, setDetalhePessoa] = useState(null);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  /* ===================== NOVO (isolado) ===================== */
-  const [periodoComparativo, setPeriodoComparativo] = useState("mensal");
-
   function togglePessoa(nome) {
     setDetalhePessoa(prev => (prev === nome ? null : nome));
   }
@@ -86,15 +82,6 @@ export default function Home({
       : detalhePessoa === "Celso"
       ? agruparPorOrigem(celsoMensal?.itens || [])
       : [];
-
-  /* ===================== FONTE DO COMPARATIVO ===================== */
-  const comparativoAtivo =
-    comparativos?.[periodoComparativo] ||
-    comparativoMensal ||
-    null;
-
-  const comparativoTotal = comparativoAtivo?.total || null;
-  const comparativoPorPessoa = comparativoAtivo?.porPessoa || null;
 
   return (
     <div className="home-shell two-columns">
@@ -183,13 +170,11 @@ export default function Home({
           )}
         </section>
 
-        {/* ===================== COMPARATIVO (única área alterada) ===================== */}
+        {/* ===================== COMPARATIVO MENSAL ===================== */}
         <section className="home-card">
           <MonthComparisonCard
-            data={comparativoTotal}
-            porPessoa={comparativoPorPessoa}
-            periodo={periodoComparativo}
-            onChangePeriodo={setPeriodoComparativo}
+            data={comparativoMensal?.total}
+            porPessoa={comparativoMensal?.porPessoa}
           />
         </section>
 
