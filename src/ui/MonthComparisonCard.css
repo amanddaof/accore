@@ -148,14 +148,14 @@
 
 
 /* ===== SETA COLORIDA NO INDIVIDUAL ===== */
-.variation.tiny.up .arrow {
+.variation.tiny.up .arrow,teste {
   color: #ef4444;
 }
 
-.variation.tiny.down .arrow {
+.variation.tiny.down .arrow.teste {
   color: #22c55e;
 }
 
-.variation.tiny .arrow {
+.variation.tiny .arrow.teste {
   opacity: 0.9;
 }
