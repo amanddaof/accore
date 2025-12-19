@@ -15,20 +15,27 @@ function agruparPorOrigem(itens = []) {
   const mapa = {};
 
   itens.forEach(i => {
-    const origem =
-      i.tipo === "Conta da casa"
-        ? "Conta da casa"
-        : i.item.origem || "Externo";
-
+    let origem;
     let valor;
-
-if (i.tipo === "Conta da casa") {
-  const real = Number(i.item.valor_real || 0);
-  const previsto = Number(i.item.valor_previsto || 0);
-  valor = real > 0 ? real : previsto;
-} else {
-  valor = Number(i.item.valor || 0);
-}
+    
+    if (i.tipo === "Conta da casa") {
+      origem = "Conta da casa";
+    
+      const real = Number(i.item.valor_real || 0);
+      const previsto = Number(i.item.valor_previsto || 0);
+      valor = real > 0 ? real : previsto;
+    
+      // metade para cada pessoa
+      valor = valor / 2;
+    
+    } else if (i.tipo === "Empréstimo") {
+      origem = "Empréstimos";
+      valor = Number(i.item.valor || 0);
+    
+    } else {
+      origem = i.item.origem || "Externo";
+      valor = Number(i.item.valor || 0);
+    }
 
     // 🔑 contas da casa entram pela metade no gasto
     if (i.tipo === "Conta da casa") {
@@ -250,5 +257,6 @@ export default function Home({
     </div>
   );
 }
+
 
 
