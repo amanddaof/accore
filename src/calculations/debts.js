@@ -6,7 +6,7 @@ import { safeNumber } from "../core/helpers";
 // ========================
 export function calcularDividasMes(
   mesFiltroISO,
-  { transactions = [], bills = [], loans = [] }
+  { transactions = [], bills = [], loans = [], reservas = [] }
 ) {
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
 
@@ -14,21 +14,12 @@ export function calcularDividasMes(
   let deveCelso = 0;
   const detalhes = [];
 
-  // ========================
-  // 🧾 TRANSAÇÕES (somente elas)
-  // ========================
-  transactions.forEach(item => {
-    console.log(
-  "DEBUG QUEM",
-  JSON.stringify(item.quem),
-  JSON.stringify(item.quem_paga)
-);
+  // Transações + Reservas
+  const todos = [...transactions, ...reservas];
 
-
-    if (!item.mes) return;
-    if (item.mes !== mesFmt) return;
+  todos.forEach(item => {
+    if (!item.mes || item.mes !== mesFmt) return;
     if (!item.quem || !item.quem_paga) return;
-    if (item.quem === item.quem_paga) return;
 
     const valor = safeNumber(item.valor);
     let devedor = null;
@@ -52,6 +43,7 @@ export function calcularDividasMes(
         devedor = "Celso";
         credor = "Amanda";
       }
+
       if (item.quem_paga === "Celso") {
         deveAmanda += valor;
         devedor = "Amanda";
@@ -80,10 +72,7 @@ export function calcularDividasMes(
 
     const valor =
       safeNumber(b.valor_real) ||
-      safeNumber(b.valor_previsto) ||
-      0;
-
-    if (!valor) return;
+      safeNumber(b.valor_previsto || 0);
 
     const metade = valor / 2;
     deveAmanda += metade;
@@ -103,22 +92,22 @@ export function calcularDividasMes(
   // Celso → Amanda
   // ========================
   loans.forEach(l => {
-    if (l.mes !== mesFmt) return;
-    if (!l.descricao?.toLowerCase().includes("nubank")) return;
+    if (
+      l.mes === mesFmt &&
+      l.descricao?.toLowerCase().includes("nubank")
+    ) {
+      const valor = safeNumber(l.valor);
+      deveCelso += valor;
 
-    const valor = safeNumber(l.valor);
-    if (!valor) return;
-
-    deveCelso += valor;
-
-    detalhes.push({
-      tipo: "Empréstimo",
-      origem: "Nubank",
-      devedor: "Celso",
-      credor: "Amanda",
-      valor,
-      descricao: l.descricao || ""
-    });
+      detalhes.push({
+        tipo: "Empréstimo",
+        origem: "Nubank",
+        devedor: "Celso",
+        credor: "Amanda",
+        valor,
+        descricao: l.descricao || ""
+      });
+    }
   });
 
   // ========================
@@ -149,5 +138,3 @@ export function calcularDividasMes(
     detalhes
   };
 }
-
-
