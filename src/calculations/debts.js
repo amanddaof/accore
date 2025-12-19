@@ -18,6 +18,14 @@ export function calcularDividasMes(
   // 🧾 TRANSAÇÕES (somente elas)
   // ========================
   transactions.forEach(item => {
+    console.log(
+  "DEBUG DIVIDA",
+  "item.mes =", item.mes,
+  "| mesFmt =", mesFmt,
+  "| igual?", item.mes === mesFmt,
+  "| descricao =", item.descricao
+);
+
     if (!item.mes) return;
     if (item.mes !== mesFmt) return;
     if (!item.quem || !item.quem_paga) return;
@@ -142,3 +150,4 @@ export function calcularDividasMes(
     detalhes
   };
 }
+
