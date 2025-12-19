@@ -30,7 +30,7 @@ export default function MonthComparisonCard({ data, porPessoa }) {
           Sem variação em relação ao mês passado
         </div>
       ) : (
-        <div className="variation">
+        <div className={`variation ${subiu ? "up" : "down"}`}>
           <span className="arrow">{subiu ? "▲" : "▼"}</span>
           <strong>{money(Math.abs(variacao.valor))}</strong>
           <span className="text">
