@@ -82,9 +82,9 @@ export default function MonthComparisonCard({ data, porPessoa }) {
                   </div>
                 ) : (
                   <div className="variation tiny">
-                    <span className="arrow">{sub ? "▲" : "▼"}</span>
+                    <span className="arrow teste">{sub ? "▲" : "▼"}</span>
                     <strong>{money(Math.abs(info.valor))}</strong>
-                    <span className="text">
+                    <span className="text teste">
                       {sub ? "a mais" : "a menos"}
                     </span>
                   </div>
