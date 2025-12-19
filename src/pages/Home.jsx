@@ -11,9 +11,6 @@ import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
 import MonthComparisonCard from "../ui/MonthComparisonCard";
 
-/* ===============================
-   🔧 AUXILIAR — AGRUPAR POR ORIGEM
-================================ */
 function agruparPorOrigem(itens = []) {
   const mapa = {};
 
@@ -29,16 +26,12 @@ function agruparPorOrigem(itens = []) {
       i.item.valor_previsto ??
       0;
 
-    // 🔑 Conta da casa → metade por pessoa (apenas visual)
-    if (origem === "Conta da casa") {
-      valor = valor / 2;
+    // 🔑 contas da casa entram pela metade no gasto
+    if (i.tipo === "Conta da casa") {
+      valor = Number(valor) / 2;
     }
 
-    if (!mapa[origem]) {
-      mapa[origem] = 0;
-    }
-
-    mapa[origem] += Number(valor);
+    mapa[origem] = (mapa[origem] || 0) + Number(valor);
   });
 
   return Object.entries(mapa).map(([origem, total]) => ({
@@ -63,11 +56,27 @@ export default function Home({
 
   const [amandaMensal, celsoMensal] = mensal?.porPessoa || [];
 
+  const contasAmanda = amandaMensal?.contas || 0;
+  const contasCelso = celsoMensal?.contas || 0;
+  const totalContasCasa = contasAmanda + contasCelso;
+
   const [showDebts, setShowDebts] = useState(false);
-  const [showAmandaDetails, setShowAmandaDetails] = useState(false);
-  const [showCelsoDetails, setShowCelsoDetails] = useState(false);
+
+  // 🔽 novo: quem está com detalhes abertos
+  const [detalhePessoa, setDetalhePessoa] = useState(null);
 
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
+
+  function togglePessoa(nome) {
+    setDetalhePessoa(prev => (prev === nome ? null : nome));
+  }
+
+  const itensDetalhe =
+    detalhePessoa === "Amanda"
+      ? agruparPorOrigem(amandaMensal?.itens || [])
+      : detalhePessoa === "Celso"
+      ? agruparPorOrigem(celsoMensal?.itens || [])
+      : [];
 
   return (
     <div className="home-shell two-columns">
@@ -92,72 +101,68 @@ export default function Home({
         <section className="home-card people-section">
           <header className="section-title">Resumo por pessoa</header>
 
-          {/* ===================== AMANDA ===================== */}
-          <div
-            className="person-box amanda"
-            onClick={() => setShowAmandaDetails(v => !v)}
-            style={{ cursor: "pointer" }}
-          >
-            <h3>Amanda</h3>
+          <div className="people-grid">
+            {/* AMANDA */}
+            <div
+              className="person-box amanda"
+              onClick={() => togglePessoa("Amanda")}
+              style={{ cursor: "pointer" }}
+            >
+              <h3>Amanda</h3>
 
-            <div className="person-row">
-              <span>Salário</span>
-              <strong>{money(amanda.salario)}</strong>
+              <div className="person-row">
+                <span>Salário</span>
+                <strong>{money(amanda.salario)}</strong>
+              </div>
+
+              <div className="person-row">
+                <span>Gasto</span>
+                <strong>{money(amanda.gasto)}</strong>
+              </div>
+
+              <div className={`person-result ${amanda.sobra < 0 ? "neg" : "ok"}`}>
+                {amanda.sobra < 0 ? "Déficit" : "Sobra"}: {money(amanda.sobra)}
+              </div>
             </div>
 
-            <div className="person-row">
-              <span>Gasto</span>
-              <strong>{money(amanda.gasto)}</strong>
-            </div>
+            {/* CELSO */}
+            <div
+              className="person-box celso"
+              onClick={() => togglePessoa("Celso")}
+              style={{ cursor: "pointer" }}
+            >
+              <h3>Celso</h3>
 
-            <div className={`person-result ${amanda.sobra < 0 ? "neg" : "ok"}`}>
-              {amanda.sobra < 0 ? "Déficit" : "Sobra"}: {money(amanda.sobra)}
+              <div className="person-row">
+                <span>Salário</span>
+                <strong>{money(celso.salario)}</strong>
+              </div>
+
+              <div className="person-row">
+                <span>Gasto</span>
+                <strong>{money(celso.gasto)}</strong>
+              </div>
+
+              <div className={`person-result ${celso.sobra < 0 ? "neg" : "ok"}`}>
+                {celso.sobra < 0 ? "Déficit" : "Sobra"}: {money(celso.sobra)}
+              </div>
             </div>
           </div>
 
-          {showAmandaDetails && amandaMensal?.itens?.length > 0 && (
-            <section className="home-card">
-              {agruparPorOrigem(amandaMensal.itens).map((i, idx) => (
+          {/* 🔽 DETALHAMENTO ABAIXO DOS DOIS CARDS */}
+          {detalhePessoa && itensDetalhe.length > 0 && (
+            <div className="home-card">
+              <header className="section-title">
+                Detalhamento — {detalhePessoa}
+              </header>
+
+              {itensDetalhe.map((i, idx) => (
                 <div key={idx} className="bill-row">
                   <span>{i.origem}</span>
                   <strong>{money(i.total)}</strong>
                 </div>
               ))}
-            </section>
-          )}
-
-          {/* ===================== CELSO ===================== */}
-          <div
-            className="person-box celso"
-            onClick={() => setShowCelsoDetails(v => !v)}
-            style={{ cursor: "pointer" }}
-          >
-            <h3>Celso</h3>
-
-            <div className="person-row">
-              <span>Salário</span>
-              <strong>{money(celso.salario)}</strong>
             </div>
-
-            <div className="person-row">
-              <span>Gasto</span>
-              <strong>{money(celso.gasto)}</strong>
-            </div>
-
-            <div className={`person-result ${celso.sobra < 0 ? "neg" : "ok"}`}>
-              {celso.sobra < 0 ? "Déficit" : "Sobra"}: {money(celso.sobra)}
-            </div>
-          </div>
-
-          {showCelsoDetails && celsoMensal?.itens?.length > 0 && (
-            <section className="home-card">
-              {agruparPorOrigem(celsoMensal.itens).map((i, idx) => (
-                <div key={idx} className="bill-row">
-                  <span>{i.origem}</span>
-                  <strong>{money(i.total)}</strong>
-                </div>
-              ))}
-            </section>
           )}
         </section>
 
@@ -176,6 +181,28 @@ export default function Home({
 
       {/* ===================== COLUNA DIREITA ===================== */}
       <div className="home-column right">
+
+        {/* 🔒 CARD DE CONTAS DA CASA — RESTAURADO */}
+        <section className="home-card">
+          <header className="section-title">Contas da casa</header>
+
+          <div className="house-bills">
+            <div className="bill-row">
+              <span>Amanda</span>
+              <strong>{money(contasAmanda)}</strong>
+            </div>
+
+            <div className="bill-row">
+              <span>Celso</span>
+              <strong>{money(contasCelso)}</strong>
+            </div>
+
+            <div className="bill-row total">
+              <span>Total do mês</span>
+              <strong>{money(totalContasCasa)}</strong>
+            </div>
+          </div>
+        </section>
 
         <section className="home-card">
           <AnnualSavingsGoal
