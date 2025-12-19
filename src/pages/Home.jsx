@@ -26,11 +26,13 @@ export default function Home({
   const celso = salarios?.celso || { salario: 0, gasto: 0, sobra: 0 };
 
   const [amandaMensal, celsoMensal] = mensal?.porPessoa || [];
-  const contasAmanda = amandaMensal?.contas || 0;
-  const contasCelso = celsoMensal?.contas || 0;
-  const totalContasCasa = contasAmanda + contasCelso;
 
   const [showDebts, setShowDebts] = useState(false);
+
+  // 🔽 NOVO: toggles dos detalhes
+  const [showAmandaDetails, setShowAmandaDetails] = useState(false);
+  const [showCelsoDetails, setShowCelsoDetails] = useState(false);
+
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
   return (
@@ -57,45 +59,84 @@ export default function Home({
           <header className="section-title">Resumo por pessoa</header>
 
           <div className="people-grid">
-            <div className="person-box amanda">
+
+            {/* ===================== AMANDA ===================== */}
+            <div
+              className="person-box amanda"
+              onClick={() => setShowAmandaDetails(v => !v)}
+              style={{ cursor: "pointer" }}
+            >
               <h3>Amanda</h3>
 
               <div className="person-row">
                 <span>Salário</span>
-                <strong>R$ {amanda.salario.toFixed(2)}</strong>
+                <strong>{money(amanda.salario)}</strong>
               </div>
 
               <div className="person-row">
                 <span>Gasto</span>
-                <strong>R$ {amanda.gasto.toFixed(2)}</strong>
+                <strong>{money(amanda.gasto)}</strong>
               </div>
 
               <div className={`person-result ${amanda.sobra < 0 ? "neg" : "ok"}`}>
-                {amanda.sobra < 0 ? "Déficit" : "Sobra"}: R$ {amanda.sobra.toFixed(2)}
+                {amanda.sobra < 0 ? "Déficit" : "Sobra"}: {money(amanda.sobra)}
               </div>
             </div>
 
-            <div className="person-box celso">
+            {/* 🔽 LISTA AMANDA */}
+            {showAmandaDetails && amandaMensal?.itens?.length > 0 && (
+              <div className="home-card">
+                {amandaMensal.itens.map((i, idx) => (
+                  <div key={idx} className="bill-row">
+                    <span>
+                      {i.tipo} — {i.item.descricao || i.item.conta || "-"}
+                    </span>
+                    <strong>{money(i.item.valor)}</strong>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* ===================== CELSO ===================== */}
+            <div
+              className="person-box celso"
+              onClick={() => setShowCelsoDetails(v => !v)}
+              style={{ cursor: "pointer" }}
+            >
               <h3>Celso</h3>
 
               <div className="person-row">
                 <span>Salário</span>
-                <strong>R$ {celso.salario.toFixed(2)}</strong>
+                <strong>{money(celso.salario)}</strong>
               </div>
 
               <div className="person-row">
                 <span>Gasto</span>
-                <strong>R$ {celso.gasto.toFixed(2)}</strong>
+                <strong>{money(celso.gasto)}</strong>
               </div>
 
               <div className={`person-result ${celso.sobra < 0 ? "neg" : "ok"}`}>
-                {celso.sobra < 0 ? "Déficit" : "Sobra"}: R$ {celso.sobra.toFixed(2)}
+                {celso.sobra < 0 ? "Déficit" : "Sobra"}: {money(celso.sobra)}
               </div>
             </div>
+
+            {/* 🔽 LISTA CELSO */}
+            {showCelsoDetails && celsoMensal?.itens?.length > 0 && (
+              <div className="home-card">
+                {celsoMensal.itens.map((i, idx) => (
+                  <div key={idx} className="bill-row">
+                    <span>
+                      {i.tipo} — {i.item.descricao || i.item.conta || "-"}
+                    </span>
+                    <strong>{money(i.item.valor)}</strong>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
         </section>
 
-        {/* ✅ COMPARATIVO MENSAL (vem pronto do useDashboard) */}
         <section className="home-card">
           <MonthComparisonCard data={comparativoMensal} />
         </section>
@@ -113,35 +154,9 @@ export default function Home({
       <div className="home-column right">
 
         <section className="home-card">
-          <header className="section-title">Contas da casa</header>
-
-          <div className="house-bills">
-            <div className="bill-row">
-              <span>Amanda</span>
-              <strong>{money(contasAmanda)}</strong>
-            </div>
-
-            <div className="bill-row">
-              <span>Celso</span>
-              <strong>{money(contasCelso)}</strong>
-            </div>
-
-            <div className="bill-row total">
-              <span>Total do mês</span>
-              <strong>{money(totalContasCasa)}</strong>
-            </div>
-          </div>
-        </section>
-
-        <section className="home-card">
           <AnnualSavingsGoal
             salarios={salarios}
-            dadosMensais={{
-              transactions: [],
-              reservas: [],
-              bills: [],
-              loans
-            }}
+            dadosMensais={{ transactions: [], reservas: [], bills: [], loans }}
             savingsGoal={savingsGoal}
             setSavingsGoal={setSavingsGoal}
             mes={mes}
@@ -180,4 +195,3 @@ export default function Home({
     </div>
   );
 }
-
