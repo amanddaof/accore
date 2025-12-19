@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { createTransaction } from "../services/transactions.service";
 import { getCards } from "../services/cards.service";
 
+function resolverQuemPagaPorCartao(origem) {
+  if (!origem) return null;
+  if (origem.includes("Amanda")) return "Amanda";
+  if (origem.includes("Celso")) return "Celso";
+  return null;
+}
+
 export default function NewTransaction() {
   const [cards, setCards] = useState([]);
 
@@ -12,8 +19,6 @@ export default function NewTransaction() {
     categoria: "",
     origem: "",
     data_real: new Date().toISOString().slice(0, 10),
-
-    // 🔑 AGORA A FATURA É INFORMADA
     mes: "",
   });
 
@@ -42,8 +47,9 @@ export default function NewTransaction() {
       ...form,
       valor: Number(form.valor),
 
-      // ⚠️ IMPORTANTE
-      // NÃO calculamos mais a fatura automaticamente
+      // 🔑 cartão define quem paga automaticamente
+      quem_paga: resolverQuemPagaPorCartao(form.origem),
+
       mes: form.mes,
     };
 
@@ -51,7 +57,6 @@ export default function NewTransaction() {
 
     alert("Lançamento salvo com sucesso ✅");
 
-    // limpa campos principais
     setForm(prev => ({
       ...prev,
       descricao: "",
@@ -96,7 +101,6 @@ export default function NewTransaction() {
           required
         />
 
-        {/* 🔑 CARTÃO / ORIGEM */}
         <select
           value={form.origem}
           onChange={e => setField("origem", e.target.value)}
@@ -110,7 +114,6 @@ export default function NewTransaction() {
           ))}
         </select>
 
-        {/* 📅 DATA REAL */}
         <input
           type="date"
           value={form.data_real}
@@ -118,7 +121,6 @@ export default function NewTransaction() {
           required
         />
 
-        {/* 🧾 FATURA (MES) */}
         <input
           placeholder="Fatura (ex: Jan/26)"
           value={form.mes}
