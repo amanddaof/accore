@@ -548,4 +548,56 @@
   color: #c4c4c4;
 }
 
+/* ===============================
+   DETALHAMENTO POR PESSOA
+================================ */
+
+.person-details {
+  margin-top: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.person-details .section-title {
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* linha individual */
+.person-detail-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.person-detail-row:last-child {
+  border-bottom: none;
+}
+
+.person-detail-row span {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.person-detail-row strong {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 
