@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-
 import { processarReservasPendentes } from "../services/reservations.processor";
 
 import {
@@ -8,15 +7,18 @@ import {
   calcularProjecaoMensal,
   calcularProjecaoPorPessoa
 } from "../calculations/monthly";
+
 import { calcularDividasMes } from "../calculations/debts";
 import {
   calcularCategoriasMes,
   compararCategoriasMes
 } from "../calculations/categories";
+
 import {
   calcularGastosAnuaisPorPessoa,
   calcularProjecaoAnual
 } from "../calculations/yearly";
+
 import { getCards } from "../services/cards.service";
 import { getLoans } from "../services/loans.service";
 import { getBills } from "../services/bills.service";
@@ -28,7 +30,6 @@ import { getSavingsGoal } from "../services/savingsGoal";
 /* ======================================================
    Utilitário: mês anterior (YYYY-MM)
 ====================================================== */
-
 function mesAnteriorISO(mes) {
   if (!mes) return null;
 
@@ -43,15 +44,10 @@ function mesAnteriorISO(mes) {
   return `${ano}-${String(mesNum).padStart(2, "0")}`;
 }
 
-/* ======================================================
-   HOOK PRINCIPAL
-====================================================== */
-
 export function useDashboard() {
   /* ======================================================
      STATES
   ====================================================== */
-
   const [cards, setCards] = useState([]);
   const [loans, setLoans] = useState([]);
   const [bills, setBills] = useState([]);
@@ -64,13 +60,12 @@ export function useDashboard() {
   /* ======================================================
      MÊS ATUAL (regra do dia 7)
   ====================================================== */
-
   const [mes, setMes] = useState(() => {
     const hoje = new Date();
     const diaVirada = 7;
 
     let ano = hoje.getFullYear();
-    let mesAtual = hoje.getMonth(); // 0-11
+    let mesAtual = hoje.getMonth();
 
     if (hoje.getDate() >= diaVirada) {
       mesAtual++;
@@ -86,7 +81,6 @@ export function useDashboard() {
   /* ======================================================
      LOAD BASE
   ====================================================== */
-
   async function loadAll() {
     setLoading(true);
 
@@ -118,6 +112,7 @@ export function useDashboard() {
     setSalaryHistory(salaryData || []);
     setTransactions(transactionsData || []);
     setSavingsGoal(savingsGoalData ? savingsGoalData.valor : 0);
+
     setLoading(false);
   }
 
@@ -128,7 +123,6 @@ export function useDashboard() {
   /* ======================================================
      BASE DE DADOS UNIFICADA
   ====================================================== */
-
   const dados = useMemo(
     () => ({
       transactions,
@@ -143,7 +137,6 @@ export function useDashboard() {
   /* ======================================================
      MENSAL ATUAL
   ====================================================== */
-
   const mensal = useMemo(
     () => ({
       porPessoa: calcularGastosPorPessoa(mes, dados),
@@ -157,8 +150,10 @@ export function useDashboard() {
   /* ======================================================
      MENSAL ANTERIOR
   ====================================================== */
-
-  const mesAnterior = useMemo(() => mesAnteriorISO(mes), [mes]);
+  const mesAnterior = useMemo(
+    () => mesAnteriorISO(mes),
+    [mes]
+  );
 
   const mensalAnterior = useMemo(() => {
     if (!mesAnterior) return null;
@@ -170,63 +165,36 @@ export function useDashboard() {
   }, [mesAnterior, dados]);
 
   /* ======================================================
-     COMPARATIVO MENSAL (TOTAL + PESSOA)
+     COMPARATIVO MENSAL
   ====================================================== */
-
   const comparativoMensal = useMemo(() => {
-    if (!mes || !mesAnterior) return null;
+  if (!mes || !mesAnterior) return null;
 
-    const totalAtual = calcularTotalMensal(mes, dados);
-    const totalAnterior = calcularTotalMensal(mesAnterior, dados);
-    const valor = totalAtual - totalAnterior;
+  const totalAtual = calcularTotalMensal(mes, dados);
+  const totalAnterior = calcularTotalMensal(mesAnterior, dados);
 
-    // total (como já era)
-    const total = {
-      mesAtual: {
-        label: mes,
-        total: totalAtual
-      },
-      mesAnterior: {
-        label: mesAnterior,
-        total: totalAnterior
-      },
-      variacao: {
-        valor,
-        percentual:
-          totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
-      }
-    };
+  const valor = totalAtual - totalAnterior;
 
-    // por pessoa
-    const [amandaAtual, celsoAtual] = calcularGastosPorPessoa(mes, dados);
-    const [amandaAnt, celsoAnt] =
-      mesAnterior ? calcularGastosPorPessoa(mesAnterior, dados) : [{ total: 0 }, { total: 0 }];
-
-    const montar = (atual, anterior) => {
-      const diff = atual - anterior;
-      return {
-        atual,
-        anterior,
-        valor: diff,
-        percentual: anterior === 0 ? 0 : (diff / anterior) * 100
-      };
-    };
-
-    const porPessoa = {
-      amanda: montar(amandaAtual?.total || 0, amandaAnt?.total || 0),
-      celso: montar(celsoAtual?.total || 0, celsoAnt?.total || 0)
-    };
-
-    return {
-      total,
-      porPessoa
-    };
-  }, [mes, mesAnterior, dados]);
+  return {
+    mesAtual: {
+      label: mes,
+      total: totalAtual
+    },
+    mesAnterior: {
+      label: mesAnterior,
+      total: totalAnterior
+    },
+    variacao: {
+      valor,
+      percentual:
+        totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
+    }
+  };
+}, [mes, mesAnterior, dados]);
 
   /* ======================================================
      OUTROS CÁLCULOS
   ====================================================== */
-
   const dividas = useMemo(
     () => calcularDividasMes(mes, dados),
     [mes, dados]
@@ -277,6 +245,7 @@ export function useDashboard() {
     if (!salaryHistory.length) return null;
 
     const ano = new Date(mes).getFullYear();
+
     const registrosAno = salaryHistory.filter(
       s => new Date(s.data).getFullYear() === ano
     );
@@ -318,7 +287,6 @@ export function useDashboard() {
   /* ======================================================
      EXPORT
   ====================================================== */
-
   return {
     loading,
     cards,
@@ -331,7 +299,7 @@ export function useDashboard() {
     setMes,
     mensal,
     mensalAnterior,
-    comparativoMensal, // agora: { total, porPessoa }
+    comparativoMensal,
     dividas,
     categorias,
     anual,
@@ -341,3 +309,9 @@ export function useDashboard() {
     reload: loadAll
   };
 }
+
+
+
+
+
+
