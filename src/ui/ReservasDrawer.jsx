@@ -257,6 +257,97 @@ export default function ReservasDrawer({ open, onClose }) {
             + Nova reserva
           </button>
 
+           {showForm && (
+              <form className="purchase-form" onSubmit={salvarReserva}>
+                <input
+                  placeholder="Descrição"
+                  value={form.descricao}
+                  onChange={e => setForm({ ...form, descricao: e.target.value })}
+                  required
+                />
+            
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Valor"
+                  value={form.valor}
+                  onChange={e => setForm({ ...form, valor: e.target.value })}
+                  required
+                />
+            
+                <input
+                  type="date"
+                  value={form.data_real}
+                  onChange={e => setForm({ ...form, data_real: e.target.value })}
+                  required
+                />
+            
+                <input
+                  placeholder="Fatura (ex: Jan/26)"
+                  value={form.mes}
+                  onChange={e => setForm({ ...form, mes: e.target.value })}
+                  required
+                />
+            
+                <select
+                  value={form.recorrencia}
+                  onChange={e => setForm({ ...form, recorrencia: e.target.value })}
+                >
+                  <option>Mensal</option>
+                  <option>Bimestral</option>
+                  <option>Trimestral</option>
+                  <option>Parcelado</option>
+                  <option>Única</option>
+                </select>
+            
+                <input
+                  placeholder="Parcelas (1/3)"
+                  value={form.parcelas}
+                  onChange={e => setForm({ ...form, parcelas: e.target.value })}
+                />
+            
+                <select
+                  value={form.quem}
+                  onChange={e => setForm({ ...form, quem: e.target.value })}
+                >
+                  <option value="">Quem comprou?</option>
+                  <option>Amanda</option>
+                  <option>Celso</option>
+                  <option>Ambos</option>
+                </select>
+            
+                <select
+                  value={form.quem_paga}
+                  onChange={e => setForm({ ...form, quem_paga: e.target.value })}
+                >
+                  <option value="">Quem paga?</option>
+                  <option>Amanda</option>
+                  <option>Celso</option>
+                </select>
+            
+                <select
+                  value={form.category_id}
+                  onChange={e => setForm({ ...form, category_id: e.target.value })}
+                  required
+                >
+                  <option value="">Categoria</option>
+                  {categories.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+            
+                <input
+                  placeholder="Origem"
+                  value={form.origem}
+                  onChange={e => setForm({ ...form, origem: e.target.value })}
+                />
+            
+                <button className="primary-btn" type="submit">
+                  Salvar reserva
+                </button>
+              </form>
+            )}
+
           {loading ? (
             <div className="card-transactions empty">Carregando...</div>
           ) : (
@@ -320,4 +411,5 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
+
 
