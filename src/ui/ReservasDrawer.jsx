@@ -202,18 +202,15 @@ export default function ReservasDrawer({ open, onClose }) {
     const proximoMes = avancarMesReserva(r.mes, r.recorrencia);
 
     const payload = proximaData
-      ? {
-          // aqui ainda usa ultimo_mes na lógica em memória, 
-          // mas não envia para o insert, só para update
-          ultimo_mes: r.data_real,
-          data_real: proximaData,
-          mes: proximoMes,
-          parcelas: avancaParcela(r)
-        }
-      : {
-          ultimo_mes: r.data_real,
-          recorrencia: "Concluída"
-        };
+  ? {
+      data_real: proximaData,
+      mes: proximoMes,
+      parcelas: avancaParcela(r)
+    }
+  : {
+      recorrencia: "Concluída"
+    };
+
 
     await supabase.from("reservations").update(payload).eq("id", r.id);
 
@@ -360,7 +357,6 @@ function ReservaRow({ r, onProcessar }) {
           <div><span>Origem</span><strong>{r.origem}</strong></div>
           <div><span>Quem paga</span><strong>{r.quem_paga || "-"}</strong></div>
           <div><span>Recorrência</span><strong>{r.recorrencia}</strong></div>
-          <div><span>Última cobrança</span><strong>{formatarDataBR(r.ultimo_mes)}</strong></div>
           <div><span>Categoria</span><strong>{r.categories?.name || "-"}</strong></div>
 
           <button className="mark-paid-btn"
@@ -372,3 +368,4 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
+
