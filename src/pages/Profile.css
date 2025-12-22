@@ -1,12 +1,149 @@
-.profile-page {
-  padding: 24px;
+/* =============================
+   OVERLAY
+============================= */
+.profile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
 }
 
-.profile-section {
-  margin-bottom: 24px;
+/* =============================
+   DRAWER
+============================= */
+.profile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 360px;
+  background: #0f1115;
+  color: #eaeaf0;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s ease-out;
 }
 
-.profile-section label {
-  display: block;
-  margin: 8px 0;
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* =============================
+   HEADER
+============================= */
+.profile-drawer-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #1c1f26;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #aaa;
+  overflow: hidden;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-user-info strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.profile-user-info span {
+  font-size: 12px;
+  color: #9aa0aa;
+}
+
+/* =============================
+   CONTENT
+============================= */
+.profile-drawer-content {
+  flex: 1;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+/* =============================
+   SECTION TITLES
+============================= */
+.profile-section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9aa0aa;
+  margin: 18px 0 10px;
+}
+
+/* =============================
+   AVISOS
+============================= */
+.profile-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.profile-alert.erro {
+  background: rgba(255, 75, 75, 0.15);
+  color: #ffb3b3;
+}
+
+.profile-alert.alerta {
+  background: rgba(255, 190, 60, 0.15);
+  color: #ffd27d;
+}
+
+.profile-alert .icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* =============================
+   EMPTY STATE
+============================= */
+.profile-empty {
+  text-align: center;
+  font-size: 14px;
+  color: #9aa0aa;
+  margin-top: 40px;
+}
+
+/* =============================
+   FOOTER (opcional)
+============================= */
+.profile-drawer-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
