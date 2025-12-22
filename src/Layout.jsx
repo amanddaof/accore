@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getUserProfile } from "../services/userProfile";
 import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
 import Footer from "./ui/Footer";
@@ -11,6 +12,7 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
+import { buildMonthlyAlerts } from "../calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
   mes,
@@ -34,18 +36,25 @@ export default function Layout({
 
   const [openProfile, setOpenProfile] = useState(false);
 
-  const avisos = [
-    {
-      tipo: "erro",
-      icon: "🔴",
-      texto: "Déficit neste mês"
-    },
-    {
-      tipo: "alerta",
-      icon: "⚠️",
-      texto: "Gastos acima do ritmo normal"
-    }
-  ];
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    getUserProfile()
+      .then(setProfile)
+      .catch(err => {
+        console.error("Erro ao carregar perfil:", err);
+      });
+  }, []);
+
+  const avisos = profile
+    ? buildMonthlyAlerts({
+        perfil: profile,
+        saldoMes: mensal?.total?.sobra ?? 0,
+        projecaoSaldoMes: mensal?.projecao?.sobra ?? null,
+        gastoAtual: mensal?.total?.gasto ?? 0,
+        gastoMedio: mensal?.mediaGastos ?? 0
+      })
+    : [];
 
   // 🔥 BUSCA GLOBAL → DECIDE QUAL DRAWER ABRIR
   function handleGlobalSelect(item) {
@@ -157,7 +166,8 @@ export default function Layout({
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
-          userName="Amanda"
+          userName={profile?.display_name || "Usuário"}
+          avatarUrl={profile?.avatar_url || null}
           avisos={avisos}
         />
 
@@ -165,6 +175,7 @@ export default function Layout({
     </div>
   );
 }
+
 
 
 
