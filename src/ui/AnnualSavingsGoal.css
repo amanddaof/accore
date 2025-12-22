@@ -1,4 +1,6 @@
-/* CARD BASE */
+/* =========================
+   CARD BASE
+========================= */
 .annual-goal-card {
   background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
   border-radius: 20px;
@@ -11,7 +13,9 @@
   gap: 14px;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 .annual-goal-card header {
   display: flex;
   justify-content: space-between;
@@ -26,6 +30,9 @@
   gap: 6px;
 }
 
+/* =========================
+   SELECT DE ANO
+========================= */
 .year-select {
   background: rgba(255,255,255,0.06);
   padding: 4px 10px;
@@ -44,7 +51,9 @@
   font-size: 16px;
 }
 
-/* META BADGE */
+/* =========================
+   META (BOTÃO)
+========================= */
 .meta-btn {
   background: rgba(56,189,248,0.15);
   padding: 6px 12px;
@@ -61,7 +70,9 @@
   background: rgba(56,189,248,0.25);
 }
 
-/* GRID DE INFOS */
+/* =========================
+   GRID DE INFOS
+========================= */
 .goal-infos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -87,7 +98,9 @@
   font-size: 15px;
 }
 
-/* PROGRESS BAR NOVA */
+/* =========================
+   PROGRESS BAR
+========================= */
 .progress-area {
   margin-top: 6px;
 }
@@ -109,6 +122,7 @@
   transition: width .4s ease;
 }
 
+/* cores base */
 .bar.real {
   background: linear-gradient(90deg,#4ade80,#22c55e);
   opacity: 0.65;
@@ -118,7 +132,9 @@
   background: linear-gradient(90deg,#60a5fa,#3b82f6);
 }
 
-/* NUMBERS */
+/* =========================
+   NUMBERS
+========================= */
 .numbers {
   margin-top: 4px;
   font-size: 12px;
@@ -127,33 +143,44 @@
   opacity: 0.8;
 }
 
-/* STATUS */
-.status {
-  padding: 10px 14px;
-  border-radius: 12px;
+/* =========================
+   ALERTA TÁTICO — ITEM 9
+========================= */
+.goal-alert {
+  padding: 12px 14px;
+  border-radius: 14px;
   font-size: 13px;
   font-weight: 500;
+  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.status.good {
-  background: rgba(56,189,248,0.15);
-  border: 1px solid rgba(56,189,248,0.25);
-  color: #38bdf8;
+/* bom */
+.goal-alert.good {
+  background: rgba(74,222,128,0.14);
+  border: 1px solid rgba(74,222,128,0.28);
+  color: #4ade80;
 }
 
-.status.warn {
-  background: rgba(251,191,36,0.15);
-  border: 1px solid rgba(251,191,36,0.25);
+/* atenção */
+.goal-alert.warn {
+  background: rgba(251,191,36,0.14);
+  border: 1px solid rgba(251,191,36,0.28);
   color: #fbbf24;
 }
 
-.status.bad {
-  background: rgba(248,113,113,0.15);
-  border: 1px solid rgba(248,113,113,0.25);
+/* crítico */
+.goal-alert.bad {
+  background: rgba(248,113,113,0.14);
+  border: 1px solid rgba(248,113,113,0.28);
   color: #f87171;
 }
 
-/* SAVE PLAN */
+/* =========================
+   SAVE PLAN (inalterado)
+========================= */
 .save-plan {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.07);
