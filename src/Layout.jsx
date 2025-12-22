@@ -34,6 +34,19 @@ export default function Layout({
 
   const [openProfile, setOpenProfile] = useState(false);
 
+  const avisos = [
+    {
+      tipo: "erro",
+      icon: "🔴",
+      texto: "Déficit neste mês"
+    },
+    {
+      tipo: "alerta",
+      icon: "⚠️",
+      texto: "Gastos acima do ritmo normal"
+    }
+  ];
+
   // 🔥 BUSCA GLOBAL → DECIDE QUAL DRAWER ABRIR
   function handleGlobalSelect(item) {
     // fecha todos antes
@@ -144,11 +157,14 @@ export default function Layout({
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
+          userName="Amanda"
+          avisos={avisos}
         />
 
       </div>
     </div>
   );
 }
+
 
 
