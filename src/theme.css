@@ -1,6 +1,10 @@
 /* ==============================
    ACCORE • THEME PRINCIPAL
 ================================ */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 * {
   box-sizing: border-box;
@@ -40,11 +44,11 @@ body::before{
 }
 
 .app-container {
-  max-width: 1240px;
-  margin: auto;
-  padding: 20px 28px 26px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16px;
   display: grid;
-  gap: 26px;
+  gap: 20px;
 }
 
 .glass {
@@ -268,3 +272,4 @@ input, select {
     inset 0 2px 4px rgba(0,0,0,.25);
   opacity: .95;
 }
+
