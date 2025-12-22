@@ -135,6 +135,14 @@ export default function Header({
             )}
           </button>
 
+          <button
+            className="icon-button"
+            onClick={onOpenProfile}
+            title="Perfil"
+          >
+            👤
+          </button>
+
           <input
             type="month"
             value={mes}
@@ -178,3 +186,4 @@ export default function Header({
     </>
   );
 }
+
