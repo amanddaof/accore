@@ -31,12 +31,10 @@ export function calcularReservasProjetadasParaMes(
     // 🔑 cartão (ou null se externo)
     const card = cards.find(c => c.nome === res.origem) || null;
 
-    // 🔑 mês base = fatura
-    const mesBase = calcularMesFatura({
-      dataReal: res.data_real,
-      card
-    });
-    if (!mesBase) return;
+    // 🔑 mês base da reserva (fonte da verdade)
+const mesBase = res.mes;
+if (!mesBase) return;
+
 
     // ========================
     // 📦 PARCELADO
@@ -298,3 +296,4 @@ export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
     celso: { total: C, media: C / dia, projecao: (C / dia) * diasMes }
   };
 }
+
