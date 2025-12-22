@@ -12,6 +12,7 @@ export default function Header({
   onMesChange,
   onReload,
 
+  onOpenProfile,
   onOpenCards,
   isCardsOpen,
   onOpenExterno,
@@ -186,4 +187,5 @@ export default function Header({
     </>
   );
 }
+
 
