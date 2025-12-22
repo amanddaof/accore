@@ -67,13 +67,11 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     return `${nomesMeses[Number(mesStr) - 1]}/${ano.slice(2)}`;
   }
 
-  const [mesFiltro, setMesFiltro] = useState(() =>
-    mes ? formatarMes(mes) : formatarMes(new Date().toISOString().slice(0, 7))
+  const [mesFiltro, setMesFiltro] = useState(
+    mes
+      ? formatarMes(mes)
+      : formatarMes(new Date().toISOString().slice(0, 7))
   );
-
-  useEffect(() => {
-    if (mes) setMesFiltro(formatarMes(mes));
-  }, [mes]);
 
   const [form, setForm] = useState({
     descricao: "",
@@ -290,4 +288,5 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
 
