@@ -27,6 +27,21 @@ function resolverQuemPagaPorCartao(origem) {
   return null;
 }
 
+function alterarMes(delta) {
+  const [mesAbrev, anoAbrev] = mesFiltro.split("/");
+  const mesIndex = nomesMeses.indexOf(mesAbrev);
+  const ano = Number("20" + anoAbrev);
+
+  const data = new Date(ano, mesIndex, 1);
+  data.setMonth(data.getMonth() + delta);
+
+  const novoMes = `${nomesMeses[data.getMonth()]}/${String(
+    data.getFullYear()
+  ).slice(2)}`;
+
+  setMesFiltro(novoMes);
+}
+
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -243,7 +258,9 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
           </div>
 
           <div className="drawer-filter">
+            <button onClick={() => alterarMes(-1)}>◀</button>
             <strong>{mesFiltro}</strong>
+            <button onClick={() => alterarMes(1)}>▶</button>
           </div>
 
           <div className="drawer-total">
@@ -273,3 +290,4 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
