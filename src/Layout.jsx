@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUserProfile } from "../services/userProfile";
+import { getUserProfile } from "./services/userProfile";
 import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
 import Footer from "./ui/Footer";
@@ -12,7 +12,7 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
-import { buildMonthlyAlerts } from "../calculations/notifications/buildMonthlyAlerts";
+import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
   mes,
@@ -175,6 +175,7 @@ export default function Layout({
     </div>
   );
 }
+
 
 
 
