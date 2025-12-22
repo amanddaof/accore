@@ -58,6 +58,7 @@ export default function ReservasDrawer({ open, onClose }) {
     descricao: "",
     valor: "",
     data_real: "",
+    mes: "",
     recorrencia: "Mensal",
     parcelas: "1/1",
     quem: "",
@@ -97,6 +98,35 @@ export default function ReservasDrawer({ open, onClose }) {
 
     load();
   }, [open]);
+
+   function avancarMesReserva(mesInicial, recorrencia) {
+  if (!mesInicial) return null;
+
+  const [mesAbrev, anoAbrev] = mesInicial.split("/");
+  const nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  const mesIndex = nomes.indexOf(mesAbrev);
+
+  const data = new Date(2000 + Number(anoAbrev), mesIndex);
+
+  switch (recorrencia) {
+    case "Mensal":
+      data.setMonth(data.getMonth() + 1);
+      break;
+    case "Bimestral":
+      data.setMonth(data.getMonth() + 2);
+      break;
+    case "Trimestral":
+      data.setMonth(data.getMonth() + 3);
+      break;
+    case "Parcelado":
+      data.setMonth(data.getMonth() + 1);
+      break;
+    default:
+      return null;
+  }
+
+  return `${nomes[data.getMonth()]}/${String(data.getFullYear()).slice(2)}`;
+}
 
   /* ===============================
      SALVAR RESERVA
@@ -172,17 +202,19 @@ export default function ReservasDrawer({ open, onClose }) {
 
     // 2️⃣ calcula próxima data
     const proximaData = proximaDataReserva(r);
-
-    const payload = proximaData
-      ? {
-          ultimo_mes: r.data_real,
-          data_real: proximaData,
-          parcelas: avancaParcela(r)
-        }
-      : {
-          ultimo_mes: r.data_real,
-          recorrencia: "Concluída"
-        };
+   const proximoMes = avancarMesReserva(r.mes, r.recorrencia);
+   
+   const payload = proximaData
+     ? {
+         ultimo_mes: r.data_real,
+         data_real: proximaData,
+         mes: proximoMes,          // ✅ AQUI
+         parcelas: avancaParcela(r)
+       }
+     : {
+         ultimo_mes: r.data_real,
+         recorrencia: "Concluída"
+       };
 
     const { error: e2 } = await supabase
       .from("reservations")
@@ -288,3 +320,4 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
+
