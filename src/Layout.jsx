@@ -10,6 +10,8 @@ import ReservasDrawer from "./ui/ReservasDrawer";
 import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
+import ProfileDrawer from "./ui/ProfileDrawer";
+
 export default function Layout({
   mes,
   setMes,
@@ -29,6 +31,8 @@ export default function Layout({
   const [openReservas, setOpenReservas] = useState(false);
   const [openBills, setOpenBills] = useState(false);
   const [openIncomes, setOpenIncomes] = useState(false);
+
+  const [openProfile, setOpenProfile] = useState(false);
 
   // 🔥 BUSCA GLOBAL → DECIDE QUAL DRAWER ABRIR
   function handleGlobalSelect(item) {
@@ -96,6 +100,8 @@ export default function Layout({
 
           onOpenIncomes={() => setOpenIncomes(true)}
           isIncomesOpen={openIncomes}
+
+          onOpenProfile={() => setOpenProfile(true)}
         />
 
         {/* CONTEÚDO */}
@@ -134,8 +140,15 @@ export default function Layout({
           open={openIncomes}
           onClose={() => setOpenIncomes(false)}
         />
+
+        <ProfileDrawer
+          open={openProfile}
+          onClose={() => setOpenProfile(false)}
+        />
+
       </div>
     </div>
   );
 }
+
 
