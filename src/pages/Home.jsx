@@ -84,12 +84,9 @@ export default function Home({
       : [];
 
   return (
-    <div className="home-shell two-columns">
+    <div className="home-shell single-column">
 
-      {/* ===================== COLUNA ESQUERDA ===================== */}
-      <div className="home-column left">
-
-        <section className="home-card hero-total">
+       <section className="home-card hero-total">
           <CardsGrid
             mensal={mensal}
             dividas={dividas}
@@ -185,11 +182,6 @@ export default function Home({
           </div>
         </section>
 
-      </div>
-
-      {/* ===================== COLUNA DIREITA ===================== */}
-      <div className="home-column right">
-
         <section className="home-card">
           <header className="section-title">Contas da casa</header>
 
@@ -250,6 +242,6 @@ export default function Home({
         </section>
 
       </div>
-    </div>
   );
 }
+
