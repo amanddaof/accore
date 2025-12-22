@@ -26,6 +26,17 @@ function resolverQuemPagaPorCartao(origem) {
   return null;
 }
 
+function avancarMes(mesInicial, incremento) {
+  const [mesAbrev, anoAbrev] = mesInicial.split("/");
+  const mesIndex = nomesMeses.indexOf(mesAbrev);
+  const data = new Date(2000 + Number(anoAbrev), mesIndex);
+  data.setMonth(data.getMonth() + incremento);
+
+  return `${nomesMeses[data.getMonth()]}/${String(
+    data.getFullYear()
+  ).slice(2)}`;
+}
+
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -146,13 +157,14 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     for (let i = parcelaAtual - 1; i < totalParcelas; i++) {
       const numeroParcela = i + 1;
       const dataParcela = addMeses(form.data_real, i);
-
+      const mesParcela = avancarMes(form.mes, i);
+    
       inserts.push({
         descricao: form.descricao,
         valor: Number(form.valor),
         data_real: dataParcela,
         parcelas: `${numeroParcela}/${totalParcelas}`,
-        mes: form.mes,
+        mes: mesParcela,
         quem: form.quem,
         quem_paga: quemPagaCartao,
         status: form.status,
@@ -385,4 +397,5 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
 
