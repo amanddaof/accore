@@ -59,15 +59,18 @@ export default function Layout({
     mensal
   });
 
-  const avisos = profile
-    ? buildMonthlyAlerts({
-        perfil: profile,
-        saldoMes: mensal?.total?.sobra ?? 0,
-        projecaoSaldoMes: mensal?.projecao?.sobra ?? null,
-        gastoAtual: mensal?.total?.gasto ?? 0,
-        gastoMedio: mensal?.mediaGastos ?? 0
-      })
-    : [];
+  const avisos = useMemo(() => {
+  if (!profile) return [];
+
+  return buildMonthlyAlerts({
+    perfil: profile,
+    saldoMes: mensal?.total ?? 0,              // 🔴 AQUI
+    projecaoSaldoMes: mensal?.projecao?.total ?? null,
+    gastoAtual: mensal?.gastoTotal ?? 0,       // se existir
+    gastoMedio: mensal?.mediaGastos ?? 0
+  });
+}, [profile, mensal]);
+
 
   console.log("📌 Avisos finais no Layout:", avisos);
 
@@ -165,3 +168,4 @@ export default function Layout({
     </div>
   );
 }
+
