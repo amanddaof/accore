@@ -1,6 +1,25 @@
 /* ============================
    HEADER • FINTECH PREMIUM
 ============================ */
+.header {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.header * {
+  max-width: 100%;
+}
+
+.header-left,
+.header-center,
+.header-right {
+  min-width: 0;
+}
+
+.nav {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
 
 .header {
   display: flex;
@@ -312,3 +331,4 @@
   top: 0;
   z-index: 1000;
 }
+
