@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getUserProfile } from "./services/userProfile";
 import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
@@ -54,26 +54,28 @@ export default function Layout({
   }, []);
 
   /* ================= AVISOS ================= */
+  const sobraRealMes =
+    (salarios?.amanda?.sobra ?? 0) +
+    (salarios?.celso?.sobra ?? 0);
+
   console.log("🔥 Antes de buildMonthlyAlerts", {
     profile,
-    mensal
+    sobraAmanda: salarios?.amanda?.sobra,
+    sobraCelso: salarios?.celso?.sobra,
+    sobraRealMes
   });
 
-  const sobraRealMes =
-  (salarios?.amanda?.sobra ?? 0) +
-  (salarios?.celso?.sobra ?? 0);
+  const avisos = useMemo(() => {
+    if (!profile) return [];
 
-const avisos = useMemo(() => {
-  if (!profile) return [];
-
-  return buildMonthlyAlerts({
-    perfil: profile,
-    saldoMes: sobraRealMes,                 // 🔴 AGORA É O MESMO CRITÉRIO
-    projecaoSaldoMes: mensal?.projecao?.total ?? null,
-    gastoAtual: 0,
-    gastoMedio: 0
-  });
-}, [profile, salarios, mensal]);
+    return buildMonthlyAlerts({
+      perfil: profile,
+      saldoMes: sobraRealMes,                 // ✅ MESMO CRITÉRIO DO CARD
+      projecaoSaldoMes: mensal?.projecao?.total ?? null,
+      gastoAtual: 0,
+      gastoMedio: 0
+    });
+  }, [profile, salarios, mensal]);
 
   console.log("📌 Avisos finais no Layout:", avisos);
 
@@ -171,5 +173,3 @@ const avisos = useMemo(() => {
     </div>
   );
 }
-
-
