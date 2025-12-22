@@ -130,53 +130,51 @@ export default function ReservasDrawer({ open, onClose }) {
   ================================ */
 
   async function salvarReserva(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const quemPagaFinal =
-      form.origem === "Externo"
-        ? form.quem_paga
-        : resolverQuemPagaPorOrigem(form.origem);
-
-    const payload = {
-      ...form,
-      quem_paga: quemPagaFinal,
-      valor: Number(form.valor),
-      ultimo_mes: null,
-      category_id: form.category_id || null
-    };
-
-    const { error, data } = await supabase
-      .from("reservations")
-      .insert([payload])
-      .select()
-      .single();
-
-    if (error) {
-      alert("Erro ao salvar reserva");
-      console.error(error);
-      return;
-    }
-
-    setReservas(prev =>
-      [...prev, data].sort(
-        (a, b) => new Date(a.data_real) - new Date(b.data_real)
-      )
-    );
-
-    setShowForm(false);
-    setForm({
-      descricao: "",
-      valor: "",
-      data_real: "",
-      mes: "",
-      recorrencia: "Mensal",
-      parcelas: "1/1",
-      quem: "",
-      quem_paga: "",
-      origem: "",
-      category_id: ""
-    });
+  if (!form.mes) {
+    alert("Informe a fatura (ex: Jan/26)");
+    return;
   }
+
+  if (!form.origem) {
+    alert("Informe a origem da reserva");
+    return;
+  }
+
+  if (form.origem === "Externo" && !form.quem_paga) {
+    alert("Informe quem paga");
+    return;
+  }
+
+  const quemPagaFinal =
+    form.origem === "Externo"
+      ? form.quem_paga
+      : resolverQuemPagaPorOrigem(form.origem);
+
+  const payload = {
+    ...form,
+    quem_paga: quemPagaFinal,
+    valor: Number(form.valor),
+    ultimo_mes: null,
+    category_id: form.category_id || null
+  };
+
+  const { error, data } = await supabase
+    .from("reservations")
+    .insert([payload])
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    alert("Erro ao salvar reserva");
+    return;
+  }
+
+  ...
+}
+
 
   /* ===============================
      PROCESSAR RESERVA
@@ -370,3 +368,4 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
+
