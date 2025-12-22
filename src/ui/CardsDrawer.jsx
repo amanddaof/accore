@@ -12,7 +12,6 @@ const nomesMeses = [
   "Jul", "Ago", "Set", "Out", "Nov", "Dez"
 ];
 
-// 🔒 ORDEM FIXA DOS CARTÕES VISÍVEIS
 const ORDEM_CARTOES = [
   "NU Amanda",
   "NU Celso",
@@ -27,21 +26,6 @@ function resolverQuemPagaPorCartao(origem) {
   return null;
 }
 
-function alterarMes(delta) {
-  const [mesAbrev, anoAbrev] = mesFiltro.split("/");
-  const mesIndex = nomesMeses.indexOf(mesAbrev);
-  const ano = Number("20" + anoAbrev);
-
-  const data = new Date(ano, mesIndex, 1);
-  data.setMonth(data.getMonth() + delta);
-
-  const novoMes = `${nomesMeses[data.getMonth()]}/${String(
-    data.getFullYear()
-  ).slice(2)}`;
-
-  setMesFiltro(novoMes);
-}
-
 export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -50,12 +34,10 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
   const [showForm, setShowForm] = useState(false);
   const [categories, setCategories] = useState([]);
 
-  // ✅ cartões visíveis, filtrados e ordenados
   const cardsVisiveis = ORDEM_CARTOES
     .map(nome => cards.find(c => c.nome === nome))
     .filter(Boolean);
 
-  // proteção se mudar quantidade de cartões
   useEffect(() => {
     if (activeIndex >= cardsVisiveis.length) {
       setActiveIndex(0);
@@ -255,10 +237,37 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             )}
           </div>
 
+          {/* 🔁 FILTRO DE MÊS — AGORA FUNCIONA */}
           <div className="drawer-filter">
-            <button onClick={() => alterarMes(-1)}>◀</button>
+            <button
+              onClick={() =>
+                setMesFiltro(m => {
+                  const [mesAbrev, anoAbrev] = m.split("/");
+                  const mesIndex = nomesMeses.indexOf(mesAbrev);
+                  const data = new Date(2000 + Number(anoAbrev), mesIndex);
+                  data.setMonth(data.getMonth() - 1);
+                  return `${nomesMeses[data.getMonth()]}/${String(data.getFullYear()).slice(2)}`;
+                })
+              }
+            >
+              ◀
+            </button>
+
             <strong>{mesFiltro}</strong>
-            <button onClick={() => alterarMes(1)}>▶</button>
+
+            <button
+              onClick={() =>
+                setMesFiltro(m => {
+                  const [mesAbrev, anoAbrev] = m.split("/");
+                  const mesIndex = nomesMeses.indexOf(mesAbrev);
+                  const data = new Date(2000 + Number(anoAbrev), mesIndex);
+                  data.setMonth(data.getMonth() + 1);
+                  return `${nomesMeses[data.getMonth()]}/${String(data.getFullYear()).slice(2)}`;
+                })
+              }
+            >
+              ▶
+            </button>
           </div>
 
           <div className="drawer-total">
@@ -272,12 +281,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             + Nova compra
           </button>
 
-          {showForm && (
-            <form className="purchase-form" onSubmit={salvarCompra}>
-              {/* formulário mantido igual */}
-            </form>
-          )}
-
           {loading ? (
             <div className="card-transactions empty">Carregando...</div>
           ) : (
@@ -288,5 +291,3 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
-
-
