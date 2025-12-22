@@ -1,6 +1,12 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
 
+/**
+ * Drawer do Perfil do Usuário
+ * - Abre mostrando avisos
+ * - Botão leva para Preferências
+ * - Ao fechar, sempre volta para avisos
+ */
 export default function ProfileDrawer({
   open,
   onClose,
@@ -30,7 +36,7 @@ export default function ProfileDrawer({
               {avatarUrl ? (
                 <img src={avatarUrl} alt="Avatar" />
               ) : (
-                <span>👤</span>
+                <span className="avatar-placeholder">👤</span>
               )}
             </div>
 
@@ -74,5 +80,29 @@ export default function ProfileDrawer({
         </div>
       </div>
     </div>
+  );
+}
+
+/* ======================================================
+   LISTA DE AVISOS
+====================================================== */
+function AvisosList({ avisos }) {
+  if (!avisos || avisos.length === 0) {
+    return (
+      <div className="empty-state">
+        <p>Nenhum aviso no momento 🎉</p>
+      </div>
+    );
+  }
+
+  return (
+    <ul className="avisos-list">
+      {avisos.map((a, idx) => (
+        <li key={idx} className={`aviso ${a.tipo || ""}`}>
+          <span className="aviso-icon">{a.icon || "ℹ️"}</span>
+          <span className="aviso-texto">{a.texto}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
