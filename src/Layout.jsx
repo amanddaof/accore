@@ -12,7 +12,7 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
-import { buildMonthlyAlerts } from "../calculations/notifications/buildMonthlyAlerts";
+import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
   mes,
@@ -175,6 +175,7 @@ export default function Layout({
     </div>
   );
 }
+
 
 
 
