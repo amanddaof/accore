@@ -2,14 +2,14 @@ import { MESES, incrementarMes, isoParaMesAbrev } from "../core/dates";
 import { safeNumber } from "../core/helpers";
 import { calcularMesFatura } from "../calculations/cardInvoice";
 
-
 // ========================
 // 🔁 RESERVAS PROJETADAS
 // ========================
 export function calcularReservasProjetadasParaMes(
   mesFiltroISO,
   reservas = [],
-  cards = []
+  cards = [],
+  transactions = []
 ) {
 
   const mesFmt = isoParaMesAbrev(mesFiltroISO);
@@ -22,6 +22,14 @@ export function calcularReservasProjetadasParaMes(
     const valor = safeNumber(res.valor);
     if (!valor || !res.data_real) return;
 
+    // ❌ NÃO projetar se já existe transaction no mês
+    const jaProcessada = transactions.some(t =>
+      t.mes === mesFmt &&
+      t.descricao === res.descricao &&
+      t.origem === res.origem
+    );
+    if (jaProcessada) return;
+
     // 🔑 resolver cartão (ou null se externo)
     const card = cards.find(c => c.nome === res.origem) || null;
 
@@ -30,11 +38,10 @@ export function calcularReservasProjetadasParaMes(
       dataReal: res.data_real,
       card
     });
-
     if (!mesBase) return;
 
     // ========================
-    // 📦 PARCELADO
+    // 📦 PARCELADO (mantido)
     // ========================
     if (res.recorrencia === "Parcelado" && res.parcelas?.includes("/")) {
 
@@ -54,21 +61,29 @@ export function calcularReservasProjetadasParaMes(
     }
 
     // ========================
-    // 🔁 RECORRENTE
+    // 🔁 RECORRENTE (CORRIGIDO)
     // ========================
-    let inc = 1;
-    if (res.recorrencia === "Bimestral") inc = 2;
-    if (res.recorrencia === "Trimestral") inc = 3;
+    const inc =
+      res.recorrencia === "Bimestral" ? 2 :
+      res.recorrencia === "Trimestral" ? 3 :
+      1;
 
-    for (let i = 0; i < 12; i += inc) {
-      const m = incrementarMes(mesBase, i);
-      if (m === mesFmt) {
-        projetadas.push({
-          ...res,
-          tipo: "Reserva projetada",
-          mes: m
-        });
-      }
+    const [mBase, aBase] = mesBase.split("/");
+    const [mAlvo, aAlvo] = mesFmt.split("/");
+
+    const base = new Date(2000 + Number(aBase), MESES.indexOf(mBase));
+    const alvo = new Date(2000 + Number(aAlvo), MESES.indexOf(mAlvo));
+
+    const diff =
+      (alvo.getFullYear() - base.getFullYear()) * 12 +
+      (alvo.getMonth() - base.getMonth());
+
+    if (diff >= 0 && diff % inc === 0) {
+      projetadas.push({
+        ...res,
+        tipo: "Reserva projetada",
+        mes: mesFmt
+      });
     }
 
   });
@@ -139,26 +154,30 @@ export function calcularGastosPorPessoa(
     itens.Celso.push({ tipo: "Empréstimo", item: l });
   });
 
-  // 🔁 RESERVAS PROJETADAS
-  calcularReservasProjetadasParaMes(mesFiltroISO, reservas, cards)
-    .forEach(r => {
-      const v = safeNumber(r.valor);
+  // 🔁 RESERVAS PROJETADAS (CORRIGIDO)
+  calcularReservasProjetadasParaMes(
+    mesFiltroISO,
+    reservas,
+    cards,
+    transactions
+  ).forEach(r => {
+    const v = safeNumber(r.valor);
 
-      if (r.quem === "Amanda") {
-        total.Amanda.pessoais += v;
-        itens.Amanda.push({ tipo: "Reserva", item: r });
-      }
-      else if (r.quem === "Celso") {
-        total.Celso.pessoais += v;
-        itens.Celso.push({ tipo: "Reserva", item: r });
-      }
-      else if (r.quem === "Ambos") {
-        total.Amanda.pessoais += v;
-        total.Celso.pessoais += v;
-        itens.Amanda.push({ tipo: "Reserva", item: r });
-        itens.Celso.push({ tipo: "Reserva", item: r });
-      }
-    });
+    if (r.quem === "Amanda") {
+      total.Amanda.pessoais += v;
+      itens.Amanda.push({ tipo: "Reserva", item: r });
+    }
+    else if (r.quem === "Celso") {
+      total.Celso.pessoais += v;
+      itens.Celso.push({ tipo: "Reserva", item: r });
+    }
+    else if (r.quem === "Ambos") {
+      total.Amanda.pessoais += v;
+      total.Celso.pessoais += v;
+      itens.Amanda.push({ tipo: "Reserva", item: r });
+      itens.Celso.push({ tipo: "Reserva", item: r });
+    }
+  });
 
   const pessoa = nome => ({
     nome,
@@ -167,13 +186,12 @@ export function calcularGastosPorPessoa(
       total[nome].pessoais +
       total[nome].contas +
       total[nome].emprestimos,
-
-    // 🔑 NOVO (não interfere no cálculo)
     itens: itens[nome]
   });
 
   return [pessoa("Amanda"), pessoa("Celso")];
 }
+
 
 // ========================
 // 💰 TOTAL MENSAL
@@ -182,167 +200,3 @@ export function calcularTotalMensal(mesFiltroISO, dados) {
   const porPessoa = calcularGastosPorPessoa(mesFiltroISO, dados);
   return porPessoa[0].total + porPessoa[1].total;
 }
-
-
-// ========================
-// 🔮 PROJEÇÃO MENSAL (TOTAL)
-// ========================
-export function calcularProjecaoMensal(mesFiltroISO, dados) {
-
-  const mesFmt = isoParaMesAbrev(mesFiltroISO);
-  const hoje = new Date();
-  const dia = hoje.getDate();
-  const diasMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
-
-  let ateHoje = 0;
-
-  dados.transactions.forEach(t => {
-    if (t.mes === mesFmt) ateHoje += safeNumber(t.valor);
-  });
-
-  dados.bills.forEach(b => {
-    if (b.mes === mesFmt) {
-      ateHoje += safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
-    }
-  });
-
-  dados.loans.forEach(l => {
-    if (l.mes === mesFmt) ateHoje += safeNumber(l.valor);
-  });
-
-  calcularReservasProjetadasParaMes(
-    mesFiltroISO,
-    dados.reservas,
-    dados.cards
-  ).forEach(r => {
-    ateHoje += safeNumber(r.valor);
-  });
-
-  return {
-    totalAteHoje: ateHoje,
-    mediaDia: ateHoje / dia,
-    projecaoFinal: (ateHoje / dia) * diasMes
-  };
-}
-
-
-// ========================
-// 🔮 PROJEÇÃO POR PESSOA (ANUAL)
-// ========================
-export function calcularProjecaoPorPessoaAnual(mesFiltroISO, dados) {
-	
-	if (!dados) {
-    return {
-      amanda: { total: 0, projecao: 0 },
-      celso: { total: 0, projecao: 0 }
-    };
-  }
-
-  const mesFmt = isoParaMesAbrev(mesFiltroISO);
-
-  let A = 0;
-  let C = 0;
-
-  dados.transactions.forEach(t => {
-    if (t.mes !== mesFmt) return;
-    const v = safeNumber(t.valor);
-
-    if (t.quem === "Amanda") A += v;
-    if (t.quem === "Celso") C += v;
-    if (t.quem === "Ambos") {
-      A += v;
-      C += v;
-    }
-  });
-
-  dados.bills.forEach(b => {
-    if (b.mes !== mesFmt) return;
-    const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
-    A += valor / 2;
-    C += valor / 2;
-  });
-
-  dados.loans.forEach(l => {
-    if (l.mes === mesFmt) C += safeNumber(l.valor);
-  });
-
-  calcularReservasProjetadasParaMes(
-    mesFiltroISO,
-    dados.reservas,
-    dados.cards
-  ).forEach(r => {
-    const v = safeNumber(r.valor);
-
-    if (r.quem === "Amanda") A += v;
-    if (r.quem === "Celso") C += v;
-    if (r.quem === "Ambos") {
-      A += v;
-      C += v;
-    }
-  });
-
-  return {
-    amanda: { total: A, projecao: A },
-    celso: { total: C, projecao: C }
-  };
-}
-
-
-// ========================
-// 👥 PROJEÇÃO POR PESSOA
-// ========================
-export function calcularProjecaoPorPessoa(mesFiltroISO, dados) {
-
-  const mesFmt = isoParaMesAbrev(mesFiltroISO);
-  const hoje = new Date();
-  const dia = hoje.getDate();
-  const diasMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
-
-  let A = 0;
-  let C = 0;
-
-  dados.transactions.forEach(t => {
-    if (t.mes !== mesFmt) return;
-
-    if (t.quem === "Amanda") A += safeNumber(t.valor);
-    if (t.quem === "Celso") C += safeNumber(t.valor);
-    if (t.quem === "Ambos") {
-      A += safeNumber(t.valor);
-      C += safeNumber(t.valor);
-    }
-  });
-
-  dados.bills.forEach(b => {
-    if (b.mes !== mesFmt) return;
-    const valor = safeNumber(b.valor_real) || safeNumber(b.valor_previsto);
-    A += valor / 2;
-    C += valor / 2;
-  });
-
-  dados.loans.forEach(l => {
-    if (l.mes === mesFmt) C += safeNumber(l.valor);
-  });
-
-  calcularReservasProjetadasParaMes(
-    mesFiltroISO,
-    dados.reservas,
-    dados.cards
-  ).forEach(r => {
-    const v = safeNumber(r.valor);
-
-    if (r.quem === "Amanda") A += v;
-    if (r.quem === "Celso") C += v;
-    if (r.quem === "Ambos") {
-      A += v;
-      C += v;
-    }
-  });
-
-  return {
-    amanda: { total: A, media: A / dia, projecao: (A / dia) * diasMes },
-    celso: { total: C, media: C / dia, projecao: (C / dia) * diasMes }
-  };
-}
-
-
-
