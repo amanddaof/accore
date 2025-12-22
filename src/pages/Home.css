@@ -4,6 +4,8 @@
   gap: 1rem;
   padding: 26px;
   min-height: calc(100vh - 80px);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* colunas */
@@ -637,4 +639,5 @@
   background: rgba(255,255,255,0.12);
   color: #fff;
 }
+
 
