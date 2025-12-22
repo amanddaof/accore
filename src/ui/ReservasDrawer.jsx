@@ -50,6 +50,8 @@ function avancarMesReserva(mesInicial, recorrencia) {
   const nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
   const [mesAbrev, anoAbrev] = mesInicial.split("/");
   const mesIndex = nomes.indexOf(mesAbrev);
+  if (mesIndex === -1) return mesInicial;
+
   const data = new Date(2000 + Number(anoAbrev), mesIndex);
 
   switch (recorrencia) {
@@ -57,7 +59,7 @@ function avancarMesReserva(mesInicial, recorrencia) {
     case "Bimestral":  data.setMonth(data.getMonth() + 2); break;
     case "Trimestral": data.setMonth(data.getMonth() + 3); break;
     case "Parcelado":  data.setMonth(data.getMonth() + 1); break;
-    default: return null;
+    default: return mesInicial;
   }
 
   return `${nomes[data.getMonth()]}/${String(data.getFullYear()).slice(2)}`;
@@ -202,22 +204,21 @@ export default function ReservasDrawer({ open, onClose }) {
     const proximoMes = avancarMesReserva(r.mes, r.recorrencia);
 
     const payload = proximaData
-  ? {
-      data_real: proximaData,
-      mes: proximoMes,
-      parcelas: avancaParcela(r)
-    }
-  : {
-      recorrencia: "Concluída"
-    };
-
+      ? {
+          data_real: proximaData,
+          mes: proximoMes,
+          parcelas: avancaParcela(r)
+        }
+      : {
+          recorrencia: "Concluída"
+        };
 
     await supabase.from("reservations").update(payload).eq("id", r.id);
 
     setReservas(prev =>
       prev
         .map(x => x.id === r.id ? { ...x, ...payload } : x)
-        .filter(r => r.recorrencia !== "Concluída")
+        .filter(x => x.recorrencia !== "Concluída")
         .sort((a, b) => new Date(a.data_real) - new Date(b.data_real))
     );
   }
@@ -368,4 +369,3 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
-
