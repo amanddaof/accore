@@ -36,10 +36,10 @@ export function buildMonthlyAlerts({
     });
   }
 
-  // 3️⃣ Sobra muito baixa
+  // 3️⃣ Sobra muito baixa (SÓ SE NÃO FOR DÉFICIT)
   if (
     perfil.notify_low_sobra &&
-    saldoMes >= 0 &&
+    saldoMes > 0 &&                       // 🔴 CORREÇÃO AQUI
     saldoMes < perfil.min_sobra_alert
   ) {
     avisos.push({
