@@ -1,0 +1,12 @@
+.profile-page {
+  padding: 24px;
+}
+
+.profile-section {
+  margin-bottom: 24px;
+}
+
+.profile-section label {
+  display: block;
+  margin: 8px 0;
+}
