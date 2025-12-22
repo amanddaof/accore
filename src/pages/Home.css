@@ -627,7 +627,14 @@
   color: #fff;
 }
 
+.home-shell.single-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
 .compare-tabs button.active {
   background: rgba(255,255,255,0.12);
   color: #fff;
 }
+
