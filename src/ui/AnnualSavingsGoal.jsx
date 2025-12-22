@@ -8,7 +8,7 @@ import "./AnnualSavingsGoal.css";
 export default function AnnualSavingsGoal({
   salarios,
   dadosMensais,
-  savingsGoal,        // mantém para o pai saber a meta do ano atual, mas não interfere na leitura
+  savingsGoal,
   setSavingsGoal,
   mes
 }) {
@@ -41,18 +41,8 @@ export default function AnnualSavingsGoal({
       const metaBD = await getSavingsGoal(ano);
       const valorBanco = metaBD?.valor ?? 0;
 
-      const valorFinal = valorBanco;
-
-      console.log("DEBUG META", {
-        ano,
-        anoInicial,
-        savingsGoal,
-        valorBanco,
-        valorFinal
-      });
-
-      setMetaAno(valorFinal);
-      setMetaTemp(valorFinal);
+      setMetaAno(valorBanco);
+      setMetaTemp(valorBanco);
     }
 
     carregarMeta();
@@ -79,28 +69,44 @@ export default function AnnualSavingsGoal({
   const pctProjetado =
     meta > 0 ? Math.min(100, (totalProjetadoAno / meta) * 100) : 0;
 
-  let tone = "neutral";
-  let status = "Defina sua meta anual para começar.";
-
-  if (meta > 0) {
-    if (pctProjetado >= 100) {
-      tone = "good";
-      status = "🎉 Meta projetada atingida!";
-    } else if (pctProjetado >= 80) {
-      tone = "good";
-      status = "😄 No caminho certo!";
-    } else if (pctProjetado >= 60) {
-      tone = "warn";
-      status = "⚠️ Você está perto, mas pode melhorar.";
-    } else {
-      tone = "bad";
-      status = "🚨 Ritmo insuficiente para bater a meta.";
-    }
-  }
-
   const faltante = Math.max(0, meta - somaReais);
   const guardarPorMes =
     qtdMesesFuturos > 0 ? faltante / qtdMesesFuturos : faltante;
+
+  // ===============================
+  // ALERTA TÁTICO — ITEM 9
+  // ===============================
+  let alertTone = null;
+  let alertText = null;
+
+  if (meta > 0) {
+    // 1️⃣ Meta já atingida
+    if (somaReais >= meta) {
+      alertTone = "good";
+      alertText = "🎯 Meta anual atingida com antecedência.";
+    }
+
+    // 2️⃣ Ritmo crítico (projeção não bate)
+    else if (totalProjetadoAno < meta && qtdMesesFuturos > 0) {
+      alertTone = "bad";
+      alertText = `🔴 Para atingir a meta, será preciso economizar ${money(
+        guardarPorMes
+      )} por mês daqui pra frente.`;
+    }
+
+    // 3️⃣ Abaixo do ideal, mas recuperável
+    else if (pctReal < (mesesReais / 12) * 100 && totalProjetadoAno >= meta) {
+      alertTone = "warn";
+      alertText =
+        "🟡 Este mês ficou abaixo do ideal, mas ainda é possível compensar.";
+    }
+
+    // 4️⃣ No ritmo ou acima
+    else {
+      alertTone = "good";
+      alertText = "🟢 Você está no ritmo esperado para este ano.";
+    }
+  }
 
   // SALVAR META
   async function salvarMeta() {
@@ -109,11 +115,9 @@ export default function AnnualSavingsGoal({
 
     await saveSavingsGoal(ano, m);
 
-    // Atualiza o estado local com o que foi salvo
     setMetaAno(m);
     setEditandoMeta(false);
 
-    // Se for o ano do dashboard, só atualiza o estado global para o pai (não afeta leitura)
     if (ano === anoInicial) {
       setSavingsGoal(m);
     }
@@ -173,11 +177,11 @@ export default function AnnualSavingsGoal({
         <div className="progress-area multi">
           <div className="bar-bg">
             <div
-              className={`bar real ${tone}`}
+              className={`bar real ${alertTone}`}
               style={{ width: `${pctReal}%` }}
             />
             <div
-              className={`bar proj ${tone}`}
+              className={`bar proj ${alertTone}`}
               style={{ width: `${pctProjetado}%` }}
             />
           </div>
@@ -186,6 +190,12 @@ export default function AnnualSavingsGoal({
             <span>Real: {pctReal.toFixed(1)}%</span>
             <em>Proj: {pctProjetado.toFixed(1)}%</em>
           </div>
+        </div>
+      )}
+
+      {alertText && (
+        <div className={`goal-alert ${alertTone}`}>
+          {alertText}
         </div>
       )}
 
@@ -205,8 +215,6 @@ export default function AnnualSavingsGoal({
           )}
         </div>
       )}
-
-      <p className={`status ${tone}`}>{status}</p>
     </div>
   );
 }
