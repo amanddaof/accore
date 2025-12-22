@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
+import "./ProfileDrawer.css";
 
 /**
  * Drawer do Perfil do Usuário
@@ -19,20 +20,20 @@ export default function ProfileDrawer({
   if (!open) return null;
 
   function handleClose() {
-    setModo("avisos"); // sempre volta para avisos ao fechar
+    setModo("avisos");
     onClose();
   }
 
   return (
-    <div className="drawer-overlay" onClick={handleClose}>
-      <div
-        className="drawer right profile-drawer"
+    <div className="profile-drawer-overlay" onClick={handleClose}>
+      <aside
+        className="profile-drawer"
         onClick={e => e.stopPropagation()}
       >
         {/* ================= HEADER ================= */}
-        <header className="drawer-header">
+        <header className="profile-drawer-header">
           <div className="profile-header">
-            <div className="avatar">
+            <div className="profile-avatar">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="Avatar" />
               ) : (
@@ -52,17 +53,17 @@ export default function ProfileDrawer({
         </header>
 
         {/* ================= AÇÃO ================= */}
-        <div className="drawer-action">
+        <div className="profile-drawer-action">
           {modo === "avisos" ? (
             <button
-              className="link-button"
+              className="profile-link-button"
               onClick={() => setModo("preferencias")}
             >
               ⚙️ Preferências
             </button>
           ) : (
             <button
-              className="link-button"
+              className="profile-link-button"
               onClick={() => setModo("avisos")}
             >
               ← Voltar para avisos
@@ -71,14 +72,14 @@ export default function ProfileDrawer({
         </div>
 
         {/* ================= CONTEÚDO ================= */}
-        <div className="drawer-content">
+        <div className="profile-drawer-content">
           {modo === "avisos" ? (
             <AvisosList avisos={avisos} />
           ) : (
             <Profile />
           )}
         </div>
-      </div>
+      </aside>
     </div>
   );
 }
@@ -89,16 +90,16 @@ export default function ProfileDrawer({
 function AvisosList({ avisos }) {
   if (!avisos || avisos.length === 0) {
     return (
-      <div className="empty-state">
+      <div className="profile-empty">
         <p>Nenhum aviso no momento 🎉</p>
       </div>
     );
   }
 
   return (
-    <ul className="avisos-list">
+    <ul className="profile-avisos-list">
       {avisos.map((a, idx) => (
-        <li key={idx} className={`aviso ${a.tipo || ""}`}>
+        <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
           <span className="aviso-icon">{a.icon || "ℹ️"}</span>
           <span className="aviso-texto">{a.texto}</span>
         </li>
