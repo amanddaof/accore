@@ -281,6 +281,100 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             + Nova compra
           </button>
 
+          {showForm && (
+            <form className="purchase-form" onSubmit={salvarCompra}>
+              <input
+                placeholder="Descrição"
+                value={form.descricao}
+                onChange={e =>
+                  setForm({ ...form, descricao: e.target.value })
+                }
+                required
+              />
+          
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Valor da parcela"
+                value={form.valor}
+                onChange={e =>
+                  setForm({ ...form, valor: e.target.value })
+                }
+                required
+              />
+          
+              <input
+                type="date"
+                value={form.data_real}
+                onChange={e =>
+                  setForm({ ...form, data_real: e.target.value })
+                }
+                required
+              />
+          
+              <input
+                placeholder="Parcelas (3/10)"
+                value={form.parcelas}
+                onChange={e =>
+                  setForm({ ...form, parcelas: e.target.value })
+                }
+                required
+              />
+          
+              <input
+                placeholder="Fatura (ex: Jan/26)"
+                value={form.mes}
+                onChange={e =>
+                  setForm({ ...form, mes: e.target.value })
+                }
+                required
+              />
+          
+              <select
+                value={form.quem}
+                onChange={e =>
+                  setForm({ ...form, quem: e.target.value })
+                }
+              >
+                <option>Amanda</option>
+                <option>Celso</option>
+                <option>Ambos</option>
+                <option>Terceiros</option>
+              </select>
+          
+              <select
+                value={form.status}
+                onChange={e =>
+                  setForm({ ...form, status: e.target.value })
+                }
+              >
+                <option>Pendente</option>
+                <option>Pago</option>
+              </select>
+          
+              <select
+                value={form.category_id}
+                onChange={e =>
+                  setForm({ ...form, category_id: e.target.value })
+                }
+                required
+              >
+                <option value="">Categoria</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+          
+              <input value={form.origem} disabled />
+          
+              <button className="primary-btn" type="submit">
+                Salvar compra
+              </button>
+            </form>
+          )}
+
           {loading ? (
             <div className="card-transactions empty">Carregando...</div>
           ) : (
@@ -291,3 +385,4 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
