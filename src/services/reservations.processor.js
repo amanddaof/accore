@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
-import { calcularMesFatura } from "../calculations/cardInvoice";
-import { incrementarMes, isoParaMesAbrev } from "../core/dates";
+// calcularMesFatura e isoParaMesAbrev não são mais usados
+// import { calcularMesFatura } from "../calculations/cardInvoice";
+// import { incrementarMes, isoParaMesAbrev } from "../core/dates";
 
 /**
  * Processa automaticamente reservas vencidas
@@ -29,19 +30,11 @@ export async function processarReservasPendentes(cards = []) {
  */
 async function processarReserva(r, cards) {
 
-  // resolve cartão (ou externo)
+  // resolve cartão (ou externo) – mantém se ainda usar em outro lugar
   const card = cards.find(c => c.nome === r.origem) || null;
 
-  // calcula mês da fatura
-  let mes = calcularMesFatura({
-    dataReal: r.data_real,
-    card
-  });
-
-  // fallback (externo ou cartão incompleto)
-  if (!mes) {
-    mes = isoParaMesAbrev(r.data_real);
-  }
+  // agora o mês vem DIRETO da reserva
+  const mes = r.mes;
 
   // 1️⃣ cria a transação
   const { error: e1 } = await supabase
@@ -49,7 +42,7 @@ async function processarReserva(r, cards) {
     .insert([{
       descricao: r.descricao,
       valor: Number(r.valor),
-      mes,
+      mes,                                  // <-- usa r.mes
       parcelas: r.recorrencia === "Parcelado" ? r.parcelas : "1/1",
       quem: r.quem || "Amanda",
       quem_paga: r.quem_paga || null,
