@@ -50,8 +50,162 @@ export default function Profile() {
         Configure como o sistema te acompanha
       </p>
 
-      {/* Seções entram aqui */}
+      {/* ===================== 🔔 NOTIFICAÇÕES ===================== */}
+      <section className="profile-section">
+        <h2>Notificações</h2>
 
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.notify_deficit}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                notify_deficit: e.target.checked
+              })
+            }
+          />
+          Avisar quando entrar em déficit no mês
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.notify_projection_negative}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                notify_projection_negative: e.target.checked
+              })
+            }
+          />
+          Avisar quando a projeção virar negativa
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.notify_low_sobra}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                notify_low_sobra: e.target.checked
+              })
+            }
+          />
+          Avisar quando a sobra ficar muito baixa
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.notify_abnormal_spending}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                notify_abnormal_spending: e.target.checked
+              })
+            }
+          />
+          Avisar quando os gastos fugirem do padrão
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.notify_spending_pace}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                notify_spending_pace: e.target.checked
+              })
+            }
+          />
+          Avisar quando o ritmo de gastos acelerar
+        </label>
+      </section>
+
+      {/* ===================== 🧠 INSIGHTS ===================== */}
+      <section className="profile-section">
+        <h2>Insights & relatórios</h2>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.insight_monthly_summary}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                insight_monthly_summary: e.target.checked
+              })
+            }
+          />
+          Mostrar resumo automático do mês
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.insight_month_comparison}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                insight_month_comparison: e.target.checked
+              })
+            }
+          />
+          Mostrar comparativo com o mês anterior
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={profile.insight_year_highlights}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                insight_year_highlights: e.target.checked
+              })
+            }
+          />
+          Mostrar destaques do ano
+        </label>
+      </section>
+
+      {/* ===================== 🎚️ LIMITES ===================== */}
+      <section className="profile-section">
+        <h2>Limites</h2>
+
+        <label>
+          Limite mínimo de sobra aceitável
+          <input
+            type="number"
+            value={profile.min_sobra_alert}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                min_sobra_alert: Number(e.target.value)
+              })
+            }
+          />
+        </label>
+
+        <label>
+          Avisar quando os gastos passarem de (% da média)
+          <input
+            type="number"
+            value={profile.gasto_alert_percent}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                gasto_alert_percent: Number(e.target.value)
+              })
+            }
+          />
+        </label>
+      </section>
+
+      {/* ===================== 💾 SALVAR ===================== */}
       <button
         className="primary"
         onClick={handleSave}
