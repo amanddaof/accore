@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { useDashboard } from "./hooks/useDashboard";
 import Layout from "./Layout";
+import Profile from "./pages/Profile";
 
 import Salaries from "./pages/settings/Salaries";
 import Limits from "./pages/cards/Limits";
@@ -94,6 +95,9 @@ export default function App() {
           }
         />
 
+        {/* PERFIL DO USUÁRIO */}
+        <Route path="perfil" element={<Profile />} />
+
         {/* PÁGINAS */}
         <Route path="cards" element={<Cards cards={cards} />} />
         <Route path="externo" element={<Externo />} />
@@ -112,4 +116,5 @@ export default function App() {
     </Routes>
   );
 }
+
 
