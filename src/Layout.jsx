@@ -15,8 +15,6 @@ import ProfileDrawer from "./ui/ProfileDrawer";
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
-  console.log("🔥 Layout renderizou");
-
   mes,
   setMes,
   reload,
@@ -30,6 +28,9 @@ export default function Layout({
   bills,
   loans
 }) {
+  /* ================= DEBUG ================= */
+  console.log("🔥 Layout renderizou");
+
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -37,20 +38,26 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
 
   const [openProfile, setOpenProfile] = useState(false);
-
   const [profile, setProfile] = useState(null);
 
+  /* ================= PERFIL ================= */
   useEffect(() => {
+    console.log("🔄 Buscando perfil do usuário...");
     getUserProfile()
-      .then(setProfile)
+      .then(data => {
+        console.log("✅ Perfil carregado:", data);
+        setProfile(data);
+      })
       .catch(err => {
-        console.error("Erro ao carregar perfil:", err);
+        console.error("❌ Erro ao carregar perfil:", err);
       });
   }, []);
-console.log("🔥 Antes de buildMonthlyAlerts", {
-  profile,
-  mensal
-});
+
+  /* ================= AVISOS ================= */
+  console.log("🔥 Antes de buildMonthlyAlerts", {
+    profile,
+    mensal
+  });
 
   const avisos = profile
     ? buildMonthlyAlerts({
@@ -62,34 +69,21 @@ console.log("🔥 Antes de buildMonthlyAlerts", {
       })
     : [];
 
-  // 🔥 BUSCA GLOBAL → DECIDE QUAL DRAWER ABRIR
+  console.log("📌 Avisos finais no Layout:", avisos);
+
+  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
-    // fecha todos antes
     setOpenCards(false);
     setOpenExterno(false);
     setOpenReservas(false);
     setOpenBills(false);
     setOpenIncomes(false);
-  
-    if (item.type === "transaction") {
-      setOpenCards(true);      // ✅ TRANSAÇÕES → CARDS
-    }
-  
-    if (item.type === "externo") {
-      setOpenExterno(true);    // ✅ EXTERNO → EXTERNO
-    }
-  
-    if (item.type === "reservation") {
-      setOpenReservas(true);   // ✅ RESERVAS
-    }
-  
-    if (item.type === "bill") {
-      setOpenBills(true);      // ✅ CONTAS DA CASA
-    }
-  
-    if (item.type === "income") {
-      setOpenIncomes(true);    // ✅ RECEBIMENTOS
-    }
+
+    if (item.type === "transaction") setOpenCards(true);
+    if (item.type === "externo") setOpenExterno(true);
+    if (item.type === "reservation") setOpenReservas(true);
+    if (item.type === "bill") setOpenBills(true);
+    if (item.type === "income") setOpenIncomes(true);
   }
 
   return (
@@ -103,32 +97,23 @@ console.log("🔥 Antes de buildMonthlyAlerts", {
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-
           mensal={mensal}
           salarios={salarios}
-
           transactions={transactions}
           reservations={reservations}
           bills={bills}
           loans={loans}
-
-          onGlobalSelect={handleGlobalSelect} // 🔥 AQUI
-
+          onGlobalSelect={handleGlobalSelect}
           onOpenCards={() => setOpenCards(true)}
           isCardsOpen={openCards}
-
           onOpenExterno={() => setOpenExterno(true)}
           isExternoOpen={openExterno}
-
           onOpenReservas={() => setOpenReservas(true)}
           isReservasOpen={openReservas}
-
           onOpenBills={() => setOpenBills(true)}
           isBillsOpen={openBills}
-
           onOpenIncomes={() => setOpenIncomes(true)}
           isIncomesOpen={openIncomes}
-
           onOpenProfile={() => setOpenProfile(true)}
         />
 
@@ -176,17 +161,7 @@ console.log("🔥 Antes de buildMonthlyAlerts", {
           avatarUrl={profile?.avatar_url || null}
           avisos={avisos}
         />
-
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
