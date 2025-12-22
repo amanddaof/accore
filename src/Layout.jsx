@@ -12,9 +12,11 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
-import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
+import { buildMonthlyAlerts } from "../calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
+  console.log("🔥 Layout renderizou");
+
   mes,
   setMes,
   reload,
@@ -45,6 +47,24 @@ export default function Layout({
         console.error("Erro ao carregar perfil:", err);
       });
   }, []);
+
+  useEffect(() => {
+  if (profile) {
+    console.log("🔥 Teste manual buildMonthlyAlerts");
+    buildMonthlyAlerts({
+      perfil: profile,
+      saldoMes: -100,
+      projecaoSaldoMes: -50,
+      gastoAtual: 1000,
+      gastoMedio: 800
+    });
+  }
+}, [profile]);
+
+console.log("🔥 Antes de buildMonthlyAlerts", {
+  profile,
+  mensal
+});
 
   const avisos = profile
     ? buildMonthlyAlerts({
@@ -175,6 +195,7 @@ export default function Layout({
     </div>
   );
 }
+
 
 
 
