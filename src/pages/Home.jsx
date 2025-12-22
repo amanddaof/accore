@@ -11,10 +11,6 @@ import MonthSummary from "../components/MonthSummary";
 import AnnualSavingsGoal from "../ui/AnnualSavingsGoal";
 import MonthComparisonCard from "../ui/MonthComparisonCard";
 
-import { montarBaseInsightsMes } from "../calculations/insightsBase";
-import { gerarInsightsDoMes } from "../calculations/generateMonthlyInsights";
-import { montarDadosAnoInsights } from "../calculations/insightsYearData";
-
 function agruparPorOrigem(itens = []) {
   const mapa = {};
 
@@ -65,40 +61,6 @@ export default function Home({
   const amanda = salarios?.amanda || { salario: 0, gasto: 0, sobra: 0 };
   const celso = salarios?.celso || { salario: 0, gasto: 0, sobra: 0 };
   
-// =====================
-// 🧠 INSIGHTS DO MÊS
-// =====================
-const mesISO = mes; // já vem no formato YYYY-MM
-const ano = Number(mesISO?.split("-")[0]);
-
-const dados = {
-  transactions: mensal?.transactions || [],
-  reservas: mensal?.reservas || [],
-  bills: mensal?.bills || [],
-  loans,
-  cards: mensal?.cards || []
-};
-
-// Base mensal
-const baseInsights = montarBaseInsightsMes({
-  mesISO,
-  dados,
-  salarios
-});
-
-// Dados do ano
-const dadosAnoInsights = montarDadosAnoInsights(
-  ano,
-  dados,
-  salarios
-);
-
-// Insights finais
-const insightsMes = gerarInsightsDoMes(
-  baseInsights,
-  dadosAnoInsights
-);
-
   const [amandaMensal, celsoMensal] = mensal?.porPessoa || [];
 
   const contasAmanda = amandaMensal?.contas || 0;
@@ -131,18 +93,6 @@ const insightsMes = gerarInsightsDoMes(
             onToggleDebts={() => setShowDebts(v => !v)}
           />
         </section>
-
-      {insightsMes?.length > 0 && (
-  <section className="home-card insights-card">
-    <header className="section-title">Insights do mês</header>
-
-    <ul className="insights-list">
-      {insightsMes.map(i => (
-        <li key={i.id}>{i.texto}</li>
-      ))}
-    </ul>
-  </section>
-)}
 
         {showDebts && (
           <section className="home-card">
@@ -294,5 +244,6 @@ const insightsMes = gerarInsightsDoMes(
       </div>
   );
 }
+
 
 
