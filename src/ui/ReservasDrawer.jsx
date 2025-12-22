@@ -44,6 +44,32 @@ function avancaParcela(r) {
   return `${Math.min(a + 1, t)}/${t}`;
 }
 
+function avancarMesReserva(mesInicial, recorrencia) {
+  if (!mesInicial) return null;
+
+  const nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  const [mesAbrev, anoAbrev] = mesInicial.split("/");
+  const mesIndex = nomes.indexOf(mesAbrev);
+  const data = new Date(2000 + Number(anoAbrev), mesIndex);
+
+  switch (recorrencia) {
+    case "Mensal":     data.setMonth(data.getMonth() + 1); break;
+    case "Bimestral":  data.setMonth(data.getMonth() + 2); break;
+    case "Trimestral": data.setMonth(data.getMonth() + 3); break;
+    case "Parcelado":  data.setMonth(data.getMonth() + 1); break;
+    default: return null;
+  }
+
+  return `${nomes[data.getMonth()]}/${String(data.getFullYear()).slice(2)}`;
+}
+
+function resolverQuemPagaPorOrigem(origem) {
+  if (!origem) return "";
+  if (origem.includes("Amanda")) return "Amanda";
+  if (origem.includes("Celso")) return "Celso";
+  return "";
+}
+
 /* ===============================
    COMPONENTE
 ================================ */
@@ -99,35 +125,6 @@ export default function ReservasDrawer({ open, onClose }) {
     load();
   }, [open]);
 
-   function avancarMesReserva(mesInicial, recorrencia) {
-  if (!mesInicial) return null;
-
-  const [mesAbrev, anoAbrev] = mesInicial.split("/");
-  const nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-  const mesIndex = nomes.indexOf(mesAbrev);
-
-  const data = new Date(2000 + Number(anoAbrev), mesIndex);
-
-  switch (recorrencia) {
-    case "Mensal":
-      data.setMonth(data.getMonth() + 1);
-      break;
-    case "Bimestral":
-      data.setMonth(data.getMonth() + 2);
-      break;
-    case "Trimestral":
-      data.setMonth(data.getMonth() + 3);
-      break;
-    case "Parcelado":
-      data.setMonth(data.getMonth() + 1);
-      break;
-    default:
-      return null;
-  }
-
-  return `${nomes[data.getMonth()]}/${String(data.getFullYear()).slice(2)}`;
-}
-
   /* ===============================
      SALVAR RESERVA
   ================================ */
@@ -135,8 +132,14 @@ export default function ReservasDrawer({ open, onClose }) {
   async function salvarReserva(e) {
     e.preventDefault();
 
+    const quemPagaFinal =
+      form.origem === "Externo"
+        ? form.quem_paga
+        : resolverQuemPagaPorOrigem(form.origem);
+
     const payload = {
       ...form,
+      quem_paga: quemPagaFinal,
       valor: Number(form.valor),
       ultimo_mes: null,
       category_id: form.category_id || null
@@ -165,6 +168,7 @@ export default function ReservasDrawer({ open, onClose }) {
       descricao: "",
       valor: "",
       data_real: "",
+      mes: "",
       recorrencia: "Mensal",
       parcelas: "1/1",
       quem: "",
@@ -181,8 +185,7 @@ export default function ReservasDrawer({ open, onClose }) {
   async function processarReserva(r) {
     if (!r.data_real) return;
 
-    // 1️⃣ cria transação
-    const { error: e1 } = await supabase.from("transactions").insert([{
+    await supabase.from("transactions").insert([{
       descricao: r.descricao,
       valor: Number(r.valor),
       data_real: r.data_real,
@@ -191,43 +194,27 @@ export default function ReservasDrawer({ open, onClose }) {
       quem_paga: r.quem_paga || null,
       status: "Pendente",
       category_id: r.category_id || null,
-      origem: r.origem || "Externo"
+      origem: r.origem || "Externo",
+      mes: r.mes
     }]);
 
-    if (e1) {
-      alert("Erro ao gerar transação");
-      console.error(e1);
-      return;
-    }
-
-    // 2️⃣ calcula próxima data
     const proximaData = proximaDataReserva(r);
-   const proximoMes = avancarMesReserva(r.mes, r.recorrencia);
-   
-   const payload = proximaData
-     ? {
-         ultimo_mes: r.data_real,
-         data_real: proximaData,
-         mes: proximoMes,          // ✅ AQUI
-         parcelas: avancaParcela(r)
-       }
-     : {
-         ultimo_mes: r.data_real,
-         recorrencia: "Concluída"
-       };
+    const proximoMes = avancarMesReserva(r.mes, r.recorrencia);
 
-    const { error: e2 } = await supabase
-      .from("reservations")
-      .update(payload)
-      .eq("id", r.id);
+    const payload = proximaData
+      ? {
+          ultimo_mes: r.data_real,
+          data_real: proximaData,
+          mes: proximoMes,
+          parcelas: avancaParcela(r)
+        }
+      : {
+          ultimo_mes: r.data_real,
+          recorrencia: "Concluída"
+        };
 
-    if (e2) {
-      alert("Erro ao atualizar reserva");
-      console.error(e2);
-      return;
-    }
+    await supabase.from("reservations").update(payload).eq("id", r.id);
 
-    // 🔑 AQUI ESTÁ O AJUSTE IMPORTANTE
     setReservas(prev =>
       prev
         .map(x => x.id === r.id ? { ...x, ...payload } : x)
@@ -245,7 +232,6 @@ export default function ReservasDrawer({ open, onClose }) {
   return (
     <div className="drawer-overlay">
       <aside className="drawer">
-
         <div className="drawer-header">
           <h2>Reservas</h2>
           <button onClick={onClose}>✕</button>
@@ -257,107 +243,90 @@ export default function ReservasDrawer({ open, onClose }) {
             + Nova reserva
           </button>
 
-           {showForm && (
-              <form className="purchase-form" onSubmit={salvarReserva}>
-                <input
-                  placeholder="Descrição"
-                  value={form.descricao}
-                  onChange={e => setForm({ ...form, descricao: e.target.value })}
-                  required
-                />
-            
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Valor"
-                  value={form.valor}
-                  onChange={e => setForm({ ...form, valor: e.target.value })}
-                  required
-                />
-            
-                <input
-                  type="date"
-                  value={form.data_real}
-                  onChange={e => setForm({ ...form, data_real: e.target.value })}
-                  required
-                />
-            
-                <input
-                  placeholder="Fatura (ex: Jan/26)"
-                  value={form.mes}
-                  onChange={e => setForm({ ...form, mes: e.target.value })}
-                  required
-                />
-            
-                <select
-                  value={form.recorrencia}
-                  onChange={e => setForm({ ...form, recorrencia: e.target.value })}
-                >
-                  <option>Mensal</option>
-                  <option>Bimestral</option>
-                  <option>Trimestral</option>
-                  <option>Parcelado</option>
-                  <option>Única</option>
-                </select>
-            
-                <input
-                  placeholder="Parcelas (1/3)"
-                  value={form.parcelas}
-                  onChange={e => setForm({ ...form, parcelas: e.target.value })}
-                />
-            
-                <select
-                  value={form.quem}
-                  onChange={e => setForm({ ...form, quem: e.target.value })}
-                >
-                  <option value="">Quem comprou?</option>
-                  <option>Amanda</option>
-                  <option>Celso</option>
-                  <option>Ambos</option>
-                </select>
-            
-                <select
-                  value={form.quem_paga}
-                  onChange={e => setForm({ ...form, quem_paga: e.target.value })}
-                >
+          {showForm && (
+            <form className="purchase-form" onSubmit={salvarReserva}>
+              <input placeholder="Descrição" value={form.descricao}
+                onChange={e => setForm({ ...form, descricao: e.target.value })} required />
+
+              <input type="number" step="0.01" placeholder="Valor"
+                value={form.valor}
+                onChange={e => setForm({ ...form, valor: e.target.value })} required />
+
+              <input type="date" value={form.data_real}
+                onChange={e => setForm({ ...form, data_real: e.target.value })} required />
+
+              <input placeholder="Fatura (ex: Jan/26)"
+                value={form.mes}
+                onChange={e => setForm({ ...form, mes: e.target.value })} required />
+
+              <select value={form.recorrencia}
+                onChange={e => setForm({ ...form, recorrencia: e.target.value })}>
+                <option>Mensal</option>
+                <option>Bimestral</option>
+                <option>Trimestral</option>
+                <option>Parcelado</option>
+                <option>Única</option>
+              </select>
+
+              <input placeholder="Parcelas (1/3)"
+                value={form.parcelas}
+                onChange={e => setForm({ ...form, parcelas: e.target.value })} />
+
+              <select value={form.quem}
+                onChange={e => setForm({ ...form, quem: e.target.value })}>
+                <option value="">Quem comprou?</option>
+                <option>Amanda</option>
+                <option>Celso</option>
+                <option>Ambos</option>
+              </select>
+
+              <select value={form.category_id}
+                onChange={e => setForm({ ...form, category_id: e.target.value })} required>
+                <option value="">Categoria</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+
+              <select value={form.origem}
+                onChange={e => {
+                  const origem = e.target.value;
+                  setForm(f => ({
+                    ...f,
+                    origem,
+                    quem_paga:
+                      origem === "Externo" ? "" : resolverQuemPagaPorOrigem(origem)
+                  }));
+                }} required>
+                <option value="">Origem</option>
+                <option>NU Amanda</option>
+                <option>NU Celso</option>
+                <option>SI Amanda</option>
+                <option>BB Celso</option>
+                <option>Externo</option>
+              </select>
+
+              {form.origem === "Externo" && (
+                <select value={form.quem_paga}
+                  onChange={e => setForm({ ...form, quem_paga: e.target.value })} required>
                   <option value="">Quem paga?</option>
                   <option>Amanda</option>
                   <option>Celso</option>
                 </select>
-            
-                <select
-                  value={form.category_id}
-                  onChange={e => setForm({ ...form, category_id: e.target.value })}
-                  required
-                >
-                  <option value="">Categoria</option>
-                  {categories.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-            
-                <input
-                  placeholder="Origem"
-                  value={form.origem}
-                  onChange={e => setForm({ ...form, origem: e.target.value })}
-                />
-            
-                <button className="primary-btn" type="submit">
-                  Salvar reserva
-                </button>
-              </form>
-            )}
+              )}
+
+              <button className="primary-btn" type="submit">
+                Salvar reserva
+              </button>
+            </form>
+          )}
 
           {loading ? (
             <div className="card-transactions empty">Carregando...</div>
           ) : (
             <div className="card-transactions">
               {reservas.map(r => (
-                <ReservaRow
-                  key={r.id}
-                  r={r}
-                  onProcessar={processarReserva}
-                />
+                <ReservaRow key={r.id} r={r} onProcessar={processarReserva} />
               ))}
             </div>
           )}
@@ -378,9 +347,7 @@ function ReservaRow({ r, onProcessar }) {
   return (
     <div className="history-row" onClick={() => setOpen(v => !v)}>
       <div className="history-desc reserva-row">
-        <span className="reserve-month">
-          {formatarDataBR(r.data_real)}
-        </span>
+        <span className="reserve-month">{formatarDataBR(r.data_real)}</span>
         <span className="title">{r.descricao}</span>
       </div>
 
@@ -391,19 +358,11 @@ function ReservaRow({ r, onProcessar }) {
           <div><span>Origem</span><strong>{r.origem}</strong></div>
           <div><span>Quem paga</span><strong>{r.quem_paga || "-"}</strong></div>
           <div><span>Recorrência</span><strong>{r.recorrencia}</strong></div>
-          <div>
-            <span>Última cobrança</span>
-            <strong>{formatarDataBR(r.ultimo_mes)}</strong>
-          </div>
+          <div><span>Última cobrança</span><strong>{formatarDataBR(r.ultimo_mes)}</strong></div>
           <div><span>Categoria</span><strong>{r.categories?.name || "-"}</strong></div>
 
-          <button
-            className="mark-paid-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onProcessar(r);
-            }}
-          >
+          <button className="mark-paid-btn"
+            onClick={(e) => { e.stopPropagation(); onProcessar(r); }}>
             Processar ✅
           </button>
         </div>
@@ -411,5 +370,3 @@ function ReservaRow({ r, onProcessar }) {
     </div>
   );
 }
-
-
