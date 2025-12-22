@@ -15,6 +15,8 @@ import ProfileDrawer from "./ui/ProfileDrawer";
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
+  console.log("🔥 Layout renderizou");
+
   mes,
   setMes,
   reload,
@@ -45,6 +47,10 @@ export default function Layout({
         console.error("Erro ao carregar perfil:", err);
       });
   }, []);
+console.log("🔥 Antes de buildMonthlyAlerts", {
+  profile,
+  mensal
+});
 
   const avisos = profile
     ? buildMonthlyAlerts({
@@ -175,6 +181,7 @@ export default function Layout({
     </div>
   );
 }
+
 
 
 
