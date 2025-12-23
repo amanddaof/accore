@@ -43,21 +43,21 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
-  /* ================= SOBRA INDIVIDUAL (APENAS PARA NOTIFICAÇÕES) ================= */
+  /* ================= SOBRA INDIVIDUAL (FONTE ÚNICA = salarios) ================= */
   const sobraIndividualMes = useMemo(() => {
-    if (!profile || !mensal?.porPessoa) return 0;
+    if (!profile || !salarios) return 0;
 
-    const pessoaLogada = mensal.porPessoa.find(p =>
-      p.nome?.toLowerCase() === profile.display_name?.toLowerCase()
-    );
+    // 🔑 mapeamento direto e explícito
+    if (profile.display_name === "Amanda") {
+      return salarios.amanda?.sobra ?? 0;
+    }
 
-    if (!pessoaLogada) return 0;
+    if (profile.display_name === "Celso") {
+      return salarios.celso?.sobra ?? 0;
+    }
 
-    const salario = pessoaLogada.salario ?? 0;
-    const gasto = pessoaLogada.gasto ?? 0;
-
-    return salario - gasto;
-  }, [profile, mensal]);
+    return 0;
+  }, [profile, salarios]);
 
   /* ================= AVISOS (INDIVIDUAIS) ================= */
   const avisos = useMemo(() => {
@@ -124,7 +124,6 @@ export default function Layout({
 
         <Footer />
 
-        {/* ================= DRAWERS ================= */}
         <CardsDrawer
           open={openCards}
           onClose={() => setOpenCards(false)}
