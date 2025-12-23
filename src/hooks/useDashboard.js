@@ -46,6 +46,21 @@ function mesAnteriorISO(mes) {
   return `${ano}-${String(mesNum).padStart(2, "0")}`;
 }
 
+/* ======================================================
+   🔑 SALÁRIO VIGENTE NO MÊS (FONTE ÚNICA)
+====================================================== */
+function salarioNoMes(historico, pessoa, mesISO) {
+  if (!historico?.length || !mesISO) return null;
+
+  const [ano, mes] = mesISO.split("-").map(Number);
+  const alvo = new Date(ano, mes - 1, 1);
+
+  return historico
+    .filter(s => s.quem.toLowerCase() === pessoa)
+    .filter(s => new Date(s.data) <= alvo)
+    .sort((a, b) => new Date(b.data) - new Date(a.data))[0] || null;
+}
+
 export function useDashboard() {
   /* ======================================================
      STATES
@@ -149,164 +164,26 @@ export function useDashboard() {
   );
 
   /* ======================================================
-     MÊS ANTERIOR
+     SALÁRIOS (CORRIGIDO E BLINDADO)
   ====================================================== */
-  const mesAnterior = useMemo(() => mesAnteriorISO(mes), [mes]);
-
-  const mensalAnterior = useMemo(() => {
-    if (!mesAnterior) return null;
-
-    return {
-      total: calcularTotalMensal(mesAnterior, dados),
-      porPessoa: calcularGastosPorPessoa(mesAnterior, dados)
-    };
-  }, [mesAnterior, dados]);
-
-  /* ======================================================
-     COMPARATIVO MENSAL (JÁ EXISTENTE)
-  ====================================================== */
-  const comparativoMensal = useMemo(() => {
-    if (!mes || !mesAnterior) return null;
-
-    const totalAtual = calcularTotalMensal(mes, dados);
-    const totalAnterior = calcularTotalMensal(mesAnterior, dados);
-    const valor = totalAtual - totalAnterior;
-
-    const total = {
-      mesAtual: { label: mes, total: totalAtual },
-      mesAnterior: { label: mesAnterior, total: totalAnterior },
-      variacao: {
-        valor,
-        percentual: totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
-      }
-    };
-
-    const [amandaAtual, celsoAtual] = calcularGastosPorPessoa(mes, dados);
-    const [amandaAnt, celsoAnt] =
-      calcularGastosPorPessoa(mesAnterior, dados) || [{ total: 0 }, { total: 0 }];
-
-    const montar = (atual, anterior) => {
-      const diff = atual - anterior;
-      return {
-        atual,
-        anterior,
-        valor: diff,
-        percentual: anterior === 0 ? 0 : (diff / anterior) * 100
-      };
-    };
-
-    return {
-      total,
-      porPessoa: {
-        amanda: montar(amandaAtual?.total || 0, amandaAnt?.total || 0),
-        celso: montar(celsoAtual?.total || 0, celsoAnt?.total || 0)
-      }
-    };
-  }, [mes, mesAnterior, dados]);
-
-  /* ======================================================
-     COMPARATIVOS POR MÉDIA (3 / 6 / 12)
-  ====================================================== */
-  const comparativo3Meses = useMemo(
-  () => compararPeriodos({ mesAtual: mes, meses: 3, dados }),
-  [mes, dados]
-);
-
-const comparativo6Meses = useMemo(
-  () => compararPeriodos({ mesAtual: mes, meses: 6, dados }),
-  [mes, dados]
-);
-
-const comparativo12Meses = useMemo(
-  () => compararPeriodos({ mesAtual: mes, meses: 12, dados }),
-  [mes, dados]
-);
-
-
-  const comparativos = useMemo(
-    () => ({
-      mensal: comparativoMensal,
-      media3: comparativo3Meses,
-      media6: comparativo6Meses,
-      media12: comparativo12Meses
-    }),
-    [comparativoMensal, comparativo3Meses, comparativo6Meses, comparativo12Meses]
-  );
-
-  /* ======================================================
-     OUTROS CÁLCULOS
-  ====================================================== */
-  const dividas = useMemo(
-    () => calcularDividasMes(mes, dados),
-    [mes, dados]
-  );
-
-  const categorias = useMemo(
-    () => ({
-      amanda: calcularCategoriasMes(mes, "Amanda", dados),
-      celso: calcularCategoriasMes(mes, "Celso", dados),
-      ambos: calcularCategoriasMes(mes, "Ambos", dados),
-      comparativo: compararCategoriasMes(mes, "Ambos", dados)
-    }),
-    [mes, dados]
-  );
-
-  const anual = useMemo(
-    () => ({
-      amanda: calcularGastosAnuaisPorPessoa(
-        new Date(mes).getFullYear(),
-        "Amanda",
-        dados
-      ),
-      celso: calcularGastosAnuaisPorPessoa(
-        new Date(mes).getFullYear(),
-        "Celso",
-        dados
-      ),
-      ambos: calcularGastosAnuaisPorPessoa(
-        new Date(mes).getFullYear(),
-        "Ambos",
-        dados
-      ),
-      projecaoAmanda: calcularProjecaoAnual(
-        new Date(mes).getFullYear(),
-        "Amanda",
-        dados
-      ),
-      projecaoCelso: calcularProjecaoAnual(
-        new Date(mes).getFullYear(),
-        "Celso",
-        dados
-      )
-    }),
-    [mes, dados]
-  );
-
   const salarios = useMemo(() => {
     if (!salaryHistory.length) return null;
 
-    const ano = new Date(mes).getFullYear();
-
-    const ultimoAmanda = [...salaryHistory]
-      .filter(s => s.quem.toLowerCase() === "amanda")
-      .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
-
-    const ultimoCelso = [...salaryHistory]
-      .filter(s => s.quem.toLowerCase() === "celso")
-      .sort((a, b) => new Date(b.data) - new Date(a.data))[0];
-
     const gasto = mensal.porPessoa;
+
+    const amanda = salarioNoMes(salaryHistory, "amanda", mes);
+    const celso = salarioNoMes(salaryHistory, "celso", mes);
 
     return {
       amanda: {
-        salario: ultimoAmanda?.valor || 0,
+        salario: amanda?.valor || 0,
         gasto: gasto[0]?.total || 0,
-        sobra: (ultimoAmanda?.valor || 0) - (gasto[0]?.total || 0)
+        sobra: (amanda?.valor || 0) - (gasto[0]?.total || 0)
       },
       celso: {
-        salario: ultimoCelso?.valor || 0,
+        salario: celso?.valor || 0,
         gasto: gasto[1]?.total || 0,
-        sobra: (ultimoCelso?.valor || 0) - (gasto[1]?.total || 0)
+        sobra: (celso?.valor || 0) - (gasto[1]?.total || 0)
       }
     };
   }, [salaryHistory, mensal, mes]);
@@ -325,16 +202,9 @@ const comparativo12Meses = useMemo(
     mes,
     setMes,
     mensal,
-    mensalAnterior,
-    comparativoMensal, // mantém compatibilidade
-    comparativos,      // 🔑 NOVO (tabs)
-    dividas,
-    categorias,
-    anual,
     salarios,
     savingsGoal,
     setSavingsGoal,
     reload: loadAll
   };
 }
-
