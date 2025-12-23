@@ -3,7 +3,7 @@ import { getUserProfile, updateUserProfile } from "../services/userProfile";
 import { uploadAvatar } from "../services/avatar";
 import "./Profile.css";
 
-export default function Profile() {
+export default function Profile({ onProfileUpdate }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -35,10 +35,18 @@ export default function Profile() {
 
       const url = await uploadAvatar(file, profile.user_id);
 
-      setProfile(prev => ({
-        ...prev,
+      const novoPerfil = {
+        ...profile,
         avatar_url: url
-      }));
+      };
+
+      // estado local (Profile)
+      setProfile(novoPerfil);
+
+      // 🔥 avisa o Layout para atualizar Header + Drawer
+      if (onProfileUpdate) {
+        onProfileUpdate(novoPerfil);
+      }
     } catch (err) {
       console.error("Erro ao enviar avatar:", err);
       alert("Erro ao enviar foto");
@@ -52,6 +60,12 @@ export default function Profile() {
     setSaving(true);
     try {
       await updateUserProfile(profile);
+
+      // garante sincronização total após salvar
+      if (onProfileUpdate) {
+        onProfileUpdate(profile);
+      }
+
       alert("Preferências salvas");
     } catch (err) {
       console.error("Erro ao salvar:", err);
@@ -102,7 +116,10 @@ export default function Profile() {
         <div className="profile-avatar-editor">
           <div className="avatar-preview">
             {profile.avatar_url ? (
-              <img src={`${profile.avatar_url}?t=${Date.now()}`} alt="Avatar" />
+              <img
+                src={`${profile.avatar_url}?t=${Date.now()}`}
+                alt="Avatar"
+              />
             ) : (
               <span>👤</span>
             )}
