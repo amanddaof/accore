@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { getUserProfile, updateUserProfile } from "../services/userProfile";
+import { uploadAvatar } from "../services/avatar";
 import "./Profile.css";
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -21,6 +23,27 @@ export default function Profile() {
 
     loadProfile();
   }, []);
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files[0];
+    if (!file || !profile) return;
+
+    try {
+      setAvatarUploading(true);
+
+      const url = await uploadAvatar(file, profile.user_id);
+
+      setProfile({
+        ...profile,
+        avatar_url: url
+      });
+    } catch (err) {
+      console.error("Erro ao enviar avatar:", err);
+      alert("Erro ao enviar foto");
+    } finally {
+      setAvatarUploading(false);
+    }
+  }
 
   async function handleSave() {
     setSaving(true);
@@ -50,7 +73,28 @@ export default function Profile() {
         Configure como o sistema te acompanha
       </p>
 
-      {/* 🔔 NOTIFICAÇÕES */}
+      {/* ================= AVATAR ================= */}
+      <div className="profile-avatar-editor">
+        <div className="avatar-preview">
+          {profile.avatar_url ? (
+            <img src={profile.avatar_url} alt="Avatar" />
+          ) : (
+            <span>👤</span>
+          )}
+        </div>
+
+        <label className="avatar-upload">
+          {avatarUploading ? "Enviando…" : "Alterar foto"}
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handleAvatarChange}
+          />
+        </label>
+      </div>
+
+      {/* ================= NOTIFICAÇÕES ================= */}
       <section className="profile-section">
         <h2>Notificações</h2>
 
@@ -119,7 +163,7 @@ export default function Profile() {
         </label>
       </section>
 
-      {/* 🧠 INSIGHTS */}
+      {/* ================= INSIGHTS ================= */}
       <section className="profile-section">
         <h2>Insights & relatórios</h2>
 
@@ -166,7 +210,7 @@ export default function Profile() {
         </label>
       </section>
 
-      {/* 🎚️ LIMITES */}
+      {/* ================= LIMITES ================= */}
       <section className="profile-section">
         <h2>Limites</h2>
 
@@ -199,7 +243,7 @@ export default function Profile() {
         </label>
       </section>
 
-      {/* 💾 SALVAR */}
+      {/* ================= SALVAR ================= */}
       <button
         className="primary"
         onClick={handleSave}
