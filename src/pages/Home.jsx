@@ -21,7 +21,6 @@ function agruparPorOrigem(itens = []) {
 
     if (i.tipo === "Conta da casa") {
       origem = "Conta da casa";
-
       const real = Number(i.item.valor_real || 0);
       const previsto = Number(i.item.valor_previsto || 0);
       valor = real > 0 ? real : previsto;
@@ -34,10 +33,7 @@ function agruparPorOrigem(itens = []) {
       valor = Number(i.item.valor || 0);
     }
 
-    if (i.tipo === "Conta da casa") {
-      valor = Number(valor) / 2;
-    }
-
+    if (i.tipo === "Conta da casa") valor = Number(valor) / 2;
     mapa[origem] = (mapa[origem] || 0) + Number(valor);
   });
 
@@ -58,14 +54,12 @@ export default function Home({
   savingsGoal,
   setSavingsGoal
 }) {
-  /* ================= USUÁRIO LOGADO ================= */
   const { usuarioLogado } = useOutletContext() || {};
 
   const amanda = salarios?.amanda || { salario: 0, gasto: 0, sobra: 0 };
   const celso = salarios?.celso || { salario: 0, gasto: 0, sobra: 0 };
 
   const [amandaMensal, celsoMensal] = mensal?.porPessoa || [];
-
   const contasAmanda = amandaMensal?.contas || 0;
   const contasCelso = celsoMensal?.contas || 0;
   const totalContasCasa = contasAmanda + contasCelso;
@@ -73,20 +67,14 @@ export default function Home({
   const [showDebts, setShowDebts] = useState(false);
   const [detalhePessoa, setDetalhePessoa] = useState(null);
 
-  /* ================= CATEGORIAS ================= */
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
+  const [pessoaEvolucao, setPessoaEvolucao] = useState("Ambos");
 
-  // 🔑 SINCRONIZA COM USUÁRIO LOGADO (SÓ NA PRIMEIRA VEZ)
+  // 🔑 sincroniza categorias
   useEffect(() => {
     if (!usuarioLogado) return;
-
-    setPessoaCategorias(prev => {
-      if (prev !== "Ambos") return prev;
-
-      if (usuarioLogado === "Amanda") return "Amanda";
-      if (usuarioLogado === "Celso") return "Celso";
-      return prev;
-    });
+    setPessoaCategorias(p => (p === "Ambos" ? usuarioLogado : p));
+    setPessoaEvolucao(p => (p === "Ambos" ? usuarioLogado : p));
   }, [usuarioLogado]);
 
   function togglePessoa(nome) {
@@ -117,71 +105,6 @@ export default function Home({
         </section>
       )}
 
-      <section className="home-card people-section">
-        <header className="section-title">Resumo por pessoa</header>
-
-        <div className="people-grid">
-          <div
-            className="person-box amanda"
-            onClick={() => togglePessoa("Amanda")}
-            style={{ cursor: "pointer" }}
-          >
-            <h3>Amanda</h3>
-
-            <div className="person-row">
-              <span>Salário</span>
-              <strong>{money(amanda.salario)}</strong>
-            </div>
-
-            <div className="person-row">
-              <span>Gasto</span>
-              <strong>{money(amanda.gasto)}</strong>
-            </div>
-
-            <div className={`person-result ${amanda.sobra < 0 ? "neg" : "ok"}`}>
-              {amanda.sobra < 0 ? "Déficit" : "Sobra"}: {money(amanda.sobra)}
-            </div>
-          </div>
-
-          <div
-            className="person-box celso"
-            onClick={() => togglePessoa("Celso")}
-            style={{ cursor: "pointer" }}
-          >
-            <h3>Celso</h3>
-
-            <div className="person-row">
-              <span>Salário</span>
-              <strong>{money(celso.salario)}</strong>
-            </div>
-
-            <div className="person-row">
-              <span>Gasto</span>
-              <strong>{money(celso.gasto)}</strong>
-            </div>
-
-            <div className={`person-result ${celso.sobra < 0 ? "neg" : "ok"}`}>
-              {celso.sobra < 0 ? "Déficit" : "Sobra"}: {money(celso.sobra)}
-            </div>
-          </div>
-        </div>
-
-        {detalhePessoa && itensDetalhe.length > 0 && (
-          <div className="home-card person-details">
-            <header className="section-title">
-              Detalhamento — {detalhePessoa}
-            </header>
-
-            {itensDetalhe.map((i, idx) => (
-              <div key={idx} className="person-detail-row">
-                <span>{i.origem}</span>
-                <strong>{money(i.total)}</strong>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
       <section className="home-card">
         <MonthComparisonCard
           data={comparativoMensal?.total}
@@ -191,30 +114,7 @@ export default function Home({
 
       <section className="home-card">
         <header className="section-title">Evolução anual</header>
-        <div className="evolution-chart-wrapper">
-          <AnnualEvolutionChart />
-        </div>
-      </section>
-
-      <section className="home-card">
-        <header className="section-title">Contas da casa</header>
-
-        <div className="house-bills">
-          <div className="bill-row">
-            <span>Amanda</span>
-            <strong>{money(contasAmanda)}</strong>
-          </div>
-
-          <div className="bill-row">
-            <span>Celso</span>
-            <strong>{money(contasCelso)}</strong>
-          </div>
-
-          <div className="bill-row total">
-            <span>Total do mês</span>
-            <strong>{money(totalContasCasa)}</strong>
-          </div>
-        </div>
+        <AnnualEvolutionChart pessoa={pessoaEvolucao} />
       </section>
 
       <section className="home-card">
@@ -234,7 +134,6 @@ export default function Home({
       <section className="home-card">
         <header className="section-title category-header">
           Gastos por categoria
-
           <div className="category-tabs">
             {["Amanda", "Celso", "Ambos"].map(p => (
               <button
@@ -251,10 +150,8 @@ export default function Home({
         <CategoryPieChart
           data={categorias?.[pessoaCategorias.toLowerCase()] || []}
         />
-
         <MonthSummary categorias={categorias} pessoa={pessoaCategorias} />
       </section>
-
     </div>
   );
 }
