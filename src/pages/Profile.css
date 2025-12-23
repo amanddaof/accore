@@ -1,149 +1,152 @@
 /* =============================
-   OVERLAY
+   BASE
 ============================= */
-.profile-drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(2px);
-  z-index: 1000;
+
+.profile-page {
+  padding: 8px 0 32px;
+  color: #eaeaf0;
+}
+
+.profile-page h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.profile-page .subtitle {
+  font-size: 13px;
+  color: #9aa0aa;
+  margin-bottom: 28px;
+  line-height: 1.4;
 }
 
 /* =============================
-   DRAWER
+   SECTIONS
 ============================= */
-.profile-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 360px;
-  background: #0f1115;
-  color: #eaeaf0;
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
-  z-index: 1001;
+
+.profile-section {
+  margin-bottom: 34px;
+}
+
+.profile-section h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #ffffff;
+}
+
+/* =============================
+   LABELS & INPUTS
+============================= */
+
+.profile-section label {
   display: flex;
   flex-direction: column;
-  animation: slideIn 0.25s ease-out;
+  gap: 6px;
+  font-size: 13px;
+  color: #d6d9e0;
+  margin-bottom: 14px;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+.profile-section input[type="text"],
+.profile-section input[type="number"] {
+  background: #151821;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.profile-section input[type="text"]:focus,
+.profile-section input[type="number"]:focus {
+  outline: none;
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 1px rgba(108,99,255,0.4);
 }
 
 /* =============================
-   HEADER
+   CHECKBOXES
 ============================= */
-.profile-drawer-header {
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+.profile-section label input[type="checkbox"] {
+  margin-right: 8px;
 }
 
-.profile-avatar {
-  width: 52px;
-  height: 52px;
+.profile-section label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.profile-section label:has(input[type="checkbox"]) span {
+  line-height: 1.4;
+}
+
+/* =============================
+   AVATAR
+============================= */
+
+.profile-avatar-editor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.avatar-preview {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: #1c1f26;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  color: #aaa;
   overflow: hidden;
+  font-size: 28px;
 }
 
-.profile-avatar img {
+.avatar-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.profile-user-info {
-  display: flex;
-  flex-direction: column;
+.avatar-upload {
+  font-size: 13px;
+  color: #8ab4f8;
+  cursor: pointer;
 }
 
-.profile-user-info strong {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.profile-user-info span {
-  font-size: 12px;
-  color: #9aa0aa;
+.avatar-upload:hover {
+  text-decoration: underline;
 }
 
 /* =============================
-   CONTENT
+   SAVE BUTTON
 ============================= */
-.profile-drawer-content {
-  flex: 1;
-  padding: 16px 20px;
-  overflow-y: auto;
+
+.profile-page .primary {
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #6c63ff, #877dff);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+  box-shadow: 0 6px 18px rgba(108,99,255,.45);
 }
 
-/* =============================
-   SECTION TITLES
-============================= */
-.profile-section-title {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9aa0aa;
-  margin: 18px 0 10px;
+.profile-page .primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(108,99,255,.6);
 }
 
-/* =============================
-   AVISOS
-============================= */
-.profile-alert {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.profile-alert.erro {
-  background: rgba(255, 75, 75, 0.15);
-  color: #ffb3b3;
-}
-
-.profile-alert.alerta {
-  background: rgba(255, 190, 60, 0.15);
-  color: #ffd27d;
-}
-
-.profile-alert .icon {
-  font-size: 18px;
-  line-height: 1;
-}
-
-/* =============================
-   EMPTY STATE
-============================= */
-.profile-empty {
-  text-align: center;
-  font-size: 14px;
-  color: #9aa0aa;
-  margin-top: 40px;
-}
-
-/* =============================
-   FOOTER (opcional)
-============================= */
-.profile-drawer-footer {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.profile-page .primary:disabled {
+  opacity: .6;
+  cursor: default;
 }
