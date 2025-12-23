@@ -45,9 +45,8 @@ export default function Layout({
 
   /* ================= DADOS DO MÊS (FILTRO ATUAL) ================= */
   const sobraRealMes =
-  (mensal?.total?.salario ?? 0) -
-  (mensal?.total?.gasto ?? 0) -
-  (mensal?.total?.reservas ?? 0);
+  (mensal?.porPessoa?.[0]?.sobra ?? 0) +
+  (mensal?.porPessoa?.[1]?.sobra ?? 0);
 
   // 🔎 LOG GLOBAL DO VALOR REAL
   console.log("[DEBUG] MÊS ATUAL:", mes);
@@ -172,4 +171,5 @@ export default function Layout({
     </div>
   );
 }
+
 
