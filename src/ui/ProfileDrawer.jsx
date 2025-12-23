@@ -35,29 +35,24 @@ export default function ProfileDrawer({
         onClick={e => e.stopPropagation()}
       >
         {/* ================= HEADER ================= */}
-        <header className="profile-drawer-header">
-          <div className="profile-header">
-            <div className="profile-avatar">
-              {avatarUrl ? (
-                <img
-                  src={`${avatarUrl}?t=${Date.now()}`}
-                  alt="Avatar"
-                />
-              ) : (
-                <span className="avatar-placeholder">👤</span>
-              )}
-            </div>
+        <header className="profile-drawer-header center">
+  <button className="close-btn" onClick={handleClose}>
+    ✕
+  </button>
 
-            <div className="profile-info">
-              <strong>{userName}</strong>
-              <small>Configura como o sistema te acompanha</small>
-            </div>
-          </div>
+  <div className="profile-avatar-large">
+    {avatarUrl ? (
+      <img src={`${avatarUrl}?t=${Date.now()}`} alt="Avatar" />
+    ) : (
+      <span className="avatar-placeholder">👤</span>
+    )}
+  </div>
 
-          <button className="close-btn" onClick={handleClose}>
-            ✕
-          </button>
-        </header>
+  <strong className="profile-name">{userName}</strong>
+  <small className="profile-subtitle">
+    Configura como o sistema te acompanha
+  </small>
+</header>
 
         {/* ================= AÇÃO ================= */}
         <div className="profile-drawer-action">
