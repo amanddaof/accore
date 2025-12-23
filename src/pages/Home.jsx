@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import CardsGrid from "../ui/CardsGrid";
@@ -25,7 +25,6 @@ function agruparPorOrigem(itens = []) {
       const real = Number(i.item.valor_real || 0);
       const previsto = Number(i.item.valor_previsto || 0);
       valor = real > 0 ? real : previsto;
-
       valor = valor / 2;
     } else if (i.tipo === "Empréstimo") {
       origem = "Empréstimos";
@@ -74,12 +73,21 @@ export default function Home({
   const [showDebts, setShowDebts] = useState(false);
   const [detalhePessoa, setDetalhePessoa] = useState(null);
 
-  /* ================= CATEGORIAS (AJUSTE PRINCIPAL) ================= */
-  const [pessoaCategorias, setPessoaCategorias] = useState(() => {
-    if (usuarioLogado === "Amanda") return "Amanda";
-    if (usuarioLogado === "Celso") return "Celso";
-    return "Ambos";
-  });
+  /* ================= CATEGORIAS ================= */
+  const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
+
+  // 🔑 SINCRONIZA COM USUÁRIO LOGADO (SÓ NA PRIMEIRA VEZ)
+  useEffect(() => {
+    if (!usuarioLogado) return;
+
+    setPessoaCategorias(prev => {
+      if (prev !== "Ambos") return prev;
+
+      if (usuarioLogado === "Amanda") return "Amanda";
+      if (usuarioLogado === "Celso") return "Celso";
+      return prev;
+    });
+  }, [usuarioLogado]);
 
   function togglePessoa(nome) {
     setDetalhePessoa(prev => (prev === nome ? null : nome));
@@ -113,7 +121,6 @@ export default function Home({
         <header className="section-title">Resumo por pessoa</header>
 
         <div className="people-grid">
-          {/* AMANDA */}
           <div
             className="person-box amanda"
             onClick={() => togglePessoa("Amanda")}
@@ -136,7 +143,6 @@ export default function Home({
             </div>
           </div>
 
-          {/* CELSO */}
           <div
             className="person-box celso"
             onClick={() => togglePessoa("Celso")}
