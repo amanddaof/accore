@@ -13,6 +13,7 @@ export default function Header({
   onReload,
 
   onOpenProfile,
+  avatarUrl,
   onOpenCards,
   isCardsOpen,
   onOpenExterno,
@@ -136,13 +137,13 @@ export default function Header({
             )}
           </button>
 
-          <button
-            className="icon-button"
-            onClick={onOpenProfile}
-            title="Perfil"
-          >
-            👤
-          </button>
+          <button className="profile-button" onClick={onOpenProfile}>
+  {avatarUrl ? (
+    <img src={avatarUrl} alt="Perfil" />
+  ) : (
+    <span className="profile-placeholder">👤</span>
+  )}
+</button>
 
           <input
             type="month"
@@ -187,5 +188,6 @@ export default function Header({
     </>
   );
 }
+
 
 
