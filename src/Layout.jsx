@@ -116,8 +116,10 @@ export default function Layout({
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
           avisos={avisos}
+          onProfileUpdate={setProfile}   // 👈 ADICIONA ISSO
         />
       </div>
     </div>
   );
 }
+
