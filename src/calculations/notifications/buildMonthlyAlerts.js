@@ -31,8 +31,14 @@ export function buildMonthlyAlerts({
 ========================= */
 const minSobra = Number(perfil.min_sobra_alert || 0);
 
-if (perfil.notify_low_sobra && saldoMes >= 0) {  // ← ADICIONOU AQUI
-  if (saldoMes < minSobra) {
+if (perfil.notify_low_sobra && saldoMes !== undefined) {
+  if (saldoMes < 0) {
+    avisos.push({
+      tipo: "erro",
+      icon: "🔴",
+      texto: "Déficit neste mês"
+    });
+  } else if (saldoMes < minSobra) {
     avisos.push({
       tipo: "alerta",
       icon: "⚠️",
@@ -46,7 +52,6 @@ if (perfil.notify_low_sobra && saldoMes >= 0) {  // ← ADICIONOU AQUI
     });
   }
 }
-
   /* =========================
      3️⃣ PROJEÇÃO NEGATIVA (adicional)
   ========================= */
