@@ -67,7 +67,7 @@ export default function Header({
 			  <img src="/logo-ac.png" alt="AC Core" />
 			</div>
 			<span className="title">ACCORE</span>
-
+		</div>
         {/* MENU */}
         <nav className="nav">
           <button
@@ -192,4 +192,5 @@ export default function Header({
     </>
   );
 }
+
 
