@@ -31,51 +31,25 @@
   }
 }
 
-/* ================= HEADER ================= */
+/* ================= HEADER (BASE) ================= */
+/* usado apenas para herdar borda */
 .profile-drawer-header {
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.profile-header {
-  display: flex;
-  gap: 14px;
-  align-items: center;
+/* ================= HEADER CENTRAL (OPÇÃO B) ================= */
+.profile-drawer-header.center {
+  position: relative;
+  padding: 32px 20px 24px;
+  text-align: center;
+  display: block; /* 🔥 remove flex antigo */
 }
 
-.profile-avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: #1c1f26;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  font-size: 22px;
-}
-
-.profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-info strong {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.profile-info small {
-  display: block;
-  font-size: 12px;
-  color: #9aa0aa;
-}
-
-.close-btn {
+/* botão fechar */
+.profile-drawer-header.center .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   background: none;
   border: none;
   color: #9aa0aa;
@@ -83,8 +57,44 @@
   cursor: pointer;
 }
 
-.close-btn:hover {
-  color: #fff;
+.profile-drawer-header.center .close-btn:hover {
+  color: #ffffff;
+}
+
+/* ================= AVATAR CENTRAL GRANDE ================= */
+.profile-avatar-large {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c63ff, #8ab4f8);
+  padding: 3px;
+}
+
+.profile-avatar-large img,
+.profile-avatar-large .avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #0f1115;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+  font-size: 34px;
+}
+
+/* ================= TEXTO ================= */
+.profile-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.profile-subtitle {
+  font-size: 12px;
+  color: #9aa0aa;
 }
 
 /* ================= ACTION ================= */
@@ -145,59 +155,10 @@
   font-size: 18px;
 }
 
-/* ================= EMPTY ================= */
+/* ================= EMPTY STATE ================= */
 .profile-empty {
   margin-top: 40px;
   text-align: center;
   color: #9aa0aa;
   font-size: 14px;
-}
-
-/* ================= HEADER CENTRAL ================= */
-.profile-drawer-header.center {
-  position: relative;
-  padding: 32px 20px 24px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.profile-drawer-header.center .close-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-}
-
-/* ================= AVATAR GRANDE ================= */
-.profile-avatar-large {
-  width: 88px;
-  height: 88px;
-  margin: 0 auto 12px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c63ff, #8ab4f8);
-  padding: 3px;
-}
-
-.profile-avatar-large img,
-.profile-avatar-large .avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: #0f1115;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-}
-
-/* ================= TEXTO ================= */
-.profile-name {
-  display: block;
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.profile-subtitle {
-  font-size: 12px;
-  color: #9aa0aa;
 }
