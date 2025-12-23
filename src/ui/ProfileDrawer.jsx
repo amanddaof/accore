@@ -6,7 +6,7 @@ import "./ProfileDrawer.css";
  * Drawer do Perfil do Usuário
  * - Abre mostrando avisos
  * - Botão leva para Preferências
- * - Ao fechar, sempre volta para avisos
+ * - Ao fechar (ou reabrir), sempre volta para avisos
  */
 export default function ProfileDrawer({
   open,
@@ -17,7 +17,11 @@ export default function ProfileDrawer({
 }) {
   const [modo, setModo] = useState("avisos"); // "avisos" | "preferencias"
 
-  if (!open) return null;
+  // 🔒 garante que sempre abre em "avisos"
+  if (!open) {
+    if (modo !== "avisos") setModo("avisos");
+    return null;
+  }
 
   function handleClose() {
     setModo("avisos");
@@ -35,7 +39,10 @@ export default function ProfileDrawer({
           <div className="profile-header">
             <div className="profile-avatar">
               {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" />
+                <img
+                  src={`${avatarUrl}?t=${Date.now()}`}
+                  alt="Avatar"
+                />
               ) : (
                 <span className="avatar-placeholder">👤</span>
               )}
