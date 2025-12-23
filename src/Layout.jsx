@@ -36,7 +36,9 @@ export default function Layout({
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    getUserProfile().then(setProfile).catch(console.error);
+    getUserProfile()
+      .then(setProfile)
+      .catch(console.error);
   }, []);
 
   const sobraRealMes =
@@ -52,7 +54,7 @@ export default function Layout({
       gastoAtual: 0,
       gastoMedio: 0
     });
-  }, [profile, salarios, mensal]);
+  }, [profile, salarios, mensal, sobraRealMes]);
 
   function handleGlobalSelect(item) {
     setOpenCards(false);
@@ -66,6 +68,11 @@ export default function Layout({
     if (item.type === "reservation") setOpenReservas(true);
     if (item.type === "bill") setOpenBills(true);
     if (item.type === "income") setOpenIncomes(true);
+  }
+
+  // sempre que o Profile atualizar, atualiza o estado centralizado
+  function handleProfileUpdate(novoPerfil) {
+    setProfile(novoPerfil);
   }
 
   return (
@@ -95,6 +102,7 @@ export default function Layout({
           onOpenIncomes={() => setOpenIncomes(true)}
           isIncomesOpen={openIncomes}
           onOpenProfile={() => setOpenProfile(true)}
+          // usa o campo avatar_url vindo do backend
           avatarUrl={profile?.avatar_url || null}
         />
 
@@ -104,11 +112,30 @@ export default function Layout({
 
         <Footer />
 
-        <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
-        <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
-        <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
-        <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
-        <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
+        <CardsDrawer
+          open={openCards}
+          onClose={() => setOpenCards(false)}
+          cards={cards}
+          mes={mes}
+        />
+        <ExternoDrawer
+          open={openExterno}
+          onClose={() => setOpenExterno(false)}
+          mes={mes}
+        />
+        <ReservasDrawer
+          open={openReservas}
+          onClose={() => setOpenReservas(false)}
+        />
+        <BillsDrawer
+          open={openBills}
+          onClose={() => setOpenBills(false)}
+          mes={mes}
+        />
+        <IncomeDrawer
+          open={openIncomes}
+          onClose={() => setOpenIncomes(false)}
+        />
 
         <ProfileDrawer
           open={openProfile}
@@ -116,10 +143,10 @@ export default function Layout({
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
           avisos={avisos}
-          onProfileUpdate={setProfile}   // 👈 ADICIONA ISSO
+          // passa o handler para o Profile.jsx
+          onProfileUpdate={handleProfileUpdate}
         />
       </div>
     </div>
   );
 }
-
