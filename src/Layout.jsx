@@ -123,6 +123,7 @@ export default function Layout({
           onOpenIncomes={() => setOpenIncomes(true)}
           isIncomesOpen={openIncomes}
           onOpenProfile={() => setOpenProfile(true)}
+          avatarUrl={profile?.avatar_url || null}
         />
 
         {/* CONTEÚDO */}
@@ -173,3 +174,4 @@ export default function Layout({
     </div>
   );
 }
+
