@@ -155,20 +155,6 @@ export default function Profile({ onProfileUpdate }) {
         <label>
           <input
             type="checkbox"
-            checked={profile.notify_projection_negative}
-            onChange={e =>
-              setProfile({
-                ...profile,
-                notify_projection_negative: e.target.checked
-              })
-            }
-          />
-          Avisar quando a projeção virar negativa
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
             checked={profile.notify_low_sobra}
             onChange={e =>
               setProfile({ ...profile, notify_low_sobra: e.target.checked })
