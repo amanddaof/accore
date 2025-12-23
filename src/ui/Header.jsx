@@ -51,6 +51,9 @@ export default function Header({
     [...dados.amanda, ...dados.celso, ...dados.geral]
       .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
 
+  // DEBUG: ver se está chegando aqui
+  console.log("AVATAR NO HEADER:", avatarUrl);
+
   return (
     <>
       <header className="header">
@@ -135,23 +138,25 @@ export default function Header({
           </button>
 
           {/* PERFIL */}
-          <button className="profile-button" onClick={onOpenProfile}>
-            {avatarUrl ? (
-              <img
-                src={`${avatarUrl}?t=${Date.now()}`}
-                alt="Perfil"
-              />
-            ) : (
-              <span className="profile-placeholder">👤</span>
-            )}
-          </button>
+			<button
+			  className="profile-button no-style"
+			  onClick={onOpenProfile}
+			>
+			  {avatarUrl ? (
+				<img src={`${avatarUrl}?t=${Date.now()}`} alt="Perfil" />
+			  ) : (
+				<span className="profile-placeholder">👤</span>
+			  )}
+			</button>
 
+          {/* MÊS */}
           <input
             type="month"
             value={mes}
             onChange={e => onMesChange(e.target.value)}
           />
 
+          {/* RELOAD */}
           <button
             className="circle-icon-btn"
             onClick={onReload}
@@ -160,6 +165,7 @@ export default function Header({
             ⟳
           </button>
 
+          {/* LOGOUT */}
           <button
             className="circle-icon-btn"
             onClick={() => logout(navigate)}
