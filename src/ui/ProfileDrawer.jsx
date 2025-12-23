@@ -37,31 +37,30 @@ export default function ProfileDrawer({
       >
         {/* ================= HEADER ================= */}
         <header className="profile-drawer-header center">
-  <button className="close-btn" onClick={handleClose}>
-    ✕
-  </button>
+          <button className="close-btn" onClick={handleClose}>
+            ✕
+          </button>
 
-  <div className="profile-avatar-large">
-    {avatarUrl ? (
-      <img src={`${avatarUrl}?t=${Date.now()}`} alt="Avatar" />
-    ) : (
-      <span className="avatar-placeholder">👤</span>
-    )}
-  </div>
+          <div className="profile-avatar-large">
+            {avatarUrl ? (
+              <img src={`${avatarUrl}?t=${Date.now()}`} alt="Avatar" />
+            ) : (
+              <span className="avatar-placeholder">👤</span>
+            )}
+          </div>
 
-  <strong className="profile-name">{userName}</strong>
-  <small className="profile-subtitle">
-    Configura como o sistema te acompanha
-  </small>
-</header>
+          <strong className="profile-name">{userName}</strong>
+          <small className="profile-subtitle">
+            Configura como o sistema te acompanha
+          </small>
+        </header>
 
         {/* ================= AÇÃO ================= */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
-  <AvisosList avisos={avisos} />
-) : (
-  <Profile onProfileUpdate={onProfileUpdate} />
-)}
+            <button
+              className="profile-link-button"
+              onClick={() => setModo("preferencias")}
             >
               ⚙️ Preferências
             </button>
@@ -80,7 +79,7 @@ export default function ProfileDrawer({
           {modo === "avisos" ? (
             <AvisosList avisos={avisos} />
           ) : (
-            <Profile />
+            <Profile onProfileUpdate={onProfileUpdate} />
           )}
         </div>
       </aside>
