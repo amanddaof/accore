@@ -63,8 +63,8 @@
 
 /* ================= AVATAR CENTRAL GRANDE ================= */
 .profile-avatar-large {
-  width: 108px;
-  height: 108px;
+  width: 200px;
+  height: 200px;
   margin: 0 auto 16px;
   border-radius: 50%;
   background: linear-gradient(135deg, #6c63ff, #8ab4f8);
