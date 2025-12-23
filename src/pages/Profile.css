@@ -200,3 +200,40 @@
   opacity: 0.6;
   cursor: default;
 }
+
+/* =========================
+   LIMITES – LAYOUT PREMIUM
+========================= */
+
+/* força layout vertical só nos limites */
+.profile-section h2 + label {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* texto explicativo */
+.profile-section h2 + label,
+.profile-section h2 + label + label {
+  align-items: flex-start;
+}
+
+.profile-section h2 + label span,
+.profile-section h2 + label + label span {
+  font-size: 13px;
+  color: #9aa0aa;
+  margin-bottom: 6px;
+}
+
+/* inputs de limite mais destacados */
+.profile-section h2 + label input[type="number"],
+.profile-section h2 + label + label input[type="number"] {
+  width: 100%;
+  font-size: 15px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.1),
+    0 6px 18px rgba(0,0,0,0.4);
+}
