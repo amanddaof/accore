@@ -9,6 +9,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  /* ================= LOAD PROFILE ================= */
   useEffect(() => {
     async function loadProfile() {
       try {
@@ -24,6 +25,7 @@ export default function Profile() {
     loadProfile();
   }, []);
 
+  /* ================= AVATAR ================= */
   async function handleAvatarChange(e) {
     const file = e.target.files[0];
     if (!file || !profile) return;
@@ -33,10 +35,10 @@ export default function Profile() {
 
       const url = await uploadAvatar(file, profile.user_id);
 
-      setProfile({
-        ...profile,
+      setProfile(prev => ({
+        ...prev,
         avatar_url: url
-      });
+      }));
     } catch (err) {
       console.error("Erro ao enviar avatar:", err);
       alert("Erro ao enviar foto");
@@ -45,6 +47,7 @@ export default function Profile() {
     }
   }
 
+  /* ================= SAVE ================= */
   async function handleSave() {
     setSaving(true);
     try {
@@ -58,6 +61,7 @@ export default function Profile() {
     }
   }
 
+  /* ================= STATES ================= */
   if (loading) {
     return <div className="page">Carregando perfil…</div>;
   }
@@ -69,30 +73,52 @@ export default function Profile() {
   return (
     <div className="page profile-page">
       <h1>Perfil do usuário</h1>
-      <p className="subtitle">
-        Configure como o sistema te acompanha
-      </p>
+      <p className="subtitle">Configure como o sistema te acompanha</p>
 
-      {/* ================= AVATAR ================= */}
-      <div className="profile-avatar-editor">
-        <div className="avatar-preview">
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="Avatar" />
-          ) : (
-            <span>👤</span>
-          )}
-        </div>
+      {/* ================= IDENTIDADE ================= */}
+      <section className="profile-section">
+        <h2>Identidade</h2>
 
-        <label className="avatar-upload">
-          {avatarUploading ? "Enviando…" : "Alterar foto"}
+        <label>
+          Nome exibido
           <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleAvatarChange}
+            type="text"
+            placeholder="Ex: Amanda"
+            value={profile.display_name || ""}
+            onChange={e =>
+              setProfile({
+                ...profile,
+                display_name: e.target.value
+              })
+            }
           />
         </label>
-      </div>
+      </section>
+
+      {/* ================= AVATAR ================= */}
+      <section className="profile-section">
+        <h2>Foto do perfil</h2>
+
+        <div className="profile-avatar-editor">
+          <div className="avatar-preview">
+            {profile.avatar_url ? (
+              <img src={`${profile.avatar_url}?t=${Date.now()}`} alt="Avatar" />
+            ) : (
+              <span>👤</span>
+            )}
+          </div>
+
+          <label className="avatar-upload">
+            {avatarUploading ? "Enviando…" : "Alterar foto"}
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleAvatarChange}
+            />
+          </label>
+        </div>
+      </section>
 
       {/* ================= NOTIFICAÇÕES ================= */}
       <section className="profile-section">
@@ -244,11 +270,7 @@ export default function Profile() {
       </section>
 
       {/* ================= SALVAR ================= */}
-      <button
-        className="primary"
-        onClick={handleSave}
-        disabled={saving}
-      >
+      <button className="primary" onClick={handleSave} disabled={saving}>
         {saving ? "Salvando…" : "Salvar preferências"}
       </button>
     </div>
