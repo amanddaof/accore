@@ -87,7 +87,7 @@ export default function Profile({ onProfileUpdate }) {
   return (
     <div className="page profile-page">
       <h1>Perfil do usuário</h1>
-      <p className="subtitle">Configure como o sistema te acompanha</p>
+      <p className="subtitle">Configure as notificações que deseja acompanhar</p>
 
       {/* ================= IDENTIDADE ================= */}
       <section className="profile-section">
