@@ -6,7 +6,8 @@ export function buildMonthlyAlerts({
 
   if (!perfil) return avisos;
 
-  const limiteSobra = Number(perfil.min_sobra_alerta || 0);
+  // ⚠️ NOME CORRETO DA COLUNA VINDO DO BANCO
+  const limiteSobra = Number(perfil.min_sobra_alert || 0);
 
   /* ======================================================
      1️⃣ DÉFICIT DO MÊS (MAIOR PRIORIDADE)
@@ -46,10 +47,13 @@ export function buildMonthlyAlerts({
     avisos.push({
       tipo: "warning",
       icon: "⚠️",
-      texto: `Sobra baixa neste mês. Restam apenas ${saldoMes.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      })}.`
+      texto: `Sobra baixa neste mês. Restam apenas ${saldoMes.toLocaleString(
+        "pt-BR",
+        {
+          style: "currency",
+          currency: "BRL"
+        }
+      )}.`
     });
   }
 
