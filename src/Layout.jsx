@@ -43,11 +43,10 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
-  /* ================= SOBRA INDIVIDUAL (FONTE ÚNICA = salarios) ================= */
+  /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
 
-    // 🔑 mapeamento direto e explícito
     if (profile.display_name === "Amanda") {
       return salarios.amanda?.sobra ?? 0;
     }
@@ -59,23 +58,15 @@ export default function Layout({
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS (INDIVIDUAIS) ================= */
+  /* ================= AVISOS ================= */
   const avisos = useMemo(() => {
-  if (!profile) return [];
+    if (!profile) return [];
 
-  console.log("[ALERT DEBUG]", {
-    saldoMes: sobraIndividualMes,
-    notify_deficit: profile.notify_deficit,
-    notify_low_sobra: profile.notify_low_sobra,
-    min_sobra_alerta: profile.min_sobra_alerta
-  });
-
-  return buildMonthlyAlerts({
-    perfil: profile,
-    saldoMes: sobraIndividualMes
-  });
-}, [profile, sobraIndividualMes]);
-
+    return buildMonthlyAlerts({
+      perfil: profile,
+      saldoMes: sobraIndividualMes
+    });
+  }, [profile, sobraIndividualMes]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -127,8 +118,9 @@ export default function Layout({
           avatarUrl={profile?.avatar_url || null}
         />
 
+        {/* 👇 O USUÁRIO LOGADO FICA DISPONÍVEL PARA TODAS AS ROTAS */}
         <main style={{ flex: 1 }}>
-          <Outlet />
+          <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
 
         <Footer />
@@ -174,5 +166,3 @@ export default function Layout({
     </div>
   );
 }
-
-
