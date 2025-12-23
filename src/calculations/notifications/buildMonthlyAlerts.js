@@ -1,12 +1,12 @@
 /**
  * Gera avisos do mês com base:
- * - nos dados mensais já calculados
+ * - nos dados do mês filtrado
  * - nas preferências do usuário
  */
 export function buildMonthlyAlerts({
   perfil,
-  saldoMes,            // SOBRA REAL DO MÊS (já filtrada)
-  projecaoSaldoMes,    // SOBRA PROJETADA
+  saldoMes,            // número (pode ser negativo)
+  projecaoSaldoMes,    // número | null
   gastoAtual,
   gastoMedio
 }) {
@@ -14,18 +14,24 @@ export function buildMonthlyAlerts({
 
   const avisos = [];
 
-  const temDeficit = saldoMes < 0;
-
-  /* ===================== 🔴 DÉFICIT ===================== */
-  if (perfil.notify_deficit && temDeficit) {
+  /* =========================
+     1️⃣ DÉFICIT (PRIORIDADE MÁXIMA)
+  ========================= */
+  if (perfil.notify_deficit && saldoMes < 0) {
     avisos.push({
       tipo: "erro",
       icon: "🔴",
       texto: "Déficit neste mês"
     });
+
+    // ⛔ IMPORTANTE:
+    // Se está em déficit, NÃO faz sentido avisar sobra baixa
+    return avisos;
   }
 
-  /* ===================== 📉 PROJEÇÃO NEGATIVA ===================== */
+  /* =========================
+     2️⃣ PROJEÇÃO NEGATIVA
+  ========================= */
   if (
     perfil.notify_projection_negative &&
     typeof projecaoSaldoMes === "number" &&
@@ -38,11 +44,12 @@ export function buildMonthlyAlerts({
     });
   }
 
-  /* ===================== ⚠️ SOBRA BAIXA ===================== */
-  // ❗️ Só avalia se NÃO houver déficit
+  /* =========================
+     3️⃣ SOBRA BAIXA (APENAS SE NÃO HÁ DÉFICIT)
+  ========================= */
   if (
     perfil.notify_low_sobra &&
-    !temDeficit &&
+    saldoMes >= 0 &&
     typeof perfil.min_sobra_alert === "number" &&
     saldoMes < perfil.min_sobra_alert
   ) {
@@ -53,7 +60,9 @@ export function buildMonthlyAlerts({
     });
   }
 
-  /* ===================== 🔥 GASTOS ANORMAIS ===================== */
+  /* =========================
+     4️⃣ GASTOS ACIMA DO PADRÃO
+  ========================= */
   if (
     perfil.notify_abnormal_spending &&
     gastoMedio > 0 &&
