@@ -43,35 +43,30 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
-  /* ================= DADOS DO MÊS (FILTRO ATUAL) ================= */
-  const sobraRealMes =
-  (mensal?.porPessoa?.[0]?.sobra ?? 0) +
-  (mensal?.porPessoa?.[1]?.sobra ?? 0);
+  /* ================= SOBRA INDIVIDUAL (APENAS PARA NOTIFICAÇÕES) ================= */
+  const sobraIndividualMes = useMemo(() => {
+    if (!profile || !mensal?.porPessoa) return 0;
 
-  // 🔎 LOG GLOBAL DO VALOR REAL
-  console.log("[DEBUG] MÊS ATUAL:", mes);
-  console.log("[DEBUG] sobraRealMes:", sobraRealMes);
-  console.log("[DEBUG] mensal.total:", mensal?.total);
+    const pessoaLogada = mensal.porPessoa.find(p =>
+      p.nome?.toLowerCase() === profile.display_name?.toLowerCase()
+    );
 
-  /* ================= AVISOS ================= */
+    if (!pessoaLogada) return 0;
+
+    const salario = pessoaLogada.salario ?? 0;
+    const gasto = pessoaLogada.gasto ?? 0;
+
+    return salario - gasto;
+  }, [profile, mensal]);
+
+  /* ================= AVISOS (INDIVIDUAIS) ================= */
   const avisos = useMemo(() => {
-    console.log("[DEBUG] useMemo avisos disparado");
-    console.log("[DEBUG] profile:", profile);
-    console.log("[DEBUG] saldo enviado para buildMonthlyAlerts:", sobraRealMes);
+    if (!profile) return [];
 
-    if (!profile || !mensal) {
-      console.log("[DEBUG] retornando avisos vazios (profile ou mensal ausente)");
-      return [];
-    }
-
-    const resultado = buildMonthlyAlerts({
-      saldoMes: sobraRealMes
+    return buildMonthlyAlerts({
+      saldoMes: sobraIndividualMes
     });
-
-    console.log("[DEBUG] avisos retornados:", resultado);
-
-    return resultado;
-  }, [profile, mensal, sobraRealMes]);
+  }, [profile, sobraIndividualMes]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -171,5 +166,3 @@ export default function Layout({
     </div>
   );
 }
-
-
