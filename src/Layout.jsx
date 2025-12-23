@@ -41,6 +41,12 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
+  // DEBUG: ver se o avatar chega aqui
+  useEffect(() => {
+    console.log("PROFILE ATUAL:", profile);
+    console.log("AVATAR NO LAYOUT:", profile?.avatar_url);
+  }, [profile]);
+
   const sobraRealMes =
     (salarios?.amanda?.sobra ?? 0) +
     (salarios?.celso?.sobra ?? 0);
@@ -70,7 +76,6 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
-  // sempre que o Profile atualizar, atualiza o estado centralizado
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
@@ -102,7 +107,6 @@ export default function Layout({
           onOpenIncomes={() => setOpenIncomes(true)}
           isIncomesOpen={openIncomes}
           onOpenProfile={() => setOpenProfile(true)}
-          // usa o campo avatar_url vindo do backend
           avatarUrl={profile?.avatar_url || null}
         />
 
@@ -143,7 +147,6 @@ export default function Layout({
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
           avisos={avisos}
-          // passa o handler para o Profile.jsx
           onProfileUpdate={handleProfileUpdate}
         />
       </div>
