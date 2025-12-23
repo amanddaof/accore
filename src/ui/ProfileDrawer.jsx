@@ -13,7 +13,8 @@ export default function ProfileDrawer({
   onClose,
   userName = "Usuário",
   avatarUrl = null,
-  avisos = []
+  avisos = [],
+  onProfileUpdate
 }) {
   const [modo, setModo] = useState("avisos"); // "avisos" | "preferencias"
 
@@ -57,9 +58,10 @@ export default function ProfileDrawer({
         {/* ================= AÇÃO ================= */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("preferencias")}
+  <AvisosList avisos={avisos} />
+) : (
+  <Profile onProfileUpdate={onProfileUpdate} />
+)}
             >
               ⚙️ Preferências
             </button>
