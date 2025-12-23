@@ -17,20 +17,38 @@ export function buildMonthlyAlerts({
   /* =========================
      1️⃣ DÉFICIT (PRIORIDADE MÁXIMA)
   ========================= */
-  if (perfil.notify_deficit && saldoMes < 0) {
+  if (saldoMes < 0) {
     avisos.push({
       tipo: "erro",
       icon: "🔴",
       texto: "Déficit neste mês"
     });
-
-    // ⛔ IMPORTANTE:
-    // Se está em déficit, NÃO faz sentido avisar sobra baixa
-    return avisos;
+    return avisos; // Para aqui se tiver déficit
   }
 
   /* =========================
-     2️⃣ PROJEÇÃO NEGATIVA
+     2️⃣ STATUS DA SOBRA (SEMPRE MOSTRA)
+  ========================= */
+  const minSobra = Number(perfil.min_sobra_alert || 0);
+  
+  if (saldoMes >= 0) {
+    if (saldoMes < minSobra) {
+      avisos.push({
+        tipo: "alerta",
+        icon: "⚠️",
+        texto: "Sobra abaixo do configurado"
+      });
+    } else {
+      avisos.push({
+        tipo: "sucesso",
+        icon: "✅",
+        texto: "Sobra acima do configurado"
+      });
+    }
+  }
+
+  /* =========================
+     3️⃣ PROJEÇÃO NEGATIVA (adicional)
   ========================= */
   if (
     perfil.notify_projection_negative &&
@@ -41,22 +59,6 @@ export function buildMonthlyAlerts({
       tipo: "erro",
       icon: "📉",
       texto: "Projeção indica déficit até o fim do mês"
-    });
-  }
-
-  /* =========================
-     3️⃣ SOBRA BAIXA (APENAS SE NÃO HÁ DÉFICIT)
-  ========================= */
-  if (
-    perfil.notify_low_sobra &&
-    saldoMes >= 0 &&
-    typeof perfil.min_sobra_alert === "number" &&
-    saldoMes < perfil.min_sobra_alert
-  ) {
-    avisos.push({
-      tipo: "alerta",
-      icon: "⚠️",
-      texto: "Sobra do mês abaixo do mínimo configurado"
     });
   }
 
