@@ -30,7 +30,14 @@ export function buildMonthlyAlerts({
      2️⃣ STATUS DA SOBRA (SEMPRE MOSTRA)
   ========================= */
   const minSobra = Number(perfil.min_sobra_alert || 0);
-  
+  console.log('🔍 DEBUG SOBRA:', {
+  saldoMes,
+  rawMin: perfil.min_sobra_alert,
+  minSobra: Number(perfil.min_sobra_alert || 0),
+  isDeficit: saldoMes < 0,
+  condicao: saldoMes >= 0
+});
+
   if (saldoMes >= 0) {
     if (saldoMes < minSobra) {
       avisos.push({
