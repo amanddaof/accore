@@ -331,27 +331,88 @@
   top: 0;
   z-index: 1000;
 }
-
+/* ============================
+   BOTÃO DE PERFIL (ISOLADO)
+============================ */
 .profile-button {
-  width: 36px;
-  height: 36px;
+  all: unset;              /* 🔥 remove herança do botão padrão */
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: none;
-  border: none;
-  padding: 0;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.profile-button img,
-.profile-placeholder {
+/* imagem do avatar */
+.profile-button img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  background: #1c1f26;
+  display: block;
+}
+
+/* placeholder quando não tem foto */
+.profile-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c63ff, #8ab4f8);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
 }
 
+/* ============================
+   ISOLAMENTO TOTAL DO AVATAR
+============================ */
+
+/* remove QUALQUER estilo herdado de botão */
+.header-right button.no-style {
+  background: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 50% !important;
+  border: none !important;
+}
+
+/* container do avatar */
+.profile-button {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+/* imagem do avatar */
+.profile-button img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* placeholder */
+.profile-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+
+  background: linear-gradient(135deg, #6c63ff, #8ab4f8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+}
