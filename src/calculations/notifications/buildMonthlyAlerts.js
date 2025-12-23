@@ -27,32 +27,25 @@ export function buildMonthlyAlerts({
   }
 
   /* =========================
-     2️⃣ STATUS DA SOBRA (SEMPRE MOSTRA)
-  ========================= */
-  const minSobra = Number(perfil.min_sobra_alert || 0);
-  console.log('🔍 DEBUG SOBRA:', {
-  saldoMes,
-  rawMin: perfil.min_sobra_alert,
-  minSobra: Number(perfil.min_sobra_alert || 0),
-  isDeficit: saldoMes < 0,
-  condicao: saldoMes >= 0
-});
+   2️⃣ STATUS DA SOBRA (SEMPRE MOSTRA)
+========================= */
+const minSobra = Number(perfil.min_sobra_alert || 0);
 
-  if (saldoMes >= 0) {
-    if (saldoMes < minSobra) {
-      avisos.push({
-        tipo: "alerta",
-        icon: "⚠️",
-        texto: "Sobra abaixo do configurado"
-      });
-    } else {
-      avisos.push({
-        tipo: "sucesso",
-        icon: "✅",
-        texto: "Sobra acima do configurado"
-      });
-    }
+if (perfil.notify_low_sobra && saldoMes >= 0) {  // ← ADICIONOU AQUI
+  if (saldoMes < minSobra) {
+    avisos.push({
+      tipo: "alerta",
+      icon: "⚠️",
+      texto: "Sobra abaixo do configurado"
+    });
+  } else {
+    avisos.push({
+      tipo: "sucesso",
+      icon: "✅",
+      texto: "Sobra acima do configurado"
+    });
   }
+}
 
   /* =========================
      3️⃣ PROJEÇÃO NEGATIVA (adicional)
