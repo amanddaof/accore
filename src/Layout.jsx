@@ -20,19 +20,21 @@ export default function Layout({
   reload,
   cards,
   mensal,
-  salarios,
+  salarios,        // continua vindo, mas NÃO é usado nas notificações
   transactions,
   reservations,
   bills,
   loans
 }) {
+  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
   const [openBills, setOpenBills] = useState(false);
   const [openIncomes, setOpenIncomes] = useState(false);
-
   const [openProfile, setOpenProfile] = useState(false);
+
+  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -41,27 +43,24 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
-  // DEBUG: ver se o avatar chega aqui
-  useEffect(() => {
-    console.log("PROFILE ATUAL:", profile);
-    console.log("AVATAR NO LAYOUT:", profile?.avatar_url);
-  }, [profile]);
+  /* ================= DADOS DO MÊS (FILTRO ATUAL) ================= */
+  // ✅ SOBRA REAL DO MÊS (reativa ao filtro)
+  const sobraRealMes = mensal?.total?.sobra ?? 0;
 
-  const sobraRealMes =
-    (salarios?.amanda?.sobra ?? 0) +
-    (salarios?.celso?.sobra ?? 0);
-
+  /* ================= AVISOS ================= */
   const avisos = useMemo(() => {
-    if (!profile) return [];
+    if (!profile || !mensal) return [];
+
     return buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraRealMes,
-      projecaoSaldoMes: mensal?.projecao?.total ?? null,
-      gastoAtual: 0,
-      gastoMedio: 0
+      projecaoSaldoMes: mensal?.projecao?.sobra ?? null,
+      gastoAtual: mensal?.total?.gasto ?? 0,
+      gastoMedio: mensal?.mediaGastos ?? 0
     });
-  }, [profile, salarios, mensal, sobraRealMes]);
+  }, [profile, mensal, sobraRealMes]);
 
+  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -76,6 +75,7 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
+  /* ================= UPDATE PERFIL ================= */
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
@@ -116,26 +116,31 @@ export default function Layout({
 
         <Footer />
 
+        {/* ================= DRAWERS ================= */}
         <CardsDrawer
           open={openCards}
           onClose={() => setOpenCards(false)}
           cards={cards}
           mes={mes}
         />
+
         <ExternoDrawer
           open={openExterno}
           onClose={() => setOpenExterno(false)}
           mes={mes}
         />
+
         <ReservasDrawer
           open={openReservas}
           onClose={() => setOpenReservas(false)}
         />
+
         <BillsDrawer
           open={openBills}
           onClose={() => setOpenBills(false)}
           mes={mes}
         />
+
         <IncomeDrawer
           open={openIncomes}
           onClose={() => setOpenIncomes(false)}
