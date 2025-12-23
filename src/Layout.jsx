@@ -62,8 +62,9 @@ export default function Layout({
   /* ================= AVISOS (INDIVIDUAIS) ================= */
   const avisos = useMemo(() => {
     if (!profile) return [];
-
+  
     return buildMonthlyAlerts({
+      perfil: profile,
       saldoMes: sobraIndividualMes
     });
   }, [profile, sobraIndividualMes]);
@@ -165,3 +166,4 @@ export default function Layout({
     </div>
   );
 }
+
