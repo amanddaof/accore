@@ -4,10 +4,12 @@
 .header {
   max-width: 100%;
   overflow-x: hidden;
+   
 }
 
 .header * {
   max-width: 100%;
+   
 }
 
 .header-left,
@@ -420,4 +422,5 @@
 
   font-size: 18px;
 }
+
 
