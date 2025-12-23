@@ -47,7 +47,7 @@ function mesAnteriorISO(mes) {
 }
 
 /* ======================================================
-   🔑 SALÁRIO VIGENTE NO MÊS (FONTE ÚNICA)
+   🔑 SALÁRIO VIGENTE NO MÊS (ÚNICA CORREÇÃO REAL)
 ====================================================== */
 function salarioNoMes(historico, pessoa, mesISO) {
   if (!historico?.length || !mesISO) return null;
@@ -164,7 +164,106 @@ export function useDashboard() {
   );
 
   /* ======================================================
-     SALÁRIOS (CORRIGIDO E BLINDADO)
+     MÊS ANTERIOR
+  ====================================================== */
+  const mesAnterior = useMemo(() => mesAnteriorISO(mes), [mes]);
+
+  const mensalAnterior = useMemo(() => {
+    if (!mesAnterior) return null;
+
+    return {
+      total: calcularTotalMensal(mesAnterior, dados),
+      porPessoa: calcularGastosPorPessoa(mesAnterior, dados)
+    };
+  }, [mesAnterior, dados]);
+
+  /* ======================================================
+     COMPARATIVOS
+  ====================================================== */
+  const comparativoMensal = useMemo(() => {
+    if (!mes || !mesAnterior) return null;
+
+    const totalAtual = calcularTotalMensal(mes, dados);
+    const totalAnterior = calcularTotalMensal(mesAnterior, dados);
+    const valor = totalAtual - totalAnterior;
+
+    return {
+      mesAtual: { label: mes, total: totalAtual },
+      mesAnterior: { label: mesAnterior, total: totalAnterior },
+      variacao: {
+        valor,
+        percentual: totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
+      }
+    };
+  }, [mes, mesAnterior, dados]);
+
+  const comparativos = useMemo(
+    () => ({
+      mensal: comparativoMensal,
+      media3: compararPeriodos({ mesAtual: mes, meses: 3, dados }),
+      media6: compararPeriodos({ mesAtual: mes, meses: 6, dados }),
+      media12: compararPeriodos({ mesAtual: mes, meses: 12, dados })
+    }),
+    [comparativoMensal, mes, dados]
+  );
+
+  /* ======================================================
+     DÍVIDAS (RESTAURADO)
+  ====================================================== */
+  const dividas = useMemo(
+    () => calcularDividasMes(mes, dados),
+    [mes, dados]
+  );
+
+  /* ======================================================
+     CATEGORIAS
+  ====================================================== */
+  const categorias = useMemo(
+    () => ({
+      amanda: calcularCategoriasMes(mes, "Amanda", dados),
+      celso: calcularCategoriasMes(mes, "Celso", dados),
+      ambos: calcularCategoriasMes(mes, "Ambos", dados),
+      comparativo: compararCategoriasMes(mes, "Ambos", dados)
+    }),
+    [mes, dados]
+  );
+
+  /* ======================================================
+     ANUAL
+  ====================================================== */
+  const anual = useMemo(
+    () => ({
+      amanda: calcularGastosAnuaisPorPessoa(
+        new Date(mes).getFullYear(),
+        "Amanda",
+        dados
+      ),
+      celso: calcularGastosAnuaisPorPessoa(
+        new Date(mes).getFullYear(),
+        "Celso",
+        dados
+      ),
+      ambos: calcularGastosAnuaisPorPessoa(
+        new Date(mes).getFullYear(),
+        "Ambos",
+        dados
+      ),
+      projecaoAmanda: calcularProjecaoAnual(
+        new Date(mes).getFullYear(),
+        "Amanda",
+        dados
+      ),
+      projecaoCelso: calcularProjecaoAnual(
+        new Date(mes).getFullYear(),
+        "Celso",
+        dados
+      )
+    }),
+    [mes, dados]
+  );
+
+  /* ======================================================
+     SALÁRIOS (CORRIGIDO)
   ====================================================== */
   const salarios = useMemo(() => {
     if (!salaryHistory.length) return null;
@@ -189,7 +288,7 @@ export function useDashboard() {
   }, [salaryHistory, mensal, mes]);
 
   /* ======================================================
-     EXPORT
+     EXPORT COMPLETO (NADA QUEBRADO)
   ====================================================== */
   return {
     loading,
@@ -202,6 +301,12 @@ export function useDashboard() {
     mes,
     setMes,
     mensal,
+    mensalAnterior,
+    comparativoMensal,
+    comparativos,
+    dividas,
+    categorias,
+    anual,
     salarios,
     savingsGoal,
     setSavingsGoal,
