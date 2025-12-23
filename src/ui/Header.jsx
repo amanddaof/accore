@@ -14,6 +14,7 @@ export default function Header({
 
   onOpenProfile,
   avatarUrl,
+
   onOpenCards,
   isCardsOpen,
   onOpenExterno,
@@ -25,13 +26,11 @@ export default function Header({
   onOpenIncomes,
   isIncomesOpen,
 
-  // 🔥 callback da busca global
   onGlobalSelect,
 
   mensal,
   salarios,
 
-  // 🔥 DADOS BRUTOS (BUSCA GLOBAL)
   transactions,
   reservations,
   bills,
@@ -55,7 +54,6 @@ export default function Header({
   return (
     <>
       <header className="header">
-
         {/* ESQUERDA */}
         <div
           className="header-left"
@@ -111,7 +109,7 @@ export default function Header({
           </button>
         </nav>
 
-        {/* 🔍 BUSCA GLOBAL (abre drawers) */}
+        {/* BUSCA GLOBAL */}
         <div className="header-search">
           <GlobalSearch
             transactions={transactions}
@@ -124,7 +122,6 @@ export default function Header({
 
         {/* DIREITA */}
         <div className="header-right">
-
           {/* ALERTAS */}
           <button
             className="alerts-btn"
@@ -137,13 +134,17 @@ export default function Header({
             )}
           </button>
 
+          {/* PERFIL */}
           <button className="profile-button" onClick={onOpenProfile}>
-  {avatarUrl ? (
-    <img src={avatarUrl} alt="Perfil" />
-  ) : (
-    <span className="profile-placeholder">👤</span>
-  )}
-</button>
+            {avatarUrl ? (
+              <img
+                src={`${avatarUrl}?t=${Date.now()}`}
+                alt="Perfil"
+              />
+            ) : (
+              <span className="profile-placeholder">👤</span>
+            )}
+          </button>
 
           <input
             type="month"
@@ -151,7 +152,6 @@ export default function Header({
             onChange={e => onMesChange(e.target.value)}
           />
 
-          {/* ATUALIZAR */}
           <button
             className="circle-icon-btn"
             onClick={onReload}
@@ -160,7 +160,6 @@ export default function Header({
             ⟳
           </button>
 
-          {/* SAIR */}
           <button
             className="circle-icon-btn"
             onClick={() => logout(navigate)}
@@ -171,7 +170,6 @@ export default function Header({
         </div>
       </header>
 
-      {/* ALERTAS */}
       {showAlerts && (
         <AlertsCenter
           mensal={mensal}
@@ -180,7 +178,6 @@ export default function Header({
         />
       )}
 
-      {/* ECONOMIA */}
       <SaveSavingsDrawer
         open={openSavings}
         onClose={() => setOpenSavings(false)}
@@ -188,6 +185,3 @@ export default function Header({
     </>
   );
 }
-
-
-
