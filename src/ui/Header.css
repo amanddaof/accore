@@ -421,10 +421,14 @@
   font-size: 18px;
 }
 
-@media (max-width: 1366px) {
+/*========================
+      RESPONSIVO
+==========================*/
+@media (max-width: 1400px) {
   .title {
     display: none;
   }
 }
+
 
 
