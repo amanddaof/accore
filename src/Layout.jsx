@@ -20,7 +20,7 @@ export default function Layout({
   reload,
   cards,
   mensal,
-  salarios,        // continua vindo, mas NÃO é usado nas notificações
+  salarios,
   transactions,
   reservations,
   bills,
@@ -44,20 +44,31 @@ export default function Layout({
   }, []);
 
   /* ================= DADOS DO MÊS (FILTRO ATUAL) ================= */
-  // ✅ SOBRA REAL DO MÊS (reativa ao filtro)
   const sobraRealMes = mensal?.total?.sobra ?? 0;
+
+  // 🔎 LOG GLOBAL DO VALOR REAL
+  console.log("[DEBUG] MÊS ATUAL:", mes);
+  console.log("[DEBUG] sobraRealMes:", sobraRealMes);
+  console.log("[DEBUG] mensal.total:", mensal?.total);
 
   /* ================= AVISOS ================= */
   const avisos = useMemo(() => {
-    if (!profile || !mensal) return [];
+    console.log("[DEBUG] useMemo avisos disparado");
+    console.log("[DEBUG] profile:", profile);
+    console.log("[DEBUG] saldo enviado para buildMonthlyAlerts:", sobraRealMes);
 
-    return buildMonthlyAlerts({
-      perfil: profile,
-      saldoMes: sobraRealMes,
-      projecaoSaldoMes: mensal?.projecao?.sobra ?? null,
-      gastoAtual: mensal?.total?.gasto ?? 0,
-      gastoMedio: mensal?.mediaGastos ?? 0
+    if (!profile || !mensal) {
+      console.log("[DEBUG] retornando avisos vazios (profile ou mensal ausente)");
+      return [];
+    }
+
+    const resultado = buildMonthlyAlerts({
+      saldoMes: sobraRealMes
     });
+
+    console.log("[DEBUG] avisos retornados:", resultado);
+
+    return resultado;
   }, [profile, mensal, sobraRealMes]);
 
   /* ================= BUSCA GLOBAL ================= */
