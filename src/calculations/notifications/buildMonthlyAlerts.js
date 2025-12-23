@@ -1,66 +1,70 @@
+/**
+ * Gera avisos do mês com base:
+ * - nos dados mensais já calculados
+ * - nas preferências do usuário
+ */
 export function buildMonthlyAlerts({
   perfil,
-  saldoMes,
-  projecaoSaldoMes,
+  saldoMes,            // SOBRA REAL DO MÊS (já filtrada)
+  projecaoSaldoMes,    // SOBRA PROJETADA
   gastoAtual,
   gastoMedio
 }) {
   if (!perfil) return [];
 
-  const alerts = [];
+  const avisos = [];
 
-  // 🔴 Déficit real
-  if (perfil.notify_deficit && saldoMes < 0) {
-    alerts.push({
+  const temDeficit = saldoMes < 0;
+
+  /* ===================== 🔴 DÉFICIT ===================== */
+  if (perfil.notify_deficit && temDeficit) {
+    avisos.push({
       tipo: "erro",
       icon: "🔴",
       texto: "Déficit neste mês"
     });
   }
 
-  // 📉 Projeção negativa
+  /* ===================== 📉 PROJEÇÃO NEGATIVA ===================== */
   if (
     perfil.notify_projection_negative &&
-    projecaoSaldoMes != null &&
+    typeof projecaoSaldoMes === "number" &&
     projecaoSaldoMes < 0
   ) {
-    alerts.push({
-      tipo: "alerta",
+    avisos.push({
+      tipo: "erro",
       icon: "📉",
       texto: "Projeção indica déficit até o fim do mês"
     });
   }
 
-  // ⚠️ Sobra baixa
+  /* ===================== ⚠️ SOBRA BAIXA ===================== */
+  // ❗️ Só avalia se NÃO houver déficit
   if (
     perfil.notify_low_sobra &&
-    perfil.min_sobra_alert != null &&
-    saldoMes <= perfil.min_sobra_alert
+    !temDeficit &&
+    typeof perfil.min_sobra_alert === "number" &&
+    saldoMes < perfil.min_sobra_alert
   ) {
-    alerts.push({
+    avisos.push({
       tipo: "alerta",
       icon: "⚠️",
-      texto: "Sobra do mês abaixo do limite configurado"
+      texto: "Sobra do mês abaixo do mínimo configurado"
     });
   }
 
-  // 🟡 Gastos acima do padrão
+  /* ===================== 🔥 GASTOS ANORMAIS ===================== */
   if (
     perfil.notify_abnormal_spending &&
     gastoMedio > 0 &&
-    gastoAtual > gastoMedio
+    gastoAtual > gastoMedio * (perfil.gasto_alert_percent / 100)
   ) {
-    alerts.push({
+    avisos.push({
       tipo: "alerta",
-      icon: "📊",
+      icon: "⚠️",
       texto: "Gastos acima do padrão recente"
     });
   }
 
-  // 🟣 Ritmo acelerado (placeholder)
-  if (perfil.notify_spending_pace) {
-    // depois refinamos
-  }
-
-  return alerts;
+  return avisos;
 }
