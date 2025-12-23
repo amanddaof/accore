@@ -21,16 +21,11 @@ export default function Layout({
   cards,
   mensal,
   salarios,
-
-  // 🔥 DADOS BRUTOS DO DASHBOARD
   transactions,
   reservations,
   bills,
   loans
 }) {
-  /* ================= DEBUG ================= */
-  console.log("🔥 Layout renderizou");
-
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -40,46 +35,25 @@ export default function Layout({
   const [openProfile, setOpenProfile] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  /* ================= PERFIL ================= */
   useEffect(() => {
-    console.log("🔄 Buscando perfil do usuário...");
-    getUserProfile()
-      .then(data => {
-        console.log("✅ Perfil carregado:", data);
-        setProfile(data);
-      })
-      .catch(err => {
-        console.error("❌ Erro ao carregar perfil:", err);
-      });
+    getUserProfile().then(setProfile).catch(console.error);
   }, []);
 
-  /* ================= AVISOS ================= */
   const sobraRealMes =
     (salarios?.amanda?.sobra ?? 0) +
     (salarios?.celso?.sobra ?? 0);
 
-  console.log("🔥 Antes de buildMonthlyAlerts", {
-    profile,
-    sobraAmanda: salarios?.amanda?.sobra,
-    sobraCelso: salarios?.celso?.sobra,
-    sobraRealMes
-  });
-
   const avisos = useMemo(() => {
     if (!profile) return [];
-
     return buildMonthlyAlerts({
       perfil: profile,
-      saldoMes: sobraRealMes,                 // ✅ MESMO CRITÉRIO DO CARD
+      saldoMes: sobraRealMes,
       projecaoSaldoMes: mensal?.projecao?.total ?? null,
       gastoAtual: 0,
       gastoMedio: 0
     });
   }, [profile, salarios, mensal]);
 
-  console.log("📌 Avisos finais no Layout:", avisos);
-
-  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -96,10 +70,8 @@ export default function Layout({
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* SIDEBAR FIXA */}
       <Sidebar />
 
-      {/* ÁREA PRINCIPAL */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Header
           mes={mes}
@@ -126,42 +98,17 @@ export default function Layout({
           avatarUrl={profile?.avatar_url || null}
         />
 
-        {/* CONTEÚDO */}
         <main style={{ flex: 1 }}>
           <Outlet />
         </main>
 
         <Footer />
 
-        {/* DRAWERS */}
-        <CardsDrawer
-          open={openCards}
-          onClose={() => setOpenCards(false)}
-          cards={cards}
-          mes={mes}
-        />
-
-        <ExternoDrawer
-          open={openExterno}
-          onClose={() => setOpenExterno(false)}
-          mes={mes}
-        />
-
-        <ReservasDrawer
-          open={openReservas}
-          onClose={() => setOpenReservas(false)}
-        />
-
-        <BillsDrawer
-          open={openBills}
-          onClose={() => setOpenBills(false)}
-          mes={mes}
-        />
-
-        <IncomeDrawer
-          open={openIncomes}
-          onClose={() => setOpenIncomes(false)}
-        />
+        <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
+        <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
+        <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
+        <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
+        <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
         <ProfileDrawer
           open={openProfile}
@@ -174,4 +121,3 @@ export default function Layout({
     </div>
   );
 }
-
