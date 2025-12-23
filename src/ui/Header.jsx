@@ -63,9 +63,10 @@ export default function Header({
           onClick={() => navigate("/")}
           style={{ cursor: "pointer" }}
         >
-          <div className="logo">A</div>
-          <span className="title">ACCORE</span>
-        </div>
+          <div className="logo">
+			  <img src="/logo-ac.png" alt="AC Core" />
+			</div>
+			<span className="title">ACCORE</span>
 
         {/* MENU */}
         <nav className="nav">
@@ -191,3 +192,4 @@ export default function Header({
     </>
   );
 }
+
