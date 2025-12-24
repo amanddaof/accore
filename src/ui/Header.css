@@ -424,11 +424,12 @@
 /*========================
       RESPONSIVO
 ==========================*/
-@media (max-width: 950px) {
+@media (max-width: 1200px) {
   .title {
     display: none;
   }
 }
+
 
 
 
