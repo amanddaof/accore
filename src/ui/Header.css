@@ -488,5 +488,28 @@
   padding: 0 2px;
 }
 
+/* container do avatar que agora recebe o badge */
+.profile-with-badge {
+  position: relative;
+}
 
+/* badge vermelho */
+.profile-badge {
+  position: absolute;
+  top: -4px;
+  right: -5px;
 
+  background: #ff3b3b;
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 700;
+
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 2px solid rgba(9,11,30,.95); /* mesma cor do header pra recortar bem */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
