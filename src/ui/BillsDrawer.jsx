@@ -23,16 +23,16 @@ export default function BillsDrawer({ open, onClose, mes }) {
     setMesFiltro(mes);
   }, [mes]);
 
-  useEffect(() => {
+  // bloqueia scroll quando drawer está aberto
+useEffect(() => {
   if (open) {
     document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
   } else {
     document.body.style.overflow = "";
   }
-
-  return () => {
-    document.body.style.overflow = "";
-  };
 }, [open]);
 
   // toggler do formulário
@@ -391,6 +391,7 @@ function BillRow({
     </div>
   );
 }
+
 
 
 
