@@ -203,3 +203,13 @@
 .sidebar-item.active svg text {
   fill: #6c63ff;
 }
+
+/* ícones em PNG */
+.sidebar-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
