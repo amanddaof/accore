@@ -24,7 +24,7 @@ export default function BillsDrawer({ open, onClose, mes }) {
   }, [mes]);
 
   useEffect(() => {
-  if (isOpen) {
+  if (open) {
     document.body.style.overflow = "hidden";
   } else {
     document.body.style.overflow = "";
@@ -33,7 +33,7 @@ export default function BillsDrawer({ open, onClose, mes }) {
   return () => {
     document.body.style.overflow = "";
   };
-}, [isOpen]);
+}, [open]);
 
   // toggler do formulário
   const [showForm, setShowForm] = useState(false);
@@ -163,13 +163,13 @@ export default function BillsDrawer({ open, onClose, mes }) {
 
   return (
     <div
-    className={`drawer-overlay ${isOpen ? "open" : ""}`}
-    onClick={onClose}
+  className={`drawer-overlay ${open ? "open" : ""}`}
+  onClick={onClose}
+>
+  <aside
+    className={`drawer ${open ? "open" : ""}`}
+    onClick={(e) => e.stopPropagation()}
   >
-    <aside
-      className={`drawer ${isOpen ? "open" : ""}`}
-      onClick={(e) => e.stopPropagation()}
-    >
         <div className="drawer-header">
           <h2>Contas da casa</h2>
           <button onClick={onClose}>✕</button>
@@ -391,6 +391,7 @@ function BillRow({
     </div>
   );
 }
+
 
 
 
