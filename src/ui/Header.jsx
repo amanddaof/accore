@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
-import { gerarAlertas } from "../services/alerts.service";
 import { logout } from "../services/auth";
-import { supabase } from "../services/supabase";
 import "./Header.css";
+
+/**
+ * HEADER COMPLETO
+ * - mantém todos os menus e funcionalidades
+ * - contador de notificações baseado APENAS nos avisos enviados ao Header
+ * - se avisos não vierem, funciona do mesmo jeito (contador 0)
+ */
 
 export default function Header({
   mes,
@@ -27,42 +32,20 @@ export default function Header({
 
   mensal,
   salarios,
+
+  avisos = [] // 🔥 notificações reais do perfil — se não vier nada, vira []
 }) {
   const navigate = useNavigate();
-
   const [openSavings, setOpenSavings] = useState(false);
-  const [usuarioEmail, setUsuarioEmail] = useState(null);
 
-  // pega usuário logado
-  useEffect(() => {
-    async function loadUser() {
-      const { data } = await supabase.auth.getUser();
-      setUsuarioEmail(data?.user?.email ?? null);
-    }
-    loadUser();
-  }, []);
-
-  // gera alertas
-  const dados = useMemo(
-    () => gerarAlertas({ mensal, salarios }),
-    [mensal, salarios]
-  );
-
-  // identifica o "perfil" correto baseado no usuário logado
-  const perfil =
-    usuarioEmail?.includes("amanda") ? "amanda" :
-    usuarioEmail?.includes("celso")  ? "celso"  :
-    "geral";
-
-  // contador correto: SOMENTE do perfil logado e SOMENTE alertas importantes
-  const quantidade =
-    dados[perfil].filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
+  // 🎯 contador real — bate 1:1 com o que aparece no ProfileDrawer
+  const quantidade = avisos.length;
 
   return (
     <>
       <header className="header">
 
-        {/* ESQUERDA */}
+        {/* ================= ESQUERDA ================= */}
         <div
           className="header-left"
           onClick={() => navigate("/")}
@@ -74,7 +57,7 @@ export default function Header({
           <span className="title">ACCORE</span>
         </div>
 
-        {/* MENU */}
+        {/* ================= MENU ================= */}
         <nav className="nav">
           <button className={`nav-link ${isCardsOpen ? "active" : ""}`} onClick={onOpenCards}>CARTÕES</button>
           <button className={`nav-link ${isExternoOpen ? "active" : ""}`} onClick={onOpenExterno}>EXTERNO</button>
@@ -84,10 +67,10 @@ export default function Header({
           <button className={`nav-link ${openSavings ? "active" : ""}`} onClick={() => setOpenSavings(true)}>ECONOMIA</button>
         </nav>
 
-        {/* DIREITA */}
+        {/* ================= DIREITA ================= */}
         <div className="header-right">
 
-          {/* PERFIL + NÚMERO DE NOTIFICAÇÕES DO PERFIL LOGADO */}
+          {/* PERFIL + BADGE DE NOTIFICAÇÕES */}
           <button
             className="profile-button no-style profile-with-badge"
             onClick={onOpenProfile}
@@ -98,6 +81,7 @@ export default function Header({
               <span className="profile-placeholder">👤</span>
             )}
 
+            {/* badge somente se houver avisos */}
             {quantidade > 0 && (
               <span className="profile-badge">{quantidade}</span>
             )}
@@ -118,6 +102,7 @@ export default function Header({
         </div>
       </header>
 
+      {/* ================= DRAWER DE ECONOMIA ================= */}
       <SaveSavingsDrawer
         open={openSavings}
         onClose={() => setOpenSavings(false)}
