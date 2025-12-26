@@ -442,3 +442,60 @@
     margin: 0 12px;
   }
 }
+
+/* estiliza o campo */
+.header-right input[type="month"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  padding: 6px 14px;
+  border-radius: 14px;
+
+  font-size: .85rem;
+  color: #fff;
+  letter-spacing: .3px;
+
+  cursor: pointer;
+  width: 145px; /* ajuste fino opcional */
+
+  transition: background .15s, border .15s, box-shadow .15s;
+}
+
+.header-right input[type="month"]:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.header-right input[type="month"]:focus {
+  outline: none;
+  border-color: #6c63ff;
+  box-shadow: 0 0 8px rgba(108,99,255,.3);
+}
+
+/* esconde o ícone feio padrão */
+.header-right input[type="month"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(.5);
+  cursor: pointer;
+}
+
+/* reduz o espaçamento interno do ano/mês */
+.header-right input[type="month"]::-webkit-datetime-edit {
+  padding: 0 4px;
+}
+
+/* deixa texto mais limpo */
+.header-right input[type="month"]::-webkit-datetime-edit-year-field,
+.header-right input[type="month"]::-webkit-datetime-edit-month-field {
+  color: #fff;
+  text-transform: lowercase;
+}
+
+/* evita ficar gigante no mobile */
+@media (max-width: 1500px) {
+  .header-right input[type="month"] {
+    width: 120px;
+  }
+}
