@@ -119,8 +119,12 @@ export default function Header({
           />
 
           {/* RELOAD */}
-          <button className="icon-img-btn" onClick={onReload} title="Atualizar dados">
-            <img src="/atualizar.png" alt="Atualizar" />
+          <button
+            className="circle-icon-btn"
+            onClick={onReload}
+            title="Atualizar dados"
+          >
+            ⟳
           </button>
 
           {/* LOGOUT */}
@@ -141,5 +145,6 @@ export default function Header({
     </>
   );
 }
+
 
 
