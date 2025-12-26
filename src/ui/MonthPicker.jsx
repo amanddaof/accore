@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./MonthPicker.css"; // criaremos já já
+import "./MonthPicker.css";
 
 const meses = [
   "jan","fev","mar","abr","mai","jun",
@@ -8,15 +8,15 @@ const meses = [
 
 export default function MonthPicker({ mesISO, onChange }) {
   const [open, setOpen] = useState(false);
-  
-  // mesISO chega tipo "2026-01"
+
+  // mesISO vem como "2026-01"
   const anoInicial = Number(mesISO.split("-")[0]);
   const mesInicial = Number(mesISO.split("-")[1]) - 1;
 
   const [ano, setAno] = useState(anoInicial);
   const [mes, setMes] = useState(mesInicial);
 
-  // quando mudar mês ou ano → avisa o pai
+  // atualiza o pai quando muda
   useEffect(() => {
     const m = String(mes + 1).padStart(2, "0");
     onChange(`${ano}-${m}`);
@@ -28,18 +28,21 @@ export default function MonthPicker({ mesISO, onChange }) {
 
   function selecionarMes(idx) {
     setMes(idx);
-    setOpen(false);
+    setOpen(false); // fecha ao selecionar
   }
 
   return (
     <div className="monthpicker-wrapper">
-      <button className="monthpicker-btn" onClick={() => setOpen(true)}>
+      <button className="monthpicker-btn" onClick={() => setOpen(o => !o)}>
         {formatar()}
       </button>
 
-     {open && (
-  <div className="monthpicker-popover" onClick={() => setOpen(false)}>
-    <div className="monthpicker-popup" onClick={e => e.stopPropagation()}>
+      {open && (
+        <div className="monthpicker-popover">
+          <div
+            className="monthpicker-popup"
+            onClick={e => e.stopPropagation()} // não fecha ao clicar dentro
+          >
             <div className="monthpicker-header">
               <button onClick={() => setAno(a => a - 1)}>◀</button>
               <strong>{ano}</strong>
