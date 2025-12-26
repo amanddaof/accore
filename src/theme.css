@@ -341,7 +341,7 @@ input, select {
 
 .app-footer {
   width: 100%;
-  padding: 18px 0 26px;
+  padding: 20px 0 28px;
 
   display: flex;
   flex-direction: column;
@@ -355,34 +355,24 @@ input, select {
   margin-top: 50px;
 }
 
-/* título: ACCORE v2.0 */
 .footer-title {
   font-size: .80rem;
-  letter-spacing: .8px;
-  color: rgba(255,255,255,.75);
+  letter-spacing: .9px;
+  color: rgba(255,255,255,.72);
   font-weight: 600;
-  text-transform: uppercase;
 }
 
 .footer-title span {
   opacity: .65;
 }
 
-/* descrição institucional */
 .footer-desc {
   font-size: .72rem;
   letter-spacing: .4px;
-  color: rgba(255,255,255,.40);
-  text-transform: lowercase;
+  color: rgba(255,255,255,.42);
   text-align: center;
   max-width: 640px;
-  line-height: 1.4;
+  line-height: 1.38;
 }
 
-/* leitura melhor no mobile */
-@media (max-width: 600px) {
-  .footer-desc {
-    max-width: 260px;
-  }
-}
 
