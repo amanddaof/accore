@@ -71,8 +71,8 @@ export default function IncomeDrawer({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <div className="drawer-overlay">
-      <aside className="drawer income-drawer">
+    <div className="drawer-overlay" onClick={onClose}>
+    <aside className="drawer" onClick={(e) => e.stopPropagation()}>
 
         <div className="drawer-header">
           <h2>Entradas</h2>
@@ -167,3 +167,4 @@ export default function IncomeDrawer({ open, onClose }) {
     </div>
   );
 }
+
