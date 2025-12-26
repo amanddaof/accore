@@ -1,112 +1,112 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Profile from "../pages/Profile";
-import "./ProfileDrawer.css";
+import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
+import { logout } from "../services/auth";
+import "./Header.css";
 
 /**
- * Drawer do Perfil do Usuário
- * - Abre mostrando avisos
- * - Botão leva para Preferências
- * - Ao fechar (ou reabrir), sempre volta para avisos
+ * HEADER COMPLETO
+ * - mantém todos os menus e funcionalidades
+ * - contador de notificações baseado APENAS nos avisos enviados ao Header
+ * - se avisos não vierem, funciona do mesmo jeito (contador 0)
  */
-export default function ProfileDrawer({
-  open,
-  onClose,
-  userName = "Usuário",
-  avatarUrl = null,
-  avisos = [],
-  onProfileUpdate
+
+export default function Header({
+  mes,
+  onMesChange,
+  onReload,
+
+  onOpenProfile,
+  avatarUrl,
+
+  onOpenCards,
+  isCardsOpen,
+  onOpenExterno,
+  isExternoOpen,
+  onOpenReservas,
+  isReservasOpen,
+  onOpenBills,
+  isBillsOpen,
+  onOpenIncomes,
+  isIncomesOpen,
+
+  mensal,
+  salarios,
+
+  avisos = [] // 🔥 notificações reais do perfil — se não vier nada, vira []
 }) {
-  const [modo, setModo] = useState("avisos"); // "avisos" | "preferencias"
+  const navigate = useNavigate();
+  const [openSavings, setOpenSavings] = useState(false);
 
-  // 🔒 garante que sempre abre em "avisos"
-  if (!open) {
-    if (modo !== "avisos") setModo("avisos");
-    return null;
-  }
-
-  function handleClose() {
-    setModo("avisos");
-    onClose();
-  }
+  // 🎯 contador real — bate 1:1 com o que aparece no ProfileDrawer
+  const quantidade = avisos.length;
 
   return (
-    <div className="profile-drawer-overlay" onClick={handleClose}>
-      <aside
-        className="profile-drawer"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* ================= HEADER ================= */}
-        <header className="profile-drawer-header center">
-          <button className="close-btn" onClick={handleClose}>
-            ✕
+    <>
+      <header className="header">
+
+        {/* ================= ESQUERDA ================= */}
+        <div
+          className="header-left"
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="logo">
+            <img src="/logo-ac.png" alt="AC Core" />
+          </div>
+          <span className="title">ACCORE</span>
+        </div>
+
+        {/* ================= MENU ================= */}
+        <nav className="nav">
+          <button className={`nav-link ${isCardsOpen ? "active" : ""}`} onClick={onOpenCards}>CARTÕES</button>
+          <button className={`nav-link ${isExternoOpen ? "active" : ""}`} onClick={onOpenExterno}>EXTERNO</button>
+          <button className={`nav-link ${isReservasOpen ? "active" : ""}`} onClick={onOpenReservas}>RESERVAS</button>
+          <button className={`nav-link ${isBillsOpen ? "active" : ""}`} onClick={onOpenBills}>CASA</button>
+          <button className={`nav-link ${isIncomesOpen ? "active" : ""}`} onClick={onOpenIncomes}>ENTRADAS</button>
+          <button className={`nav-link ${openSavings ? "active" : ""}`} onClick={() => setOpenSavings(true)}>ECONOMIA</button>
+        </nav>
+
+        {/* ================= DIREITA ================= */}
+        <div className="header-right">
+
+          {/* PERFIL + BADGE DE NOTIFICAÇÕES */}
+          <button
+            className="profile-button no-style profile-with-badge"
+            onClick={onOpenProfile}
+          >
+            {avatarUrl ? (
+              <img src={`${avatarUrl}?t=${Date.now()}`} alt="Perfil" />
+            ) : (
+              <span className="profile-placeholder">👤</span>
+            )}
+
+            {/* badge somente se houver avisos */}
+            {quantidade > 0 && (
+              <span className="profile-badge">{quantidade}</span>
+            )}
           </button>
 
-          <div className="profile-avatar-large">
-            {avatarUrl ? (
-              <img src={`${avatarUrl}?t=${Date.now()}`} alt="Avatar" />
-            ) : (
-              <span className="avatar-placeholder">👤</span>
-            )}
-          </div>
+          {/* MÊS */}
+          <input
+            type="month"
+            value={mes}
+            onChange={e => onMesChange(e.target.value)}
+          />
 
-          <strong className="profile-name">{userName}</strong>
-          <small className="profile-subtitle">
-            Configura como o sistema te acompanha
-          </small>
-        </header>
+          {/* RELOAD */}
+          <button className="circle-icon-btn" onClick={onReload} title="Atualizar dados">⟳</button>
 
-        {/* ================= AÇÃO ================= */}
-        <div className="profile-drawer-action">
-          {modo === "avisos" ? (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("preferencias")}
-            >
-              ⚙️ Preferências
-            </button>
-          ) : (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("avisos")}
-            >
-              ← Voltar para avisos
-            </button>
-          )}
+          {/* LOGOUT */}
+          <button className="circle-icon-btn" onClick={() => logout(navigate)} title="Sair">⏻</button>
         </div>
+      </header>
 
-        {/* ================= CONTEÚDO ================= */}
-        <div className="profile-drawer-content">
-          {modo === "avisos" ? (
-            <AvisosList avisos={avisos} />
-          ) : (
-            <Profile onProfileUpdate={onProfileUpdate} />
-          )}
-        </div>
-      </aside>
-    </div>
-  );
-}
-
-/* ======================================================
-   LISTA DE AVISOS
-====================================================== */
-function AvisosList({ avisos }) {
-  if (!avisos || avisos.length === 0) {
-    return (
-      <div className="profile-empty">
-        <p>Nenhum aviso no momento 🎉</p>
-      </div>
-    );
-  }
-
-  return (
-    <ul className="profile-avisos-list">
-      {avisos.map((a, idx) => (
-        <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
-          <span className="aviso-icon">{a.icon || "ℹ️"}</span>
-          <span className="aviso-texto">{a.texto}</span>
-        </li>
-      ))}
-    </ul>
+      {/* ================= DRAWER DE ECONOMIA ================= */}
+      <SaveSavingsDrawer
+        open={openSavings}
+        onClose={() => setOpenSavings(false)}
+      />
+    </>
   );
 }
