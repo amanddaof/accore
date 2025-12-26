@@ -538,10 +538,17 @@
   transition: .15s ease;
 }
 
-.circle-icon-btn img.icon-img {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+.btn-img {
+  all: unset;            /* remove fundo, borda, padding */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-img img {
+  width: 38px;          /* ajuste o tamanho se quiser */
+  height: 38px;
   display: block;
-  pointer-events: none;
+  object-fit: contain;
 }
