@@ -163,8 +163,8 @@ useEffect(() => {
   if (!open) return null;
 
   return (
-    <div className="drawer-overlay">
-      <aside className="drawer">
+    <div className="drawer-overlay" onClick={onClose}>
+    <aside className="drawer" onClick={(e) => e.stopPropagation()}>
 
         <div className="drawer-header">
           <h2>Compras externas</h2>
@@ -300,3 +300,4 @@ useEffect(() => {
     </div>
   );
 }
+
