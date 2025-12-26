@@ -1,51 +1,56 @@
+/* botão dentro do header */
 .monthpicker-wrapper {
   position: relative;
 }
 
 .monthpicker-btn {
-  background: rgba(255,255,255,.08);
-  border: none;
-  color: white;
-  padding: 8px 18px;
-  border-radius: 14px;
-  font-size: .85rem;
-  cursor: pointer;
-  letter-spacing: .4px;
+  background: rgba(255,255,255,.06);
+  border:none;
+  color:white;
+  padding:6px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-size:.85rem;
+  letter-spacing:.4px;
+  transition: background .15s;
 }
 
-/* overlay */
-.monthpicker-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.4);
-  backdrop-filter: blur(6px);
+.monthpicker-btn:hover {
+  background: rgba(255,255,255,.10);
+}
+
+/* popover — NÃO é tela toda, fica ancorado ao botão */
+.monthpicker-popover {
+  position: absolute;
+  top: 42px;   /* desce um pouco a partir do botão */
+  right: 0;    /* encosta à direita (pode trocar pra left: 0;) */
   z-index: 3000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* popup */
+/* popup real */
 .monthpicker-popup {
   background: linear-gradient(135deg, #16182f, #090b1e);
-  padding: 22px;
+  padding: 18px;
   border-radius: 18px;
-  width: 260px;
+  width: 220px;
+
   box-shadow:
-    0 10px 28px rgba(0,0,0,.55),
+    0 6px 24px rgba(0,0,0,.45),
     inset 0 0 0 1px rgba(255,255,255,.04);
+
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  animation: slideUp .25s cubic-bezier(.17,.84,.44,1);
+  gap: 12px;
+
+  animation: fadeIn .20s cubic-bezier(.17,.84,.44,1);
 }
 
-@keyframes slideUp {
-  from { transform: translateY(12px); opacity: .6; }
-  to   { transform: translateY(0);    opacity: 1; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);     }
 }
 
-/* header */
+/* header do popup */
 .monthpicker-header {
   display: flex;
   justify-content: space-between;
@@ -54,6 +59,7 @@
 
 .monthpicker-header strong {
   font-size: 1rem;
+  letter-spacing:.5px;
 }
 
 .monthpicker-header button {
@@ -62,23 +68,36 @@
   padding:4px 10px;
   border-radius:8px;
   color:white;
+  cursor:pointer;
+  transition: background .15s;
 }
 
-/* grid de meses */
+.monthpicker-header button:hover {
+  background: rgba(255,255,255,.14);
+}
+
+/* meses */
 .monthpicker-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .monthpicker-grid button {
-  background: rgba(255,255,255,.08);
+  background: rgba(255,255,255,.06);
   border:none;
-  padding:8px;
+  padding:6px;
   border-radius:10px;
   color:white;
-  font-size: .85rem;
+  font-size: .8rem;
   cursor:pointer;
+  text-transform: lowercase;
+  transition: background .15s;
+}
+
+.monthpicker-grid button:hover {
+  background: rgba(255,255,255,.14);
 }
 
 .monthpicker-grid button.active {
