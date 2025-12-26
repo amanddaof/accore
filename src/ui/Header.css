@@ -540,23 +540,21 @@
 
 /* botão SEM nenhum fundo, padding, borda, nada */
 .atualizar-btn-puro {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
 }
+
 
 /* imagem pura */
 .atualizar-img-pura {
-  width: 32px;       /* ajusta depois se quiser */
+  width: 32px;
   height: 32px;
   object-fit: contain;
   display: block;
 }
+
+
 
