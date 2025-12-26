@@ -217,7 +217,7 @@
 .home-right .home-card {
   display: flex;
   flex-direction: column;
-  padding: 22px 24px;   /* mais espaço interno */
+  padding: 22px 24px;
 }
 
 /* container visual do conteúdo */
@@ -329,7 +329,7 @@
 
 /* card Contas da casa mais alto para alinhar visualmente ao Resumo por pessoa */
 .home-center .home-card:first-child {
-  min-height: 140px; /* ajuste fino até alinhar bem com o print */
+  min-height: 140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
