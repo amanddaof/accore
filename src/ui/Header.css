@@ -537,3 +537,11 @@
   transform: scale(1.07);
   transition: .15s ease;
 }
+
+.circle-icon-btn img.icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
