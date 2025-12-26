@@ -1,8 +1,9 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
 import { gerarAlertas } from "../services/alerts.service";
 import { logout } from "../services/auth";
+import { supabase } from "../services/supabase";
 import "./Header.css";
 
 export default function Header({
@@ -28,21 +29,34 @@ export default function Header({
   salarios,
 }) {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
 
   const [openSavings, setOpenSavings] = useState(false);
+  const [usuarioEmail, setUsuarioEmail] = useState(null);
 
-  // quantidade de alertas (mantida)
+  // pega usuário logado
+  useEffect(() => {
+    async function loadUser() {
+      const { data } = await supabase.auth.getUser();
+      setUsuarioEmail(data?.user?.email ?? null);
+    }
+    loadUser();
+  }, []);
+
+  // gera alertas
   const dados = useMemo(
     () => gerarAlertas({ mensal, salarios }),
     [mensal, salarios]
   );
 
-  const quantidade =
-    [...dados.amanda, ...dados.celso, ...dados.geral]
-      .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
+  // identifica o "perfil" correto baseado no usuário logado
+  const perfil =
+    usuarioEmail?.includes("amanda") ? "amanda" :
+    usuarioEmail?.includes("celso")  ? "celso"  :
+    "geral";
 
-  console.log("AVATAR NO HEADER:", avatarUrl);
+  // contador correto: SOMENTE do perfil logado e SOMENTE alertas importantes
+  const quantidade =
+    dados[perfil].filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
 
   return (
     <>
@@ -62,53 +76,18 @@ export default function Header({
 
         {/* MENU */}
         <nav className="nav">
-          <button
-            className={`nav-link ${isCardsOpen ? "active" : ""}`}
-            onClick={onOpenCards}
-          >
-            CARTÕES
-          </button>
-
-          <button
-            className={`nav-link ${isExternoOpen ? "active" : ""}`}
-            onClick={onOpenExterno}
-          >
-            EXTERNO
-          </button>
-
-          <button
-            className={`nav-link ${isReservasOpen ? "active" : ""}`}
-            onClick={onOpenReservas}
-          >
-            RESERVAS
-          </button>
-
-          <button
-            className={`nav-link ${isBillsOpen ? "active" : ""}`}
-            onClick={onOpenBills}
-          >
-            CASA
-          </button>
-
-          <button
-            className={`nav-link ${isIncomesOpen ? "active" : ""}`}
-            onClick={onOpenIncomes}
-          >
-            ENTRADAS
-          </button>
-
-          <button
-            className={`nav-link ${openSavings ? "active" : ""}`}
-            onClick={() => setOpenSavings(true)}
-          >
-            ECONOMIA
-          </button>
+          <button className={`nav-link ${isCardsOpen ? "active" : ""}`} onClick={onOpenCards}>CARTÕES</button>
+          <button className={`nav-link ${isExternoOpen ? "active" : ""}`} onClick={onOpenExterno}>EXTERNO</button>
+          <button className={`nav-link ${isReservasOpen ? "active" : ""}`} onClick={onOpenReservas}>RESERVAS</button>
+          <button className={`nav-link ${isBillsOpen ? "active" : ""}`} onClick={onOpenBills}>CASA</button>
+          <button className={`nav-link ${isIncomesOpen ? "active" : ""}`} onClick={onOpenIncomes}>ENTRADAS</button>
+          <button className={`nav-link ${openSavings ? "active" : ""}`} onClick={() => setOpenSavings(true)}>ECONOMIA</button>
         </nav>
 
         {/* DIREITA */}
         <div className="header-right">
 
-          {/* PERFIL + BADGE DE NOTIFICAÇÕES */}
+          {/* PERFIL + NÚMERO DE NOTIFICAÇÕES DO PERFIL LOGADO */}
           <button
             className="profile-button no-style profile-with-badge"
             onClick={onOpenProfile}
@@ -124,7 +103,7 @@ export default function Header({
             )}
           </button>
 
-          {/* MÊS ORIGINAL */}
+          {/* MÊS */}
           <input
             type="month"
             value={mes}
@@ -132,22 +111,10 @@ export default function Header({
           />
 
           {/* RELOAD */}
-          <button
-            className="circle-icon-btn"
-            onClick={onReload}
-            title="Atualizar dados"
-          >
-            ⟳
-          </button>
+          <button className="circle-icon-btn" onClick={onReload} title="Atualizar dados">⟳</button>
 
           {/* LOGOUT */}
-          <button
-            className="circle-icon-btn"
-            onClick={() => logout(navigate)}
-            title="Sair"
-          >
-            ⏻
-          </button>
+          <button className="circle-icon-btn" onClick={() => logout(navigate)} title="Sair">⏻</button>
         </div>
       </header>
 
