@@ -1,6 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useMemo } from "react";
-import AlertsCenter from "../ui/AlertsCenter";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
 import { gerarAlertas } from "../services/alerts.service";
 import { logout } from "../services/auth";
@@ -31,9 +30,9 @@ export default function Header({
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const [showAlerts, setShowAlerts] = useState(false);
   const [openSavings, setOpenSavings] = useState(false);
 
+  // quantidade de alertas (mantida)
   const dados = useMemo(
     () => gerarAlertas({ mensal, salarios }),
     [mensal, salarios]
@@ -48,6 +47,7 @@ export default function Header({
   return (
     <>
       <header className="header">
+
         {/* ESQUERDA */}
         <div
           className="header-left"
@@ -107,27 +107,20 @@ export default function Header({
 
         {/* DIREITA */}
         <div className="header-right">
-          {/* ALERTAS */}
-          <button
-            className="alerts-btn"
-            onClick={() => setShowAlerts(true)}
-            title="Notificações"
-          >
-            🔔
-            {quantidade > 0 && (
-              <span className="alerts-badge">{quantidade}</span>
-            )}
-          </button>
 
-          {/* PERFIL */}
+          {/* PERFIL + BADGE DE NOTIFICAÇÕES */}
           <button
-            className="profile-button no-style"
+            className="profile-button no-style profile-with-badge"
             onClick={onOpenProfile}
           >
             {avatarUrl ? (
               <img src={`${avatarUrl}?t=${Date.now()}`} alt="Perfil" />
             ) : (
               <span className="profile-placeholder">👤</span>
+            )}
+
+            {quantidade > 0 && (
+              <span className="profile-badge">{quantidade}</span>
             )}
           </button>
 
@@ -157,14 +150,6 @@ export default function Header({
           </button>
         </div>
       </header>
-
-      {showAlerts && (
-        <AlertsCenter
-          mensal={mensal}
-          salarios={salarios}
-          onClose={() => setShowAlerts(false)}
-        />
-      )}
 
       <SaveSavingsDrawer
         open={openSavings}
