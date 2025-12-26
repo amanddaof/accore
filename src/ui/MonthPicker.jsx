@@ -37,12 +37,9 @@ export default function MonthPicker({ mesISO, onChange }) {
         {formatar()}
       </button>
 
-      {open && (
-        <div className="monthpicker-overlay" onClick={() => setOpen(false)}>
-          <div
-            className="monthpicker-popup"
-            onClick={e => e.stopPropagation()}
-          >
+     {open && (
+  <div className="monthpicker-popover" onClick={() => setOpen(false)}>
+    <div className="monthpicker-popup" onClick={e => e.stopPropagation()}>
             <div className="monthpicker-header">
               <button onClick={() => setAno(a => a - 1)}>◀</button>
               <strong>{ano}</strong>
