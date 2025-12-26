@@ -273,3 +273,10 @@ input, select {
   opacity: .95;
 }
 
+.drawer {
+  position: fixed; /* importante para tirar do fluxo */
+  top: 0;
+  right: 0;
+  z-index: 2000; /* maior que o header */
+}
+
