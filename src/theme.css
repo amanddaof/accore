@@ -273,10 +273,30 @@ input, select {
   opacity: .95;
 }
 
-.drawer {
-  position: fixed; /* importante para tirar do fluxo */
+.drawer-overlay {
+  position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(0, 0, 0, .4); /* se quiser backdrop */
   z-index: 2000; /* maior que o header */
 }
+
+.drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 420px;           /* exemplo */
+  height: 100%;
+  background: #0c0e23;    /* seu fundo */
+  border-radius: 18px 0 0 18px;
+
+  /* opcional: transição bonitinha */
+  transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+  transform: translateX(0);
+}
+
 
