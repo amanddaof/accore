@@ -1,9 +1,10 @@
+/* mantém o botão no fluxo do header */
 .monthpicker-wrapper {
   position: relative;
   display: inline-block;
 }
 
-/* botão do header */
+/* botão que mostra o mês no header */
 .monthpicker-btn {
   background: rgba(255,255,255,.10);
   border:none;
@@ -15,28 +16,31 @@
   letter-spacing:.3px;
 }
 
-/* pop-up pequeno */
+/* popover — fora do header, sem quebrar layout */
 .monthpicker-popover {
-  position: absolute;
-  top: calc(100% + 6px); /* logo abaixo */
-  left: 0;
-  z-index: 5000;        /* acima dos cartões, abaixo do header */
+  position: fixed;
+  z-index: 5000; 
+  /* ajuste fino: distancia do topo + deslocamento horizontal */
+  top: 78px;         /* abaixa até ficar abaixo do header */
+  left: 50%;         /* centraliza na tela */
+  transform: translateX(-50%); /* centralização real */
 }
 
-/* caixinha */
+/* caixa do seletor */
 .monthpicker-popup {
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.15);
   padding: 12px;
   border-radius: 12px;
-  width: 200px;
+  width: 220px;
   box-shadow: 0 6px 24px rgba(0,0,0,.5);
 }
 
-/* header ano */
+/* header do ano */
 .monthpicker-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
 
@@ -47,6 +51,7 @@
   padding:4px 8px;
   border-radius:8px;
   cursor:pointer;
+  font-size:.8rem;
 }
 
 /* meses */
@@ -64,6 +69,7 @@
   color:white;
   font-size:.8rem;
   cursor:pointer;
+  text-transform: lowercase;
 }
 
 .monthpicker-grid button.active {
