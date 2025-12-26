@@ -459,7 +459,7 @@
   letter-spacing: .5px;
 
   cursor: pointer;
-  width: 170px;                     /* 👈 aumenta a largura */
+  width: 250px;                     /* 👈 aumenta a largura */
   height: 38px;                     /* 👈 ajusta altura */
 
   transition: background .15s, border .15s, box-shadow .15s;
@@ -487,5 +487,6 @@
 .header-right input[type="month"]::-webkit-datetime-edit {
   padding: 0 2px;
 }
+
 
 
