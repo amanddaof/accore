@@ -120,15 +120,11 @@ export default function Header({
 
           {/* BOTÃO DE ATUALIZAR */}
           <button
-            className="circle-icon-btn"
             onClick={onReload}
             title="Atualizar dados"
+            className="btn-img"
           >
-            <img
-              src="/btn-atualizar.png"
-              alt="Atualizar"
-              className="icon-img"
-            />
+            <img src="/btn-atualizar.png" alt="Atualizar" />
           </button>
 
           {/* LOGOUT */}
@@ -149,6 +145,7 @@ export default function Header({
     </>
   );
 }
+
 
 
 
