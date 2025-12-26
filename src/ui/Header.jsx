@@ -129,12 +129,17 @@ export default function Header({
 
           {/* LOGOUT */}
           <button
-            className="circle-icon-btn"
+            className="atualizar-btn-puro"
             onClick={() => logout(navigate)}
             title="Sair"
           >
-            ⏻
+            <img
+              src="/btn-sair.png"
+              alt="Sair"
+              className="atualizar-img-pura"
+            />
           </button>
+
         </div>
       </header>
 
@@ -145,6 +150,7 @@ export default function Header({
     </>
   );
 }
+
 
 
 
