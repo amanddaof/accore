@@ -205,8 +205,8 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     activeIndex < cardsVisiveis.length - 1 ? activeIndex + 1 : null;
 
   return (
-    <div className="drawer-overlay">
-      <aside className="drawer">
+    <div className="drawer-overlay" onClick={onClose}>
+    <aside className="drawer" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-header">
           <h2>Cartões</h2>
           <button onClick={onClose}>✕</button>
@@ -397,5 +397,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
+
 
 
