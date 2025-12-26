@@ -118,13 +118,17 @@ export default function Header({
             onChange={e => onMesChange(e.target.value)}
           />
 
-          {/* RELOAD */}
+          {/* BOTÃO DE ATUALIZAR */}
           <button
             className="circle-icon-btn"
             onClick={onReload}
             title="Atualizar dados"
           >
-            ⟳
+            <img
+              src="/btn-atualizar.png"
+              alt="Atualizar"
+              className="icon-img"
+            />
           </button>
 
           {/* LOGOUT */}
@@ -145,6 +149,7 @@ export default function Header({
     </>
   );
 }
+
 
 
 
