@@ -4,6 +4,7 @@ import AlertsCenter from "../ui/AlertsCenter";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
 import { gerarAlertas } from "../services/alerts.service";
 import { logout } from "../services/auth";
+import MonthPicker from "../ui/MonthPicker"; // ⬅ ADICIONADO
 import "./Header.css";
 
 export default function Header({
@@ -131,12 +132,8 @@ export default function Header({
             )}
           </button>
 
-          {/* MÊS */}
-          <input
-            type="month"
-            value={mes}
-            onChange={e => onMesChange(e.target.value)}
-          />
+          {/* MÊS — ⬇ AQUI TROQUEI PELO MONTH PICKER */}
+          <MonthPicker mesISO={mes} onChange={onMesChange} />
 
           {/* RELOAD */}
           <button
