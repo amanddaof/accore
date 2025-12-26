@@ -256,8 +256,8 @@ export default function SaveSavingsDrawer({ open, onClose }) {
   // UI
   // ============================================================
   return (
-    <div className="drawer-overlay">
-      <aside className="save-savings-drawer">
+    <div className="drawer-overlay" onClick={onClose}>
+    <aside className="drawer" onClick={(e) => e.stopPropagation()}>
 
         <div className="drawer-header">
           <h2>Registrar economia do mês</h2>
@@ -422,3 +422,4 @@ export default function SaveSavingsDrawer({ open, onClose }) {
     </div>
   );
 }
+
