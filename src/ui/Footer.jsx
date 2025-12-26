@@ -3,7 +3,8 @@ export default function Footer() {
     <footer className="app-footer">
       <span>ACCORE</span>
       <span>•</span>
-      <span>v1.0</span>
+      <span>v2.0</span>
     </footer>
   );
 }
+
