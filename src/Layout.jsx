@@ -94,29 +94,37 @@ export default function Layout({
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Header
-          mes={mes}
-          onMesChange={setMes}
-          onReload={reload}
-          mensal={mensal}
-          salarios={salarios}
-          transactions={transactions}
-          reservations={reservations}
-          bills={bills}
-          loans={loans}
-          onGlobalSelect={handleGlobalSelect}
-          onOpenCards={() => setOpenCards(true)}
-          isCardsOpen={openCards}
-          onOpenExterno={() => setOpenExterno(true)}
-          isExternoOpen={openExterno}
-          onOpenReservas={() => setOpenReservas(true)}
-          isReservasOpen={openReservas}
-          onOpenBills={() => setOpenBills(true)}
-          isBillsOpen={openBills}
-          onOpenIncomes={() => setOpenIncomes(true)}
-          isIncomesOpen={openIncomes}
-          onOpenProfile={() => setOpenProfile(true)}
-          avatarUrl={profile?.avatar_url || null}
-        />
+  mes={mes}
+  onMesChange={setMes}
+  onReload={reload}
+
+  /* 🔔 AVISOS DO PERFIL — AGORA PASSANDO PARA O HEADER */
+  avisos={avisos}
+
+  mensal={mensal}
+  salarios={salarios}
+  transactions={transactions}
+  reservations={reservations}
+  bills={bills}
+  loans={loans}
+
+  onGlobalSelect={handleGlobalSelect}
+
+  onOpenCards={() => setOpenCards(true)}
+  isCardsOpen={openCards}
+  onOpenExterno={() => setOpenExterno(true)}
+  isExternoOpen={openExterno}
+  onOpenReservas={() => setOpenReservas(true)}
+  isReservasOpen={openReservas}
+  onOpenBills={() => setOpenBills(true)}
+  isBillsOpen={openBills}
+  onOpenIncomes={() => setOpenIncomes(true)}
+  isIncomesOpen={openIncomes}
+
+  onOpenProfile={() => setOpenProfile(true)}
+  avatarUrl={profile?.avatar_url || null}
+/>
+
 
         {/* 👇 O USUÁRIO LOGADO FICA DISPONÍVEL PARA TODAS AS ROTAS */}
         <main style={{ flex: 1 }}>
@@ -166,3 +174,4 @@ export default function Layout({
     </div>
   );
 }
+
