@@ -728,3 +728,49 @@
     padding: 16px 18px 14px;
   }
 }
+
+/* =============================
+   POSICIONAMENTO ATÉ 1500px
+   — deixa CardsGrid full width
+   — Resumo por pessoa + Comparativo lado a lado
+============================= */
+@media (max-width: 1500px) {
+
+  /* mantém o grid de 2 colunas */
+  .home-shell {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+
+  /* CardsGrid / Debts ocupam largura inteira */
+  .hero-total {
+    grid-column: span 2;
+  }
+
+  /* Resumo por pessoa */
+  .people-section {
+    grid-column: span 1;
+  }
+
+  /* Comparativo mensal */
+  .home-card:has(.month-comparison-card),
+  .home-card:has(.MonthComparisonCard),
+  .home-card:has(.comparison-card),
+  section:has(.MonthComparisonCard) {
+    grid-column: span 1;
+  }
+}
+
+/* =============================
+   ABAIXO DE 1200px volta 1 coluna
+============================= */
+@media (max-width: 1200px) {
+  .home-shell {
+    grid-template-columns: 1fr;
+  }
+  .people-section,
+  .home-card:has(.MonthComparisonCard) {
+    grid-column: span 1;
+  }
+}
