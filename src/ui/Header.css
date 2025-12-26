@@ -538,19 +538,25 @@
   transition: .15s ease;
 }
 
-.btn-atualizar-img {
-  all: unset;          /* remove TUDO que o botão herda */
-  cursor: pointer;
+/* botão SEM nenhum fundo, padding, borda, nada */
+.atualizar-btn-puro {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
 }
 
-.btn-atualizar-img img {
-  width: 32px;        /* ajuste se quiser maior */
+/* imagem pura */
+.atualizar-img-pura {
+  width: 32px;       /* ajusta depois se quiser */
   height: 32px;
   object-fit: contain;
   display: block;
 }
-
 
