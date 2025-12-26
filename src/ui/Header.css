@@ -443,59 +443,49 @@
   }
 }
 
-/* estiliza o campo */
+/* campo estilizado grande */
 .header-right input[type="month"] {
   appearance: none;
   -webkit-appearance: none;
 
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
 
-  padding: 6px 14px;
-  border-radius: 14px;
+  padding: 10px 18px;               /* mais alto e mais largo */
+  border-radius: 18px;
 
-  font-size: .85rem;
+  font-size: .95rem;                /* maior */
   color: #fff;
-  letter-spacing: .3px;
+  letter-spacing: .5px;
 
   cursor: pointer;
-  width: 145px; /* ajuste fino opcional */
+  width: 170px;                     /* 👈 aumenta a largura */
+  height: 38px;                     /* 👈 ajusta altura */
 
   transition: background .15s, border .15s, box-shadow .15s;
 }
 
 .header-right input[type="month"]:hover {
-  background: rgba(255, 255, 255, 0.10);
-  border-color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.25);
 }
 
 .header-right input[type="month"]:focus {
   outline: none;
   border-color: #6c63ff;
-  box-shadow: 0 0 8px rgba(108,99,255,.3);
+  box-shadow: 0 0 8px rgba(108,99,255,.35);
 }
 
-/* esconde o ícone feio padrão */
+/* ícone do calendário */
 .header-right input[type="month"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) opacity(.5);
+  filter: invert(1) opacity(.9);
   cursor: pointer;
+  padding-left: 6px;
 }
 
-/* reduz o espaçamento interno do ano/mês */
+/* ajusta texto interno para não ficar esmagado */
 .header-right input[type="month"]::-webkit-datetime-edit {
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
-/* deixa texto mais limpo */
-.header-right input[type="month"]::-webkit-datetime-edit-year-field,
-.header-right input[type="month"]::-webkit-datetime-edit-month-field {
-  color: #fff;
-  text-transform: lowercase;
-}
 
-/* evita ficar gigante no mobile */
-@media (max-width: 1500px) {
-  .header-right input[type="month"] {
-    width: 120px;
-  }
-}
