@@ -514,3 +514,26 @@
   pointer-events: none;
 }
 
+/* botão que mostra só a imagem */
+.icon-img-btn {
+  all: unset;           /* remove tudo */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* imagem */
+.icon-img-btn img {
+  width: 28px;          /* ajuste se quiser maior/menor */
+  height: 28px;
+  object-fit: contain;
+  pointer-events: none; /* evita clique na imagem ao invés do botão */
+}
+
+/* efeito hover opcional */
+.icon-img-btn:hover img {
+  filter: brightness(1.15);
+  transform: scale(1.07);
+  transition: .15s ease;
+}
