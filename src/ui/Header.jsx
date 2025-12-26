@@ -124,7 +124,11 @@ export default function Header({
             onClick={onReload}
             title="Atualizar dados"
           >
-            ⟳
+            <img
+              src="/atualizar.png"
+              alt="Atualizar"
+              style={{ width: "22px", height: "22px", objectFit: "contain" }}
+            />
           </button>
 
           {/* LOGOUT */}
@@ -145,3 +149,4 @@ export default function Header({
     </>
   );
 }
+
