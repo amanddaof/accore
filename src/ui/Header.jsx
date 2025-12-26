@@ -4,7 +4,6 @@ import AlertsCenter from "../ui/AlertsCenter";
 import SaveSavingsDrawer from "../ui/SaveSavingsDrawer";
 import { gerarAlertas } from "../services/alerts.service";
 import { logout } from "../services/auth";
-import GlobalSearch from "../components/GlobalSearch";
 import "./Header.css";
 
 export default function Header({
@@ -26,15 +25,8 @@ export default function Header({
   onOpenIncomes,
   isIncomesOpen,
 
-  onGlobalSelect,
-
   mensal,
   salarios,
-
-  transactions,
-  reservations,
-  bills,
-  loans
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -51,7 +43,6 @@ export default function Header({
     [...dados.amanda, ...dados.celso, ...dados.geral]
       .filter(a => a.tipo === "critico" || a.tipo === "atencao").length;
 
-  // DEBUG: ver se está chegando aqui
   console.log("AVATAR NO HEADER:", avatarUrl);
 
   return (
@@ -64,10 +55,11 @@ export default function Header({
           style={{ cursor: "pointer" }}
         >
           <div className="logo">
-			  <img src="/logo-ac.png" alt="AC Core" />
-			</div>
-			<span className="title">ACCORE</span>
-		</div>
+            <img src="/logo-ac.png" alt="AC Core" />
+          </div>
+          <span className="title">ACCORE</span>
+        </div>
+
         {/* MENU */}
         <nav className="nav">
           <button
@@ -113,17 +105,6 @@ export default function Header({
           </button>
         </nav>
 
-        {/* BUSCA GLOBAL */}
-        <div className="header-search">
-          <GlobalSearch
-            transactions={transactions}
-            reservations={reservations}
-            bills={bills}
-            loans={loans}
-            onSelect={onGlobalSelect}
-          />
-        </div>
-
         {/* DIREITA */}
         <div className="header-right">
           {/* ALERTAS */}
@@ -139,16 +120,16 @@ export default function Header({
           </button>
 
           {/* PERFIL */}
-			<button
-			  className="profile-button no-style"
-			  onClick={onOpenProfile}
-			>
-			  {avatarUrl ? (
-				<img src={`${avatarUrl}?t=${Date.now()}`} alt="Perfil" />
-			  ) : (
-				<span className="profile-placeholder">👤</span>
-			  )}
-			</button>
+          <button
+            className="profile-button no-style"
+            onClick={onOpenProfile}
+          >
+            {avatarUrl ? (
+              <img src={`${avatarUrl}?t=${Date.now()}`} alt="Perfil" />
+            ) : (
+              <span className="profile-placeholder">👤</span>
+            )}
+          </button>
 
           {/* MÊS */}
           <input
@@ -192,5 +173,3 @@ export default function Header({
     </>
   );
 }
-
-
