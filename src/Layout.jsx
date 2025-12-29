@@ -28,6 +28,7 @@ export default function Layout({
   bills,
   loans
 }) {
+  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -35,6 +36,7 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
+  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function Layout({
     );
   }, [profile, mes, mensal, salarios]);
 
+  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -91,6 +94,7 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
+  /* ================= UPDATE PERFIL ================= */
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
@@ -133,34 +137,11 @@ export default function Layout({
         <Footer />
 
         {/* DRAWERS */}
-        <CardsDrawer
-          open={openCards}
-          onClose={() => setOpenCards(false)}
-          cards={cards}
-          mes={mes}
-        />
-
-        <ExternoDrawer
-          open={openExterno}
-          onClose={() => setOpenExterno(false)}
-          mes={mes}
-        />
-
-        <ReservasDrawer
-          open={openReservas}
-          onClose={() => setOpenReservas(false)}
-        />
-
-        <BillsDrawer
-          open={openBills}
-          onClose={() => setOpenBills(false)}
-          mes={mes}
-        />
-
-        <IncomeDrawer
-          open={openIncomes}
-          onClose={() => setOpenIncomes(false)}
-        />
+        <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
+        <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
+        <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
+        <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
+        <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
         <ProfileDrawer
           open={openProfile}
