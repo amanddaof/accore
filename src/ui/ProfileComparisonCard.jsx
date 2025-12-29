@@ -1,33 +1,41 @@
+import { useMemo } from "react";
 import { money } from "../utils/money";
 
-export default function ProfileComparisonCard({ comparativoMensal, profile }) {
-  const pessoa = profile?.display_name?.toLowerCase();
-  const data = comparativoMensal?.porPessoa?.[pessoa];
+export default function ProfileComparisonCard({ mes, mensal, salarios, profile }) {
+  const usuario = profile?.display_name?.toLowerCase();
 
-  if (!data) return null;
+  const [anoAtual, mesAtualNum] = mes.split('-').map(Number);
+  const mesAnteriorNum = mesAtualNum === 1 ? 12 : mesAtualNum - 1;
+  const anoAnterior = mesAnteriorNum === 12 ? anoAtual - 1 : anoAtual;
+  const mesAnterior = `${anoAnterior}-${mesAnteriorNum.toString().padStart(2, '0')}`;
 
-  const anterior = data.anterior?.total || 0;
-  const atual = data.atual?.total || data.total || 0;
-  const diff = atual - anterior;
+  function getTotal(mesStr) {
+    return mensal?.[mesStr]?.[usuario]?.total || 0;
+  }
 
-  const percentual = anterior
-    ? ((diff / anterior) * 100).toFixed(1)
+  const totalAtual = useMemo(() => getTotal(mes), [mes, mensal, usuario]);
+  const totalAnterior = useMemo(() => getTotal(mesAnterior), [mesAnterior, mensal, usuario]);
+
+  const variacao = totalAtual - totalAnterior;
+  const variacaoPercent = totalAnterior
+    ? ((variacao / totalAnterior) * 100).toFixed(1)
     : 0;
-
-  const status =
-    diff === 0 ? "Sem variação" :
-    diff > 0 ? `+${percentual}% (gastou mais)` :
-    `${percentual}% (gastou menos)`;
 
   return (
     <div className="profile-comparativo-card">
-      <strong>{profile.display_name}</strong> — Comparativo mensal
+      <strong>{profile.display_name} — Comparativo mensal</strong>
 
-      <div>💸 Atual: {money(atual)}</div>
-      <div>📅 Anterior: {money(anterior)}</div>
+      <div style={{ marginTop: "8px" }}>
+        🟢 Atual: <strong>{money(totalAtual)}</strong>
+      </div>
+      <div>
+        🔵 Anterior: <strong>{money(totalAnterior)}</strong>
+      </div>
 
-      <div style={{ marginTop: "6px" }}>
-        {diff > 0 ? "▲" : diff < 0 ? "▼" : "•"} {status}
+      <div style={{ marginTop: "8px" }}>
+        {variacao === 0
+          ? "— sem variação"
+          : `${variacaoPercent}% (${variacao > 0 ? "gastou mais" : "gastou menos"})`}
       </div>
     </div>
   );
