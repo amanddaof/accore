@@ -13,6 +13,7 @@ import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
+import MonthComparisonCard from "./ui/MonthComparisonCard"; // 👈 adicionado
 
 export default function Layout({
   mes,
@@ -52,15 +53,26 @@ export default function Layout({
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS ================= */
+  /* ================= AVISOS (COM COMPARATIVO) ================= */
   const avisos = useMemo(() => {
     if (!profile) return [];
 
-    return buildMonthlyAlerts({
+    const alerts = buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
-  }, [profile, sobraIndividualMes]);
+
+    // 👈 COMPARATIVO como aviso automático!
+    return [
+      ...alerts,
+      {
+        icon: "👥",
+        texto: "Comparativo mensal por pessoa",
+        tipo: "comparativo",
+        component: <MonthComparisonCard mes={mes} mensal={mensal} salarios={salarios} />
+      }
+    ];
+  }, [profile, sobraIndividualMes, mes, mensal, salarios]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -86,13 +98,11 @@ export default function Layout({
       <Sidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-
-        {/* 🔔 volta ao modo antigo — badge funciona */}
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos} // 🔥 volta a lista
+          avisos={avisos}
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -126,7 +136,6 @@ export default function Layout({
         <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
         <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
-        {/* 🔥 Drawer sem comparativo por enquanto */}
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
@@ -135,7 +144,6 @@ export default function Layout({
           avisos={avisos}
           onProfileUpdate={handleProfileUpdate}
         />
-
       </div>
     </div>
   );
