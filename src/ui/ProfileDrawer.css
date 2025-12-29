@@ -162,3 +162,15 @@
   color: #9aa0aa;
   font-size: 14px;
 }
+
+/* permite o conteúdo expandir quando é um componente */
+.profile-aviso.comparativo {
+  display: block;
+  padding: 10px 0;
+}
+
+/* garante que o componente dentro apareça */
+.aviso-componente {
+  margin-top: 4px;
+  display: block;
+}
