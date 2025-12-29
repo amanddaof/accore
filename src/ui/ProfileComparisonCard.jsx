@@ -1,52 +1,28 @@
 import { money } from "../utils/money";
 
-function getPessoaData(porPessoa, usuario) {
-  if (!porPessoa) return null;
-
-  if (!Array.isArray(porPessoa) && porPessoa[usuario]) {
-    const data = porPessoa[usuario];
-    return {
-      atual: { total: data.total ?? data.atual?.total ?? data.gasto ?? 0 },
-      anterior: { total: 0 } // ✅ Mês anterior não existe nos dados
-    };
-  }
-
-  return null;
-}
-
 export default function ProfileComparisonCard({ mensal, profile }) {
   const usuario = profile?.display_name?.toLowerCase();
-  const pessoaData = getPessoaData(mensal?.porPessoa, usuario);
-
+  
+  // ✅ EXATAMENTE como no debug que funcionou
+  const pessoaData = mensal?.porPessoa?.[usuario];
+  
   if (!pessoaData) {
-    return <div>⚠️ Sem dados suficientes para comparar ({usuario})</div>;
+    return <div>Comparativo indisponível</div>;
   }
 
-  const atual = Number(pessoaData.atual?.total ?? 0);
-  const anterior = Number(pessoaData.anterior?.total ?? 0);
-
-  const variacao = atual - anterior;
-  const variacaoPercent = anterior
-    ? ((variacao / anterior) * 100).toFixed(1)
-    : "Novo";
+  const atual = Number(pessoaData.total ?? 0);
+  const anterior = 0; // Não tem dados anteriores ainda
 
   return (
     <div className="profile-comparativo-card">
-      <strong>{profile.display_name} — Comparativo mensal</strong>
+      <strong>{profile.display_name} — Gastos este mês</strong>
 
       <div style={{ marginTop: "8px" }}>
-        🟢 Atual: <strong>{money(atual)}</strong>
+        🟢 Total: <strong>{money(atual)}</strong>
       </div>
-      <div>
-        🔵 Anterior: <strong>{anterior > 0 ? money(anterior) : "— sem dados"}</strong>
-      </div>
-
+      
       <div style={{ marginTop: "8px" }}>
-        {anterior === 0 
-          ? "📊 Primeiro mês com dados" 
-          : variacao === 0
-          ? "— sem variação"
-          : `${variacaoPercent}% (${variacao > 0 ? "gastou mais" : "gastou menos"})`}
+        📊 Primeiro mês com dados
       </div>
     </div>
   );
