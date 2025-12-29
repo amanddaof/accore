@@ -58,6 +58,7 @@ export default function Home({
   savingsGoal,
   setSavingsGoal
 }) {
+  /* ================= USUÁRIO LOGADO ================= */
   const { usuarioLogado } = useOutletContext() || {};
 
   const amanda = salarios?.amanda || { salario: 0, gasto: 0, sobra: 0 };
@@ -71,56 +72,32 @@ export default function Home({
 
   const [showDebts, setShowDebts] = useState(false);
   const [detalhePessoa, setDetalhePessoa] = useState(null);
+
+  /* ================= CATEGORIAS ================= */
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  /* ============================================================
-     ADAPTAR COMPARATIVO PARA FORMATO ESPERADO PELO CARD ANTIGO
-     (mantendo tudo igual ao projeto que funciona)
-  ============================================================ */
-  let comparativoAdaptado = comparativoMensal;
+  /* ====================== DEBUG LOGS ====================== */
+  console.log("===== HOME DEBUG START =====");
+  console.log("usuarioLogado:", usuarioLogado);
+ console.log("mensal:", mensal);
+  console.log("salarios:", salarios);
 
-  if (
-    comparativoMensal &&
-    comparativoMensal.mesAtual &&
-    comparativoMensal.mesAnterior
-  ) {
-    const adaptItem = (i) =>
-      i
-        ? {
-            ...i,
-            valor: i.total ?? i.valor ?? 0 // garante info.valor
-          }
-        : { valor: 0 };
+  console.log("comparativoMensal:", comparativoMensal);
+  console.log("comparativoMensal?.total:", comparativoMensal?.total);
+  console.log("comparativoMensal?.porPessoa:", comparativoMensal?.porPessoa);
 
-    const adaptPessoa = (p) =>
-      p
-        ? {
-            anterior: adaptItem(p.anterior),
-            atual: adaptItem(p.atual)
-          }
-        : null;
+  console.log("categorias:", categorias);
+  console.log("loans:", loans);
+  console.log("mes:", mes);
+  console.log("===== HOME DEBUG END =====");
 
-    comparativoAdaptado = {
-      total: [
-        adaptItem(comparativoMensal.mesAnterior),
-        adaptItem(comparativoMensal.mesAtual)
-      ],
-      porPessoa: comparativoMensal.porPessoa
-        ? {
-            amanda: adaptPessoa(comparativoMensal.porPessoa.amanda),
-            celso: adaptPessoa(comparativoMensal.porPessoa.celso)
-          }
-        : null,
-      variacao: comparativoMensal.variacao || null
-    };
-  }
-
-  /* ================= SINCRONIZAR COM LOGIN ================= */
+  // 🔑 SINCRONIZA COM USUÁRIO LOGADO (SÓ NA PRIMEIRA VEZ)
   useEffect(() => {
     if (!usuarioLogado) return;
 
     setPessoaCategorias(prev => {
       if (prev !== "Ambos") return prev;
+
       if (usuarioLogado === "Amanda") return "Amanda";
       if (usuarioLogado === "Celso") return "Celso";
       return prev;
@@ -223,9 +200,8 @@ export default function Home({
       {/* ==== COMPARATIVO MENSAL ==== */}
       <section className="home-card comparison-card">
         <MonthComparisonCard
-          data={comparativoAdaptado?.total}
-          porPessoa={comparativoAdaptado?.porPessoa}
-          variacao={comparativoAdaptado?.variacao}
+          data={comparativoMensal?.total}
+          porPessoa={comparativoMensal?.porPessoa}
         />
       </section>
 
