@@ -26,6 +26,7 @@ export default function Layout({
   bills,
   loans
 }) {
+  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -33,25 +34,31 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
+  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    getUserProfile().then(setProfile).catch(console.error);
+    getUserProfile()
+      .then(setProfile)
+      .catch(console.error);
   }, []);
 
+  /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
 
     if (profile.display_name === "Amanda") {
       return salarios.amanda?.sobra ?? 0;
     }
+
     if (profile.display_name === "Celso") {
       return salarios.celso?.sobra ?? 0;
     }
+
     return 0;
   }, [profile, salarios]);
 
-  /* 🔥 AQUI: avisos + comparativo + porPessoa */
+  /* ================= AVISOS + COMPARATIVO ================= */
   const avisos = useMemo(() => {
     if (!profile) return { lista: [], comparativoMensal: null, porPessoa: null };
 
@@ -67,6 +74,8 @@ export default function Layout({
     };
   }, [profile, sobraIndividualMes, mensal]);
 
+
+  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -81,6 +90,7 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
+  /* ================= UPDATE PERFIL ================= */
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
@@ -90,11 +100,13 @@ export default function Layout({
       <Sidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
+        {/* 🔥 AGORA enviando o pacote completo de avisos */}
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos.lista}
+          avisos={avisos}
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -116,6 +128,7 @@ export default function Layout({
           avatarUrl={profile?.avatar_url || null}
         />
 
+        {/* 👇 usuário logado disponível para rotas */}
         <main style={{ flex: 1 }}>
           <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
@@ -128,15 +141,13 @@ export default function Layout({
         <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
         <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
-        {/*  🔥 AQUI AGORA VAI TUDO */}
+        {/* 🔥 agora o Drawer também recebe o pacote completo */}
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
-          avisos={avisos.lista}
-          comparativoMensal={avisos.comparativoMensal}
-          porPessoa={avisos.porPessoa}
+          avisos={avisos}
           onProfileUpdate={handleProfileUpdate}
         />
       </div>
