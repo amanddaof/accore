@@ -14,6 +14,41 @@ import IncomeDrawer from "./ui/IncomeDrawer";
 import ProfileDrawer from "./ui/ProfileDrawer";
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
+/* ======================================================
+   🔁 MAPEAR POR PESSOA — transforma array em objeto
+   Exemplo:
+   [{ pessoa:"Amanda", anterior:2000, total:2100 }]
+   vira:
+   { amanda:{ anterior:{total}, atual:{total}, valor } }
+====================================================== */
+function mapearPorPessoa(lista = []) {
+  if (!Array.isArray(lista)) return {};
+
+  const mapa = {};
+
+  lista.forEach(item => {
+    if (!item?.pessoa) return;
+
+    const chave = item.pessoa.toLowerCase(); // "amanda", "celso"
+
+    const anterior = Number(item.anterior ?? 0);
+    const atual = Number(item.total ?? 0);
+    const valor = atual - anterior;
+
+    mapa[chave] = {
+      anterior: { total: anterior },
+      atual: { total: atual },
+      valor
+    };
+  });
+
+  return mapa;
+}
+
+
+/* ======================================================
+   COMPONENTE PRINCIPAL
+====================================================== */
 export default function Layout({
   mes,
   setMes,
@@ -60,7 +95,7 @@ export default function Layout({
 
   /* ================= AVISOS + COMPARATIVO ================= */
   const avisos = useMemo(() => {
-    if (!profile) return { lista: [], comparativoMensal: null, porPessoa: null };
+    if (!profile) return { lista: [], comparativoMensal: null, porPessoa: {} };
 
     const lista = buildMonthlyAlerts({
       perfil: profile,
@@ -70,7 +105,7 @@ export default function Layout({
     return {
       lista,
       comparativoMensal: mensal?.comparativoMensal || null,
-      porPessoa: mensal?.porPessoa || null
+      porPessoa: mapearPorPessoa(mensal?.porPessoa || [])
     };
   }, [profile, sobraIndividualMes, mensal]);
 
@@ -95,18 +130,25 @@ export default function Layout({
     setProfile(novoPerfil);
   }
 
+
+  /* ======================================================
+     🌙 DEBUG OPCIONAL — descomente se quiser verificar
+  ======================================================= */
+  // console.log("🧭 mapearPorPessoa:", mapearPorPessoa(mensal?.porPessoa));
+  // console.log("📌 avisos final:", avisos);
+
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-
-        {/* 🔥 AGORA enviando o pacote completo de avisos */}
+        {/* 🔥 PASSANDO O PACOTE COMPLETO */}
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}
+          avisos={avisos}     // << correto agora
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -128,7 +170,7 @@ export default function Layout({
           avatarUrl={profile?.avatar_url || null}
         />
 
-        {/* 👇 usuário logado disponível para rotas */}
+        {/* 👇 usuário logado para as rotas */}
         <main style={{ flex: 1 }}>
           <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
@@ -141,18 +183,15 @@ export default function Layout({
         <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
         <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
-        {/* 🔥 agora o Drawer também recebe o pacote completo */}
+        {/* 🔥 RECEBENDO O PACOTE COMPLETO */}
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
-        
-          /* 🔥 agora passamos os 3 valores corretamente */
           avisos={avisos.lista}
           comparativoMensal={avisos.comparativoMensal}
           porPessoa={avisos.porPessoa}
-        
           onProfileUpdate={handleProfileUpdate}
         />
 
@@ -160,5 +199,3 @@ export default function Layout({
     </div>
   );
 }
-
-
