@@ -28,7 +28,6 @@ export default function Layout({
   bills,
   loans
 }) {
-  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -48,39 +47,47 @@ export default function Layout({
   /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
-    const nome = profile.display_name;
-    if (nome === "Amanda") return salarios.amanda?.sobra ?? 0;
-    if (nome === "Celso") return salarios.celso?.sobra ?? 0;
+
+    if (profile.display_name === "Amanda") {
+      return salarios.amanda?.sobra ?? 0;
+    }
+
+    if (profile.display_name === "Celso") {
+      return salarios.celso?.sobra ?? 0;
+    }
+
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS COM COMPARATIVO ================= */
+
+  /* ================= AVISOS (INCLUINDO COMPARATIVO) ================= */
   const avisos = useMemo(() => {
     if (!profile) return [];
 
-    const base = buildMonthlyAlerts({
+    const listaBase = buildMonthlyAlerts({
       perfil: profile,
-      saldoMes: sobraIndividualMes
+      saldoMes: sobraIndividualMes,
     });
 
-    // ⚠️ comparativo só aparece se tiver dados mensais
-    if (mensal && Object.keys(mensal).length > 0) {
-      base.push({
-        icon: "👥",
+    // 👇 garante que tenha dados antes de mostrar o comparativo pessoal
+    if (mensal?.comparativoMensal && mensal?.porPessoa) {
+      listaBase.push({
         tipo: "comparativo",
+        icon: "👥",
+        texto: "Comparativo mensal",
         component: (
           <ProfileComparisonCard
-            mes={mes}
-            mensal={mensal}
-            salarios={salarios}
+            comparativoMensal={mensal.comparativoMensal}
+            porPessoa={mensal.porPessoa}
             profile={profile}
           />
-        )
+        ),
       });
     }
 
-    return base;
-  }, [profile, sobraIndividualMes, mes, mensal, salarios]);
+    return listaBase;
+  }, [profile, sobraIndividualMes, mensal]);
+
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -101,16 +108,18 @@ export default function Layout({
     setProfile(novoPerfil);
   }
 
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}     // << só isso já leva o comparativo para o ProfileDrawer
+          avisos={avisos}
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -152,6 +161,7 @@ export default function Layout({
           avisos={avisos}
           onProfileUpdate={handleProfileUpdate}
         />
+
       </div>
     </div>
   );
