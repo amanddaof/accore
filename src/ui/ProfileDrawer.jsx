@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
+import MonthComparisonCard from "../ui/MonthComparisonCard";
 import "./ProfileDrawer.css";
 
 /**
@@ -13,15 +14,48 @@ export default function ProfileDrawer({
   onClose,
   userName = "Usuário",
   avatarUrl = null,
-  avisos = [],
+  avisos = {},
   onProfileUpdate
 }) {
   const [modo, setModo] = useState("avisos"); // "avisos" | "preferencias"
 
-  // 🔒 garante que sempre abre em "avisos"
+  // 🔒 sempre abre em avisos
   if (!open) {
     if (modo !== "avisos") setModo("avisos");
     return null;
+  }
+
+  const listaAvisos = avisos?.lista || [];
+
+  /* =====================================================
+     🔍 COMPARATIVO POR PESSOA (Amanda / Celso)
+     aparece apenas na aba de avisos
+  ===================================================== */
+  const comparativo = avisos?.comparativoMensal;
+  const pessoaLogada = userName?.toLowerCase(); // "amanda" | "celso"
+  let comparativoPessoa = null;
+
+  if (comparativo?.porPessoa?.[pessoaLogada]) {
+    const dados = comparativo.porPessoa[pessoaLogada];
+
+    comparativoPessoa = {
+      mesAnterior: comparativo.mesAnterior,
+      mesAtual: comparativo.mesAtual,
+      variacao: {
+        valor:
+          Number(dados?.atual?.total || 0) -
+          Number(dados?.anterior?.total || 0)
+      },
+      porPessoa: {
+        [pessoaLogada]: {
+          anterior: { total: Number(dados?.anterior?.total || 0) },
+          atual: { total: Number(dados?.atual?.total || 0) },
+          valor:
+            Number(dados?.atual?.total || 0) -
+            Number(dados?.anterior?.total || 0)
+        }
+      }
+    };
   }
 
   function handleClose() {
@@ -76,11 +110,27 @@ export default function ProfileDrawer({
 
         {/* ================= CONTEÚDO ================= */}
         <div className="profile-drawer-content">
+
           {modo === "avisos" ? (
-            <AvisosList avisos={avisos} />
+            <>
+              {/* 👇 novo bloco com comparativo por pessoa */}
+              {comparativoPessoa && (
+                <div className="profile-comparison-section">
+                  <MonthComparisonCard
+                    mesAnterior={comparativoPessoa.mesAnterior}
+                    mesAtual={comparativoPessoa.mesAtual}
+                    variacao={comparativoPessoa.variacao}
+                    porPessoa={comparativoPessoa.porPessoa}
+                  />
+                </div>
+              )}
+
+              <AvisosList avisos={listaAvisos} />
+            </>
           ) : (
             <Profile onProfileUpdate={onProfileUpdate} />
           )}
+
         </div>
       </aside>
     </div>
@@ -110,3 +160,4 @@ function AvisosList({ avisos }) {
     </ul>
   );
 }
+
