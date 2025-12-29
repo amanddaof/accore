@@ -11,7 +11,7 @@ export default function ProfileDrawer({
   comparativoCard,
   onProfileUpdate
 }) {
-  const [modo, setModo] = useState("avisos"); // avisos | preferencias
+  const [modo, setModo] = useState("avisos");
 
   if (!open) {
     if (modo !== "avisos") setModo("avisos");
@@ -26,8 +26,6 @@ export default function ProfileDrawer({
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
       <aside className="profile-drawer" onClick={e => e.stopPropagation()}>
-
-        {/* ================= HEADER ================= */}
         <header className="profile-drawer-header center">
           <button className="close-btn" onClick={handleClose}>✕</button>
 
@@ -45,7 +43,6 @@ export default function ProfileDrawer({
           </small>
         </header>
 
-        {/* ================= AÇÃO ================= */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
             <button className="profile-link-button" onClick={() => setModo("preferencias")}>
@@ -58,17 +55,13 @@ export default function ProfileDrawer({
           )}
         </div>
 
-        {/* ================= CONTEÚDO ================= */}
         <div className="profile-drawer-content">
-
-          {/* ⭐ COMPARATIVO — aparece ANTES dos avisos */}
           {modo === "avisos" && comparativoCard && (
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "24px", padding: "16px", background: "#f8fafc", borderRadius: "12px" }}>
               {comparativoCard}
             </div>
           )}
 
-          {/* 🔔 avisos normais */}
           {modo === "avisos" ? (
             <AvisosList avisos={avisos} />
           ) : (
@@ -80,9 +73,6 @@ export default function ProfileDrawer({
   );
 }
 
-/* ======================================================
-   LISTA DE AVISOS
-====================================================== */
 function AvisosList({ avisos }) {
   if (!avisos || avisos.length === 0) {
     return (
