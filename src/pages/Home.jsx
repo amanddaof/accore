@@ -53,7 +53,7 @@ function agruparPorOrigem(itens = []) {
 function prepararComparativo(comparativoMensal) {
   if (!comparativoMensal) return null;
 
-  // === TOTAL ===
+  /** ======= TOTAL ======= **/
   const mesAnterior = {
     label: comparativoMensal.mesAnterior?.label,
     total: Number(comparativoMensal.mesAnterior?.total ?? 0)
@@ -68,19 +68,19 @@ function prepararComparativo(comparativoMensal) {
     valor: mesAtual.total - mesAnterior.total
   };
 
-  // === POR PESSOA (AQUI ESTAVA O ERRO) ===
-  let porPessoa = null;
+
+  /** ======= POR PESSOA ======= **/
+  let porPessoa = {};
 
   if (comparativoMensal.porPessoa) {
-    porPessoa = {};
-
     for (const pessoa of ["amanda", "celso"]) {
-      const item = comparativoMensal.porPessoa[pessoa];
-      if (!item) continue;
+      const dados = comparativoMensal.porPessoa[pessoa];
+      if (!dados) continue;
 
-      const anterior = Number(item.anterior?.total ?? 0);
-      const atual = Number(item.atual?.total ?? 0);
-      
+      // NOVA estrutura real do backend:
+      const anterior = Number(dados.anterior?.total ?? dados.anterior ?? 0);
+      const atual = Number(dados.atual?.total ?? dados.atual ?? 0);
+
       porPessoa[pessoa] = {
         anterior: { total: anterior },
         atual: { total: atual },
@@ -300,6 +300,7 @@ export default function Home({
     </div>
   );
 }
+
 
 
 
