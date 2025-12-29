@@ -21,7 +21,6 @@ function agruparPorOrigem(itens = []) {
 
     if (i.tipo === "Conta da casa") {
       origem = "Conta da casa";
-
       const real = Number(i.item.valor_real || 0);
       const previsto = Number(i.item.valor_previsto || 0);
       valor = real > 0 ? real : previsto;
@@ -76,15 +75,39 @@ export default function Home({
   /* ================= CATEGORIAS ================= */
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
+  /* ====================== ADAPTAR COMPARATIVO ====================== */
+  /** 
+   * backend agora envia:
+   * { mesAtual, mesAnterior, variacao }
+   *
+   * o MonthComparisonCard (que funciona) espera:
+   * { total: [...], porPessoa: {...} }
+   */
+  let comparativoAdaptado = comparativoMensal;
+
+  if (
+    comparativoMensal &&
+    comparativoMensal.mesAtual &&
+    comparativoMensal.mesAnterior
+  ) {
+    comparativoAdaptado = {
+      total: [
+        comparativoMensal.mesAnterior,
+        comparativoMensal.mesAtual
+      ],
+      porPessoa: comparativoMensal.porPessoa || null,
+      variacao: comparativoMensal.variacao,
+    };
+  }
+
   /* ====================== DEBUG LOGS ====================== */
   console.log("===== HOME DEBUG START =====");
   console.log("usuarioLogado:", usuarioLogado);
   console.log("mensal:", mensal);
   console.log("salarios:", salarios);
 
-  console.log("comparativoMensal:", comparativoMensal);
-  console.log("comparativoMensal?.total:", comparativoMensal?.total);
-  console.log("comparativoMensal?.porPessoa:", comparativoMensal?.porPessoa);
+  console.log("comparativoMensal (bruto):", comparativoMensal);
+  console.log("comparativoAdaptado:", comparativoAdaptado);
 
   console.log("categorias:", categorias);
   console.log("loans:", loans);
@@ -200,8 +223,9 @@ export default function Home({
       {/* ==== COMPARATIVO MENSAL ==== */}
       <section className="home-card comparison-card">
         <MonthComparisonCard
-          data={comparativoMensal?.total}
-          porPessoa={comparativoMensal?.porPessoa}
+          data={comparativoAdaptado?.total}
+          porPessoa={comparativoAdaptado?.porPessoa}
+          variacao={comparativoAdaptado?.variacao}
         />
       </section>
 
