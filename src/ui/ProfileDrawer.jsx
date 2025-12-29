@@ -25,15 +25,11 @@ export default function ProfileDrawer({
 
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
-      <aside
-        className="profile-drawer"
-        onClick={e => e.stopPropagation()}
-      >
+      <aside className="profile-drawer" onClick={e => e.stopPropagation()}>
+
         {/* ================= HEADER ================= */}
         <header className="profile-drawer-header center">
-          <button className="close-btn" onClick={handleClose}>
-            ✕
-          </button>
+          <button className="close-btn" onClick={handleClose}>✕</button>
 
           <div className="profile-avatar-large">
             {avatarUrl ? (
