@@ -12,7 +12,7 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
-import ProfileComparisonCard from "./ui/ProfileComparisonCard"; // 👈 NOVO!
+import ProfileComparisonCard from "./ui/ProfileComparisonCard"; 
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
@@ -34,7 +34,6 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
-  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -43,17 +42,14 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
-  /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
-
     if (profile.display_name === "Amanda") return salarios.amanda?.sobra ?? 0;
     if (profile.display_name === "Celso") return salarios.celso?.sobra ?? 0;
-
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS (COM COMPARATIVO) ================= */
+  /** 🔥 AVISOS + COMPARATIVO INDIVIDUAL */
   const avisos = useMemo(() => {
     if (!profile) return [];
 
@@ -62,7 +58,6 @@ export default function Layout({
       saldoMes: sobraIndividualMes
     });
 
-    // 👈 COMPARATIVO como aviso automático com NÚMEROS REAIS!
     return [
       ...alerts,
       {
@@ -70,19 +65,18 @@ export default function Layout({
         texto: "Comparativo mensal por pessoa",
         tipo: "comparativo",
         component: (
-          <ProfileComparisonCard 
+          <ProfileComparisonCard
             mes={mes}
             mensal={mensal}
+            comparativoMensal={mensal?.comparativoMensal} // 🔥 envia real
             salarios={salarios}
-            transactions={transactions}
             profile={profile}
           />
         )
       }
     ];
-  }, [profile, sobraIndividualMes, mes, mensal, salarios, transactions]);
+  }, [profile, sobraIndividualMes, mes, mensal, salarios]);
 
-  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -100,17 +94,17 @@ export default function Layout({
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
- console.log("🧪 DUMP MENSAL REAL:", JSON.stringify(mensal, null, 2));
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>       
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}
+          avisos={avisos} // 👈 agora correto
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -156,4 +150,3 @@ export default function Layout({
     </div>
   );
 }
-
