@@ -83,9 +83,11 @@ function AvisosList({ avisos }) {
       {avisos.map((a, idx) => (
         <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
           <span className="aviso-icon">{a.icon || "ℹ️"}</span>
-          
+
           {a.component ? (
-            <div className="aviso-componente">{a.component}</div>
+            <div className="aviso-componente">
+              {a.component}
+            </div>
           ) : (
             <span className="aviso-texto">{a.texto}</span>
           )}
