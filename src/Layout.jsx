@@ -1,3 +1,4 @@
+// Layout.jsx
 import { useState, useEffect, useMemo } from "react";
 import { getUserProfile } from "./services/userProfile";
 
@@ -28,7 +29,6 @@ export default function Layout({
   bills,
   loans
 }) {
-  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -36,7 +36,6 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
-  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -45,29 +44,32 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
-  /* ================= SOBRA INDIVIDUAL ================= */
+  // =====================================================
+  // SOBRA INDIVIDUAL
+  // =====================================================
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
-
     return profile.display_name === "Amanda"
       ? salarios.amanda?.sobra ?? 0
       : salarios.celso?.sobra ?? 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS ================= */
+  // =====================================================
+  // AVISOS — lista
+  // =====================================================
   const avisosLista = useMemo(() => {
     if (!profile) return [];
-
     return buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
   }, [profile, sobraIndividualMes]);
 
-  /* ================= COMPARATIVO ================= */
+  // =====================================================
+  // COMPARATIVO — card do perfil
+  // =====================================================
   const comparativoCard = useMemo(() => {
-    if (!profile || !mensal || Object.keys(mensal).length === 0)
-      return null;
+    if (!profile || !mensal || Object.keys(mensal).length === 0) return null;
 
     return (
       <ProfileComparisonCard
@@ -79,7 +81,9 @@ export default function Layout({
     );
   }, [profile, mes, mensal, salarios]);
 
-  /* ================= BUSCA GLOBAL ================= */
+  // =====================================================
+  // BUSCA GLOBAL
+  // =====================================================
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -94,11 +98,13 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
-  /* ================= UPDATE PERFIL ================= */
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
 
+  // =====================================================
+  // RENDER
+  // =====================================================
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
@@ -136,7 +142,7 @@ export default function Layout({
 
         <Footer />
 
-        {/* DRAWERS */}
+        {/* DRAWERS ============================= */}
         <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
         <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
         <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
