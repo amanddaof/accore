@@ -46,107 +46,33 @@ function agruparPorOrigem(itens = []) {
   }));
 }
 
-function prepararComparativo(comparativoMensal, mes = "Mês atual") {
+function prepararComparativo(comparativoMensal, mes = "Mês atual", amandaMensal, celsoMensal) {
   console.log('🔍 comparativoMensal recebido:', comparativoMensal);
   
-  if (!comparativoMensal) return {
-    mesAnterior: { label: 'Anterior', total: 0 },
-    mesAtual: { label: mes, total: 0 },
-    variacao: { valor: 0 },
-    porPessoa: null
-  };
+  // ... (mantenha toda a lógica anterior até o final)
 
-  // ✅ DETECTA FORMATO 1: {mesAnterior, mesAtual} direto
-  if (comparativoMensal.mesAnterior && comparativoMensal.mesAtual) {
-    const mesAnterior = {
-      label: comparativoMensal.mesAnterior.label || 'Anterior',
-      total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
-    };
-    const mesAtual = {
-      label: comparativoMensal.mesAtual.label || mes,
-      total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
-    };
-
-    // ✅ MOCK porPessoa pra testar
-    const porPessoaMock = {
-      amanda: {
-        anterior: { total: 2800 },
-        atual: { total: 2500 },
-        valor: -300
-      },
-      celso: {
-        anterior: { total: 3457 },
-        atual: { total: 3150 },
-        valor: -307
-      }
-    };
-
-    const variacao = {
-      valor: Math.round(Number(comparativoMensal.variacao?.valor || (mesAtual.total - mesAnterior.total)))
-    };
-
-    console.log('✅ comparativo COMPLETO (com mock):', { mesAnterior, mesAtual, variacao, porPessoa: porPessoaMock });
-    
-    return { mesAnterior, mesAtual, variacao, porPessoa: porPessoaMock };
-  }
-
-  // ✅ DETECTA FORMATO 2: {total: [anterior, atual]}
-  if (Array.isArray(comparativoMensal.total) && comparativoMensal.total.length >= 2) {
-    const [anterior, atual] = comparativoMensal.total;
-    const mesAnterior = {
-      label: anterior.label || 'Anterior',
-      total: Math.round(Number(anterior?.total ?? anterior?.valor ?? 0))
-    };
-    const mesAtual = {
-      label: atual.label || mes,
-      total: Math.round(Number(atual?.total ?? atual?.valor ?? 0))
-    };
-
-    const porPessoaMock = {
-      amanda: {
-        anterior: { total: 2800 },
-        atual: { total: 2500 },
-        valor: -300
-      },
-      celso: {
-        anterior: { total: 3457 },
-        atual: { total: 3150 },
-        valor: -307
-      }
-    };
-
-    console.log('✅ comparativo COMPLETO (com mock):', { mesAnterior, mesAtual, variacao: {valor: 0}, porPessoa: porPessoaMock });
-    
-    return { mesAnterior, mesAtual, variacao: {valor: 0}, porPessoa: porPessoaMock };
-  }
-
-  // Fallback com mock
-  const porPessoaMock = {
-    amanda: {
-      anterior: { total: 2800 },
-      atual: { total: 2500 },
-      valor: -300
-    },
-    celso: {
-      anterior: { total: 3457 },
-      atual: { total: 3150 },
-      valor: -307
-    }
-  };
-
-  console.log('✅ comparativo FALLBACK (com mock):', { 
-    mesAnterior: { label: 'Anterior', total: 0 },
-    mesAtual: { label: mes, total: 0 },
-    variacao: { valor: 0 },
-    porPessoa: porPessoaMock 
-  });
+  // ✅ DADOS REAIS porPessoa usando mensal.porPessoa
+  const porPessoaReal = {};
   
-  return {
-    mesAnterior: { label: 'Anterior', total: 0 },
-    mesAtual: { label: mes, total: 0 },
-    variacao: { valor: 0 },
-    porPessoa: porPessoaMock
-  };
+  // Amanda
+  if (amandaMensal) {
+    porPessoaReal.amanda = {
+      anterior: { total: Math.round(amandaMensal.mesAnterior || amandaMensal.gastoAnterior || 0) },
+      atual: { total: Math.round(amandaMensal.total || amandaMensal.gasto || 0) },
+      valor: 0
+    };
+  }
+  
+  // Celso
+  if (celsoMensal) {
+    porPessoaReal.celso = {
+      anterior: { total: Math.round(celsoMensal.mesAnterior || celsoMensal.gastoAnterior || 0) },
+      atual: { total: Math.round(celsoMensal.total || celsoMensal.gasto || 0) },
+      valor: 0
+    };
+  }
+
+  return { mesAnterior, mesAtual, variacao, porPessoa: porPessoaReal || porPessoaMock };
 }
 
 export default function Home({
@@ -359,3 +285,4 @@ export default function Home({
     </div>
   );
 }
+
