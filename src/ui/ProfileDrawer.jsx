@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
-import MonthComparisonCard from "../ui/MonthComparisonCard";
 import "./ProfileDrawer.css";
 
 export default function ProfileDrawer({
@@ -84,7 +83,12 @@ function AvisosList({ avisos }) {
       {avisos.map((a, idx) => (
         <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
           <span className="aviso-icon">{a.icon || "ℹ️"}</span>
-          <span className="aviso-texto">{a.texto}</span>
+          
+          {a.component ? (
+            <div className="aviso-componente">{a.component}</div> // 👈 CORRIGIDO!
+          ) : (
+            <span className="aviso-texto">{a.texto}</span>
+          )}
         </li>
       ))}
     </ul>
