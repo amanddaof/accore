@@ -59,20 +59,21 @@ export default function Layout({
   }, [profile, salarios]);
 
   /* ================= AVISOS + COMPARATIVO ================= */
-  const avisos = useMemo(() => {
-    if (!profile) return { lista: [], comparativoMensal: null, porPessoa: null };
+  /* ================= AVISOS ================= */
+const avisos = useMemo(() => {
+  if (!profile) return { lista: [], comparativoMensal: null, porPessoa: null };
 
-    const lista = buildMonthlyAlerts({
-      perfil: profile,
-      saldoMes: sobraIndividualMes
-    });
+  const lista = buildMonthlyAlerts({
+    perfil: profile,
+    saldoMes: sobraIndividualMes
+  });
 
-    return {
-      lista,
-      comparativoMensal: mensal?.comparativoMensal || null,
-      porPessoa: mensal?.porPessoa || null
-    };
-  }, [profile, sobraIndividualMes, mensal]);
+  return {
+    lista,
+    comparativoMensal: mensal?.comparativoMensal || null, // 🔥 vem do banco
+    porPessoa: mensal?.porPessoa || null                  // 🔥 dados individuais
+  };
+}, [profile, sobraIndividualMes, mensal]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -178,3 +179,4 @@ export default function Layout({
     </div>
   );
 }
+
