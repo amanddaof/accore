@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
 import "./ProfileDrawer.css";
+
 import MonthComparisonCard from "./MonthComparisonCard";
 
 export default function ProfileDrawer({
@@ -9,7 +10,8 @@ export default function ProfileDrawer({
   userName = "Usuário",
   avatarUrl = null,
   avisos = [],
-  comparativoMensal = null,   // 👈 AGORA RECEBENDO CERTO
+  comparativoMensal = null,
+  porPessoa = null,
   onProfileUpdate
 }) {
   const [modo, setModo] = useState("avisos");
@@ -26,65 +28,38 @@ export default function ProfileDrawer({
 
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
-      <aside
-        className="profile-drawer"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* ================= HEADER ================= */}
+      <aside className="profile-drawer" onClick={(e) => e.stopPropagation()}>
         <header className="profile-drawer-header center">
-          <button className="close-btn" onClick={handleClose}>
-            ✕
-          </button>
+          <button className="close-btn" onClick={handleClose}>✕</button>
 
           <div className="profile-avatar-large">
-            {avatarUrl ? (
-              <img src={`${avatarUrl}?t=${Date.now()}`} alt="Avatar" />
-            ) : (
-              <span className="avatar-placeholder">👤</span>
-            )}
+            {avatarUrl ? <img src={`${avatarUrl}?t=${Date.now()}`} alt="Avatar" /> : <span className="avatar-placeholder">👤</span>}
           </div>
 
           <strong className="profile-name">{userName}</strong>
-          <small className="profile-subtitle">
-            Configura como o sistema te acompanha
-          </small>
+          <small className="profile-subtitle">Configura como o sistema te acompanha</small>
         </header>
 
-        {/* ================= AÇÃO ================= */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("preferencias")}
-            >
-              ⚙️ Preferências
-            </button>
+            <button className="profile-link-button" onClick={() => setModo("preferencias")}>⚙️ Preferências</button>
           ) : (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("avisos")}
-            >
-              ← Voltar para avisos
-            </button>
+            <button className="profile-link-button" onClick={() => setModo("avisos")}>← Voltar para avisos</button>
           )}
         </div>
 
-        {/* ================= CONTEÚDO ================= */}
         <div className="profile-drawer-content">
-
-          {/* ⭐ MOSTRA O COMPARATIVO AQUI */}
-          {modo === "avisos" && comparativoMensal && (
+          {/* ⭐ Comparativo do usuário logado */}
+          {modo === "avisos" && comparativoMensal && porPessoa && (
             <div style={{ marginBottom: "20px" }}>
               <MonthComparisonCard
-                mesAnterior={comparativoMensal.mesAnterior}
-                mesAtual={comparativoMensal.mesAtual}
-                variacao={comparativoMensal.variacao}
-                porPessoa={comparativoMensal.porPessoa}
+                data={comparativoMensal}
+                porPessoa={porPessoa}
               />
             </div>
           )}
 
-          {/* 🔔 avisos normais */}
+          {/* 🔔 Avisos */}
           {modo === "avisos" ? (
             <AvisosList avisos={avisos} />
           ) : (
@@ -96,16 +71,9 @@ export default function ProfileDrawer({
   );
 }
 
-/* ======================================================
-   LISTA DE AVISOS
-====================================================== */
 function AvisosList({ avisos }) {
   if (!avisos || avisos.length === 0) {
-    return (
-      <div className="profile-empty">
-        <p>Nenhum aviso no momento 🎉</p>
-      </div>
-    );
+    return <div className="profile-empty"><p>Nenhum aviso no momento 🎉</p></div>;
   }
 
   return (
