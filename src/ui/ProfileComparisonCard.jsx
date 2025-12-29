@@ -39,11 +39,7 @@ export default function ProfileComparisonCard({ mensal, profile }) {
   const pessoaData = getPessoaData(mensal?.porPessoa, usuario);
 
   if (!pessoaData) {
-    return (
-      <div>
-        ⚠️ Sem dados suficientes para comparar ({usuario})
-      </div>
-    );
+    return <div>⚠️ Sem dados suficientes para comparar ({usuario})</div>;
   }
 
   const atual = Number(pessoaData.atual?.total ?? 0);
