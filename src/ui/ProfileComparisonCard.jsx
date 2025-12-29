@@ -49,7 +49,7 @@ export default function ProfileComparisonCard({ mensal, profile }) {
     : 0;
 
   return (
-    <div className="profile-comparativo-card">
+    <div>
       <strong>{profile.display_name} — Comparativo mensal</strong>
 
       <div style={{ marginTop: "8px" }}>
