@@ -226,13 +226,11 @@ export default function Home({
       </section>
 
       <section className="home-card comparison-card">
- <MonthComparisonCard
-  mesAnterior={comparativoFormatado?.mesAnterior}
-  mesAtual={comparativoFormatado?.mesAtual}
-  variacao={comparativoFormatado?.variacao}
-  porPessoa={comparativoFormatado?.porPessoa}
-/>
-
+  <MonthComparisonCard
+    mesAnterior={comparativoFormatado?.mesAnterior}
+    mesAtual={comparativoFormatado?.mesAtual}
+    variacao={comparativoFormatado?.variacao}
+  />
 </section>
 
       <section className="home-card">
@@ -304,6 +302,7 @@ export default function Home({
     </div>
   );
 }
+
 
 
 
