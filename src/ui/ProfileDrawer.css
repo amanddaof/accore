@@ -174,3 +174,8 @@
   margin-top: 4px;
   display: block;
 }
+
+.profile-drawer-content > div[style*="marginBottom: \"24px\""] {
+  background: transparent !important;
+  padding: 0 !important;
+}
