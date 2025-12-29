@@ -14,41 +14,6 @@ import IncomeDrawer from "./ui/IncomeDrawer";
 import ProfileDrawer from "./ui/ProfileDrawer";
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
-/* ======================================================
-   🔁 MAPEAR POR PESSOA — transforma array em objeto
-   Exemplo:
-   [{ pessoa:"Amanda", anterior:2000, total:2100 }]
-   vira:
-   { amanda:{ anterior:{total}, atual:{total}, valor } }
-====================================================== */
-function mapearPorPessoa(lista = []) {
-  if (!Array.isArray(lista)) return {};
-
-  const mapa = {};
-
-  lista.forEach(item => {
-    if (!item?.pessoa) return;
-
-    const chave = item.pessoa.toLowerCase(); // "amanda", "celso"
-
-    const anterior = Number(item.anterior ?? 0);
-    const atual = Number(item.total ?? 0);
-    const valor = atual - anterior;
-
-    mapa[chave] = {
-      anterior: { total: anterior },
-      atual: { total: atual },
-      valor
-    };
-  });
-
-  return mapa;
-}
-
-
-/* ======================================================
-   COMPONENTE PRINCIPAL
-====================================================== */
 export default function Layout({
   mes,
   setMes,
@@ -61,7 +26,6 @@ export default function Layout({
   bills,
   loans
 }) {
-  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -82,33 +46,21 @@ export default function Layout({
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
 
-    if (profile.display_name === "Amanda") {
-      return salarios.amanda?.sobra ?? 0;
-    }
-
-    if (profile.display_name === "Celso") {
-      return salarios.celso?.sobra ?? 0;
-    }
+    if (profile.display_name === "Amanda") return salarios.amanda?.sobra ?? 0;
+    if (profile.display_name === "Celso") return salarios.celso?.sobra ?? 0;
 
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS + COMPARATIVO ================= */
+  /* ================= AVISOS ================= */
   const avisos = useMemo(() => {
-    if (!profile) return { lista: [], comparativoMensal: null, porPessoa: {} };
+    if (!profile) return [];
 
-    const lista = buildMonthlyAlerts({
+    return buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
-
-    return {
-      lista,
-      comparativoMensal: mensal?.comparativoMensal || null,
-      porPessoa: mapearPorPessoa(mensal?.porPessoa || [])
-    };
-  }, [profile, sobraIndividualMes, mensal]);
-
+  }, [profile, sobraIndividualMes]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -125,30 +77,22 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
-  /* ================= UPDATE PERFIL ================= */
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
-
-
-  /* ======================================================
-     🌙 DEBUG OPCIONAL — descomente se quiser verificar
-  ======================================================= */
-  // console.log("🧭 mapearPorPessoa:", mapearPorPessoa(mensal?.porPessoa));
-  // console.log("📌 avisos final:", avisos);
-
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        {/* 🔥 PASSANDO O PACOTE COMPLETO */}
+
+        {/* 🔔 volta ao modo antigo — badge funciona */}
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}     // << correto agora
+          avisos={avisos} // 🔥 volta a lista
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -170,7 +114,6 @@ export default function Layout({
           avatarUrl={profile?.avatar_url || null}
         />
 
-        {/* 👇 usuário logado para as rotas */}
         <main style={{ flex: 1 }}>
           <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
@@ -183,15 +126,13 @@ export default function Layout({
         <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
         <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
-        {/* 🔥 RECEBENDO O PACOTE COMPLETO */}
+        {/* 🔥 Drawer sem comparativo por enquanto */}
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
-          avisos={avisos.lista}
-          comparativoMensal={avisos.comparativoMensal}
-          porPessoa={avisos.porPessoa}
+          avisos={avisos}
           onProfileUpdate={handleProfileUpdate}
         />
 
