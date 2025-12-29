@@ -21,7 +21,6 @@ function agruparPorOrigem(itens = []) {
 
     if (i.tipo === "Conta da casa") {
       origem = "Conta da casa";
-
       const real = Number(i.item.valor_real || 0);
       const previsto = Number(i.item.valor_previsto || 0);
       valor = real > 0 ? real : previsto;
@@ -47,58 +46,51 @@ function agruparPorOrigem(itens = []) {
   }));
 }
 
-
 /* ==========================================================
-   adapta comparativoMensal para o formato esperado pelo card
-   (mesAnterior, mesAtual, variacao, porPessoa)
+   VERSÃO ROBUSTA: sempre retorna dados válidos, nunca null
 ========================================================== */
-function prepararComparativo(comparativoMensal) {
-  if (!comparativoMensal || !Array.isArray(comparativoMensal.total)) {
-    return null;
-  }
-
-  const [mesAnterior, mesAtual] = comparativoMensal.total;
-
-  const anteriorValor = mesAnterior?.total ?? mesAnterior?.valor ?? 0;
-  const atualValor = mesAtual?.total ?? mesAtual?.valor ?? 0;
-
-  const variacao = {
-    valor: atualValor - anteriorValor
+function prepararComparativo(comparativoMensal, mes = "Mês atual") {
+  console.log('🔍 comparativoMensal recebido:', comparativoMensal); // Debug
+  
+  // Fallback: dados vazios mas estruturados
+  const fallback = {
+    mesAnterior: { label: 'Mês anterior', total: 0 },
+    mesAtual: { label: mes, total: 0 },
+    variacao: { valor: 0 },
+    porPessoa: null
   };
 
-  let porPessoa = null;
-  if (comparativoMensal.porPessoa) {
-    porPessoa = {};
-
-    for (const key of ["amanda", "celso"]) {
-      const info = comparativoMensal.porPessoa[key];
-      if (!info) continue;
-
-      const anterior = info.anterior?.total ?? info.anterior?.valor ?? 0;
-      const atual = info.atual?.total ?? info.atual?.valor ?? 0;
-
-      porPessoa[key] = {
-        anterior,
-        atual,
-        valor: atual - anterior
-      };
-    }
+  if (!comparativoMensal) {
+    console.warn('❌ comparativoMensal é null/undefined');
+    return fallback;
   }
+
+  // Tenta acessar total como array
+  let mesAnterior = { label: 'Anterior', total: 0 };
+  let mesAtual = { label: mes, total: 0 };
+
+  if (Array.isArray(comparativoMensal.total) && comparativoMensal.total.length >= 2) {
+    const [anterior, atual] = comparativoMensal.total;
+    mesAnterior.total = Number(anterior?.total ?? anterior?.valor ?? 0);
+    mesAtual.total = Number(atual?.total ?? atual?.valor ?? 0);
+    mesAnterior.label = anterior.label || 'Anterior';
+    mesAtual.label = atual.label || mes;
+  } else if (comparativoMensal.total) {
+    // Se total não é array, tenta usar como objeto único
+    mesAtual.total = Number(comparativoMensal.total?.total ?? comparativoMensal.total?.valor ?? 0);
+  }
+
+  const variacao = { valor: mesAtual.total - mesAnterior.total };
+
+  console.log('✅ comparativo formatado:', { mesAnterior, mesAtual, variacao }); // Debug
 
   return {
-    mesAnterior: {
-      label: mesAnterior.label,
-      total: anteriorValor
-    },
-    mesAtual: {
-      label: mesAtual.label,
-      total: atualValor
-    },
+    mesAnterior,
+    mesAtual,
     variacao,
-    porPessoa
+    porPessoa: null // Simplificado por enquanto
   };
 }
-
 
 export default function Home({
   mensal,
@@ -126,8 +118,8 @@ export default function Home({
   const [detalhePessoa, setDetalhePessoa] = useState(null);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  // adapta o comparativo para o formato esperado
-  const comparativoFormatado = prepararComparativo(comparativoMensal);
+  // Sempre gera dados válidos agora
+  const comparativoFormatado = prepararComparativo(comparativoMensal, mes);
 
   useEffect(() => {
     if (!usuarioLogado) return;
@@ -233,9 +225,21 @@ export default function Home({
         )}
       </section>
 
-      {/* ==== COMPARATIVO MENSAL ==== */}
+      {/* ==== COMPARATIVO MENSAL - AGORA SEMPRE VISÍVEL ==== */}
       <section className="home-card comparison-card">
-        <MonthComparisonCard {...comparativoFormatado} porPessoa={comparativoFormatado?.porPessoa} />
+        <MonthComparisonCard 
+          mesAnterior={comparativoFormatado.mesAnterior}
+          mesAtual={comparativoFormatado.mesAtual}
+          variacao={comparativoFormatado.variacao}
+          porPessoa={comparativoFormatado.porPessoa}
+        />
+        {/* Debug temporário - remova depois */}
+        {process.env.NODE_ENV === 'development' && (
+          <div style={{fontSize: '11px', color: '#666', padding: '5px'}}>
+            Debug: {comparativoFormatado.mesAtual.total.toLocaleString()} | 
+            Ant: {comparativoFormatado.mesAnterior.total.toLocaleString()}
+          </div>
+        )}
       </section>
 
       <section className="home-card">
