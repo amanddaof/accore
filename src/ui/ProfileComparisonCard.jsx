@@ -1,24 +1,23 @@
 import { money } from "../utils/money";
 
-/**
- * Obtém os dados por pessoa independente da forma:
- * 1) objeto: { amanda: { atual, anterior } }
- * 2) array:  [ { nome: "Amanda", atual, anterior } ]
- */
 function getPessoaData(porPessoa, usuario) {
+  console.log("🔍 DEBUG - porPessoa:", porPessoa);
+  console.log("🔍 DEBUG - usuario:", usuario);
+  
   if (!porPessoa) return null;
 
-  // ✅ CORRIGIDO: testa ambas estruturas
   if (!Array.isArray(porPessoa) && porPessoa[usuario]) {
+    console.log("🔍 DEBUG - ENCONTROU OBJETO:", porPessoa[usuario]);
     const data = porPessoa[usuario];
     return {
       atual: { total: data.total ?? data.atual?.total ?? data.gasto ?? 0 },
-      anterior: { total: data.anterior?.total ?? data.anterior ?? 0 }
+      anterior: { total: data.anterior?.total ?? data.anterior ?? data ?? 0 }
     };
   }
 
   if (Array.isArray(porPessoa)) {
     const item = porPessoa.find(p => p.nome?.toLowerCase() === usuario);
+    console.log("🔍 DEBUG - ITEM ARRAY:", item);
     if (item) return {
       atual: { total: item.total ?? item.atual?.total ?? 0 },
       anterior: { total: item.anterior?.total ?? 0 }
@@ -30,14 +29,19 @@ function getPessoaData(porPessoa, usuario) {
 
 export default function ProfileComparisonCard({ mensal, profile }) {
   const usuario = profile?.display_name?.toLowerCase();
+  console.log("🔍 DEBUG - mensal completo:", mensal);
+  
   const pessoaData = getPessoaData(mensal?.porPessoa, usuario);
+  console.log("🔍 DEBUG - pessoaData:", pessoaData);
 
   if (!pessoaData) {
     return <div>⚠️ Sem dados suficientes para comparar ({usuario})</div>;
   }
 
   const atual = Number(pessoaData.atual?.total ?? 0);
-  const anterior = Number(pessoaData.anterior?.total ?? 0); // ✅ AGORA PEGA O ANTERIOR
+  const anterior = Number(pessoaData.anterior?.total ?? 0);
+
+  console.log("🔍 DEBUG - FINAL atual:", atual, "anterior:", anterior);
 
   const variacao = atual - anterior;
   const variacaoPercent = anterior
