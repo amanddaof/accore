@@ -100,12 +100,12 @@ export default function Layout({
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
-
+ console.log("🧪 DUMP MENSAL REAL:", JSON.stringify(mensal, null, 2));
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>       
         <Header
           mes={mes}
           onMesChange={setMes}
@@ -156,3 +156,4 @@ export default function Layout({
     </div>
   );
 }
+
