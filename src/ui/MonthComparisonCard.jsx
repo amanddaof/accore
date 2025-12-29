@@ -9,16 +9,12 @@ function formatarMes(label) {
 }
 
 export default function MonthComparisonCard({ mesAnterior, mesAtual, variacao, porPessoa }) {
-  // 🔍 DEBUG: vê exatamente o que chega
-  console.log('MonthComparisonCard props:', { mesAnterior, mesAtual, variacao });
+  console.log('MonthComparisonCard porPessoa:', porPessoa); // 🔍 DEBUG
   
-  // ✅ FIX: Math.round() pra float impreciso + fallback
-  const anteriorValor = Math.round(Number(mesAnterior?.total ?? mesAnterior?.valor ?? 0));
-  const atualValor = Math.round(Number(mesAtual?.total ?? mesAtual?.valor ?? 0));
+  const anteriorValor = Math.round(Number(mesAnterior?.total ?? 0));
+  const atualValor = Math.round(Number(mesAtual?.total ?? 0));
   const diffValor = Math.round(Number(variacao?.valor ?? (atualValor - anteriorValor)));
   
-  console.log('Valores calculados:', { anteriorValor, atualValor, diffValor }); // 🔍 DEBUG
-
   const subiu = diffValor > 0;
   const igual = diffValor === 0;
 
@@ -48,10 +44,45 @@ export default function MonthComparisonCard({ mesAnterior, mesAtual, variacao, p
         </div>
       )}
 
-      {/* DEBUG VISUAL TEMPORÁRIO */}
-      {process.env.NODE_ENV === 'development' && (
-        <div style={{fontSize: '10px', color: '#666', padding: '5px 0'}}>
-          Debug: {atualValor.toLocaleString()} | {anteriorValor.toLocaleString()} | {diffValor}
+      {/* ✅ FORÇA MOSTRAR porPessoa (mesmo com mock) */}
+      {porPessoa && Object.keys(porPessoa).length > 0 && (
+        <div className="people-compare-inline">
+          {Object.entries(porPessoa).map(([key, info]) => {
+            console.log(`Renderizando ${key}:`, info); // 🔍 DEBUG
+            if (!info) return null;
+
+            const nome = key === "amanda" ? "Amanda" : "Celso";
+            const anterior = Math.round(Number(info.anterior?.total ?? 0));
+            const atual = Math.round(Number(info.atual?.total ?? 0));
+            const diff = atual - anterior;
+            const sub = diff > 0;
+            const eq = diff === 0;
+
+            return (
+              <div key={key} className="person-block">
+                <header className="person-name">{nome}</header>
+                <div className="months small">
+                  <div>
+                    <span>{formatarMes(mesAtual?.label)}</span>
+                    <strong>{money(atual)}</strong>
+                  </div>
+                  <div>
+                    <span>{formatarMes(mesAnterior?.label)}</span>
+                    <strong>{money(anterior)}</strong>
+                  </div>
+                </div>
+                {eq ? (
+                  <div className="variation neutral tiny">Sem variação</div>
+                ) : (
+                  <div className={`variation tiny ${sub ? "up" : "down"}`}>
+                    <span className="arrow">{sub ? "▲" : "▼"}</span>
+                    <strong>{money(Math.abs(diff))}</strong>
+                    <span className="text">{sub ? "a mais" : "a menos"}</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </section>
