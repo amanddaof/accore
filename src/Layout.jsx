@@ -1,4 +1,3 @@
-// Layout.jsx
 import { useState, useEffect, useMemo } from "react";
 import { getUserProfile } from "./services/userProfile";
 
@@ -162,3 +161,4 @@ export default function Layout({
     </div>
   );
 }
+
