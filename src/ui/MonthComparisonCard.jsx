@@ -2,7 +2,7 @@ import { money } from "../utils/money";
 import "./MonthComparisonCard.css";
 
 /* ======================================================
-   Utilitário visual: YYYY-MM → Dez/25
+   YYYY-MM → Dez/25
 ====================================================== */
 function formatarMes(label) {
   if (!label || !label.includes("-")) return label;
@@ -16,16 +16,67 @@ function formatarMes(label) {
   return `${meses[Number(mes) - 1]}/${ano.slice(2)}`;
 }
 
+/* ======================================================
+   ADAPTA OS DADOS RECEBIDOS DO HOME
+   (transforma total[] → mesAtual/mesAnterior/variacao)
+====================================================== */
+function normalizarEntrada(data, porPessoa) {
+  if (!Array.isArray(data) || data.length < 2) return null;
+
+  const mesAnterior = data[0];
+  const mesAtual = data[1];
+
+  const anteriorValor = mesAnterior.total ?? mesAnterior.valor ?? 0;
+  const atualValor = mesAtual.total ?? mesAtual.valor ?? 0;
+
+  const variacaoValor = atualValor - anteriorValor;
+
+  // adapta por pessoa
+  let porPessoaAdaptado = null;
+  if (porPessoa) {
+    porPessoaAdaptado = {};
+
+    for (const key of ["amanda", "celso"]) {
+      const info = porPessoa[key];
+      if (!info) continue;
+
+      porPessoaAdaptado[key] = {
+        anterior: info.anterior?.total ?? info.anterior?.valor ?? 0,
+        atual: info.atual?.total ?? info.atual?.valor ?? 0,
+        valor: (info.atual?.total ?? info.atual?.valor ?? 0) -
+               (info.anterior?.total ?? info.anterior?.valor ?? 0)
+      };
+    }
+  }
+
+  return {
+    mesAnterior: {
+      label: mesAnterior.label,
+      total: anteriorValor
+    },
+    mesAtual: {
+      label: mesAtual.label,
+      total: atualValor
+    },
+    variacao: {
+      valor: variacaoValor
+    },
+    porPessoa: porPessoaAdaptado
+  };
+}
+
 export default function MonthComparisonCard({
   data,
   porPessoa
 }) {
-  if (!data) return null;
+  const normalizado = normalizarEntrada(data, porPessoa);
 
-  const { mesAtual, mesAnterior, variacao } = data;
+  if (!normalizado) return null;
 
-  const subiu = variacao?.valor > 0;
-  const igual = variacao?.valor === 0;
+  const { mesAtual, mesAnterior, variacao, porPessoa: pessoas } = normalizado;
+
+  const subiu = variacao.valor > 0;
+  const igual = variacao.valor === 0;
 
   return (
     <section className="month-compare-card">
@@ -34,13 +85,13 @@ export default function MonthComparisonCard({
       {/* ===================== TOTAL ===================== */}
       <div className="months">
         <div>
-          <span>{formatarMes(mesAtual?.label)}</span>
-          <strong>{money(mesAtual?.total || 0)}</strong>
+          <span>{formatarMes(mesAtual.label)}</span>
+          <strong>{money(mesAtual.total)}</strong>
         </div>
 
         <div>
-          <span>{formatarMes(mesAnterior?.label)}</span>
-          <strong>{money(mesAnterior?.total || 0)}</strong>
+          <span>{formatarMes(mesAnterior.label)}</span>
+          <strong>{money(mesAnterior.total)}</strong>
         </div>
       </div>
 
@@ -60,11 +111,11 @@ export default function MonthComparisonCard({
       )}
 
       {/* ===================== POR PESSOA ===================== */}
-      {porPessoa && (
+      {pessoas && (
         <div className="people-compare-inline">
           {["amanda", "celso"].map(key => {
             const nome = key === "amanda" ? "Amanda" : "Celso";
-            const info = porPessoa[key];
+            const info = pessoas[key];
             if (!info) return null;
 
             const sub = info.valor > 0;
@@ -76,13 +127,13 @@ export default function MonthComparisonCard({
 
                 <div className="months small">
                   <div>
-                    <span>{formatarMes(mesAtual?.label)}</span>
-                    <strong>{money(info.atual || 0)}</strong>
+                    <span>{formatarMes(mesAtual.label)}</span>
+                    <strong>{money(info.atual)}</strong>
                   </div>
 
                   <div>
-                    <span>{formatarMes(mesAnterior?.label)}</span>
-                    <strong>{money(info.anterior || 0)}</strong>
+                    <span>{formatarMes(mesAnterior.label)}</span>
+                    <strong>{money(info.anterior)}</strong>
                   </div>
                 </div>
 
