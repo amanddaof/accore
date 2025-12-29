@@ -50,9 +50,8 @@ function agruparPorOrigem(itens = []) {
    VERSÃO ROBUSTA: sempre retorna dados válidos, nunca null
 ========================================================== */
 function prepararComparativo(comparativoMensal, mes = "Mês atual") {
-  console.log('🔍 comparativoMensal recebido:', comparativoMensal); // Debug
+  console.log('🔍 comparativoMensal recebido:', comparativoMensal);
   
-  // Fallback: dados vazios mas estruturados
   const fallback = {
     mesAnterior: { label: 'Mês anterior', total: 0 },
     mesAtual: { label: mes, total: 0 },
@@ -65,32 +64,42 @@ function prepararComparativo(comparativoMensal, mes = "Mês atual") {
     return fallback;
   }
 
-  // Tenta acessar total como array
+  // ✅ FIX: Math.round() ANTES do Number()
   let mesAnterior = { label: 'Anterior', total: 0 };
   let mesAtual = { label: mes, total: 0 };
 
   if (Array.isArray(comparativoMensal.total) && comparativoMensal.total.length >= 2) {
     const [anterior, atual] = comparativoMensal.total;
-    mesAnterior.total = Number(anterior?.total ?? anterior?.valor ?? 0);
-    mesAtual.total = Number(atual?.total ?? atual?.valor ?? 0);
+    mesAnterior.total = Math.round(Number(anterior?.total ?? anterior?.valor ?? 0));
+    mesAtual.total = Math.round(Number(atual?.total ?? atual?.valor ?? 0));
     mesAnterior.label = anterior.label || 'Anterior';
     mesAtual.label = atual.label || mes;
   } else if (comparativoMensal.total) {
-    // Se total não é array, tenta usar como objeto único
-    mesAtual.total = Number(comparativoMensal.total?.total ?? comparativoMensal.total?.valor ?? 0);
+    mesAtual.total = Math.round(Number(comparativoMensal.total?.total ?? comparativoMensal.total?.valor ?? 0));
   }
 
-  const variacao = { valor: mesAtual.total - mesAnterior.total };
+  // ✅ Usa os dados originais se já vierem no formato certo
+  if (comparativoMensal.mesAnterior) {
+    mesAnterior = {
+      label: comparativoMensal.mesAnterior.label || 'Anterior',
+      total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
+    };
+  }
+  if (comparativoMensal.mesAtual) {
+    mesAtual = {
+      label: comparativoMensal.mesAtual.label || mes,
+      total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
+    };
+  }
 
-  console.log('✅ comparativo formatado:', { mesAnterior, mesAtual, variacao }); // Debug
-
-  return {
-    mesAnterior,
-    mesAtual,
-    variacao,
-    porPessoa: null // Simplificado por enquanto
+  const variacao = { 
+    valor: Math.round(Number(comparativoMensal?.variacao?.valor ?? (mesAtual.total - mesAnterior.total))) 
   };
+
+  console.log('✅ comparativo formatado:', { mesAnterior, mesAtual, variacao });
+  return { mesAnterior, mesAtual, variacao, porPessoa: null };
 }
+
 
 export default function Home({
   mensal,
@@ -305,6 +314,7 @@ export default function Home({
     </div>
   );
 }
+
 
 
 
