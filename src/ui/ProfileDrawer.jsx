@@ -2,7 +2,7 @@ import { useState } from "react";
 import Profile from "../pages/Profile";
 import "./ProfileDrawer.css";
 
-import MonthComparisonCard from "./MonthComparisonCard"; // ⬅️ necessário
+import MonthComparisonCard from "./MonthComparisonCard";
 
 export default function ProfileDrawer({
   open,
@@ -10,10 +10,10 @@ export default function ProfileDrawer({
   userName = "Usuário",
   avatarUrl = null,
 
-  /* 🔥 agora recebemos valores separados diretamente */
+  // 🔥 agora recebendo tudo organizado
   avisos = [],
   comparativoMensal = null,
-  porPessoa = null,
+  porPessoa = {},
 
   onProfileUpdate
 }) {
@@ -30,53 +30,27 @@ export default function ProfileDrawer({
     onClose();
   }
 
-  /* ==========================================================
-     🔍 RESOLVENDO DADOS POR PESSOA LOGADA
-     Amanda → chave "amanda"
-     Celso  → chave "celso"
-  =========================================================== */
-  const chavePessoa = userName.toLowerCase(); // "amanda" / "celso"
+  // 🧠 pessoa logada -> chave para acessar porPessoa
+  const chavePessoa = userName?.toLowerCase();
   const dadosPessoa = porPessoa?.[chavePessoa] || null;
 
-  /* ==========================================================
-     🎯 formato que o MonthComparisonCard espera
-     só monta se tiver dados da pessoa logada
-  =========================================================== */
-  let comparativoRender = null;
-
-  if (comparativoMensal && dadosPessoa) {
-    comparativoRender = {
-      mesAnterior: comparativoMensal.mesAnterior,
-      mesAtual: comparativoMensal.mesAtual,
-      variacao: {
-        valor:
-          Number(dadosPessoa?.atual?.total || 0) -
-          Number(dadosPessoa?.anterior?.total || 0)
-      },
-      porPessoa: {
-        [chavePessoa]: {
-          anterior: { total: Number(dadosPessoa?.anterior?.total || 0) },
-          atual: { total: Number(dadosPessoa?.atual?.total || 0) }
-        }
+  // 📌 estrutura correta para o card do comparativo por pessoa
+  const comparativoRender = (comparativoMensal && dadosPessoa)
+    ? {
+        mesAnterior: comparativoMensal.mesAnterior,
+        mesAtual: comparativoMensal.mesAtual,
+        variacao: { valor: dadosPessoa.valor ?? 0 },
+        porPessoa: { [chavePessoa]: dadosPessoa }
       }
-    };
-  }
-console.log("🧭 Drawer userName:", userName);
-console.log("🔑 chavePessoa:", chavePessoa);
-console.log("📦 porPessoa recebido:", porPessoa);
-console.log("🎯 porPessoa[chavePessoa]:", porPessoa?.[chavePessoa]);
+    : null;
 
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
-      <aside
-        className="profile-drawer"
-        onClick={e => e.stopPropagation()}
-      >
+      <aside className="profile-drawer" onClick={e => e.stopPropagation()}>
+        
         {/* ================= HEADER ================= */}
         <header className="profile-drawer-header center">
-          <button className="close-btn" onClick={handleClose}>
-            ✕
-          </button>
+          <button className="close-btn" onClick={handleClose}>✕</button>
 
           <div className="profile-avatar-large">
             {avatarUrl ? (
@@ -95,17 +69,11 @@ console.log("🎯 porPessoa[chavePessoa]:", porPessoa?.[chavePessoa]);
         {/* ================= AÇÃO ================= */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("preferencias")}
-            >
+            <button className="profile-link-button" onClick={() => setModo("preferencias")}>
               ⚙️ Preferências
             </button>
           ) : (
-            <button
-              className="profile-link-button"
-              onClick={() => setModo("avisos")}
-            >
+            <button className="profile-link-button" onClick={() => setModo("avisos")}>
               ← Voltar para avisos
             </button>
           )}
@@ -113,10 +81,10 @@ console.log("🎯 porPessoa[chavePessoa]:", porPessoa?.[chavePessoa]);
 
         {/* ================= CONTEÚDO ================= */}
         <div className="profile-drawer-content">
-
-          {/* ⭐ NOVO: comparativo mensal do usuário logado */}
+          
+          {/* ⭐ NOVO: Comparativo por pessoa do usuário logado */}
           {modo === "avisos" && comparativoRender && (
-            <div style={{ marginBottom: "20px" }}>
+            <div className="profile-compare-wrapper">
               <MonthComparisonCard {...comparativoRender} />
             </div>
           )}
@@ -128,10 +96,12 @@ console.log("🎯 porPessoa[chavePessoa]:", porPessoa?.[chavePessoa]);
             <Profile onProfileUpdate={onProfileUpdate} />
           )}
         </div>
+
       </aside>
     </div>
   );
 }
+
 
 /* ======================================================
    LISTA DE AVISOS
