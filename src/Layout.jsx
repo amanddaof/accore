@@ -143,21 +143,22 @@ export default function Layout({
 
         {/* 🔥 agora o Drawer também recebe o pacote completo */}
         <ProfileDrawer
-  open={openProfile}
-  onClose={() => setOpenProfile(false)}
-  userName={profile?.display_name || "Usuário"}
-  avatarUrl={profile?.avatar_url || null}
-
-  /* 🔥 agora sim — cada parte separada */
-  avisos={avisos.lista}
-  comparativoMensal={avisos.comparativoMensal}
-  porPessoa={avisos.porPessoa}
-
-  onProfileUpdate={handleProfileUpdate}
-/>
+          open={openProfile}
+          onClose={() => setOpenProfile(false)}
+          userName={profile?.display_name || "Usuário"}
+          avatarUrl={profile?.avatar_url || null}
+        
+          /* 🔥 agora passamos os 3 valores corretamente */
+          avisos={avisos.lista}
+          comparativoMensal={avisos.comparativoMensal}
+          porPessoa={avisos.porPessoa}
+        
+          onProfileUpdate={handleProfileUpdate}
+        />
 
       </div>
     </div>
   );
 }
+
 
