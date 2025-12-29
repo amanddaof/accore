@@ -76,6 +76,21 @@ export default function Home({
   /* ================= CATEGORIAS ================= */
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
+  /* ====================== DEBUG LOGS ====================== */
+  console.log("===== HOME DEBUG START =====");
+  console.log("usuarioLogado:", usuarioLogado);
+  console.log("mensal:", mensal);
+  console.log("salarios:", salarios);
+
+  console.log("comparativoMensal:", comparativoMensal);
+  console.log("comparativoMensal?.total:", comparativoMensal?.total);
+  console.log("comparativoMensal?.porPessoa:", comparativoMensal?.porPessoa);
+
+  console.log("categorias:", categorias);
+  console.log("loans:", loans);
+  console.log("mes:", mes);
+  console.log("===== HOME DEBUG END =====");
+
   // 🔑 SINCRONIZA COM USUÁRIO LOGADO (SÓ NA PRIMEIRA VEZ)
   useEffect(() => {
     if (!usuarioLogado) return;
@@ -182,6 +197,7 @@ export default function Home({
         )}
       </section>
 
+      {/* ==== COMPARATIVO MENSAL ==== */}
       <section className="home-card comparison-card">
         <MonthComparisonCard
           data={comparativoMensal?.total}
@@ -258,4 +274,3 @@ export default function Home({
     </div>
   );
 }
-
