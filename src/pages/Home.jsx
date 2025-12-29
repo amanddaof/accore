@@ -228,11 +228,10 @@ export default function Home({
       {/* ==== COMPARATIVO MENSAL - AGORA SEMPRE VISÍVEL ==== */}
       <section className="home-card comparison-card">
         <MonthComparisonCard 
-          mesAnterior={comparativoFormatado.mesAnterior}
-          mesAtual={comparativoFormatado.mesAtual}
-          variacao={comparativoFormatado.variacao}
-          porPessoa={comparativoFormatado.porPessoa}
-        />
+  mesAnterior={comparativoFormatado.mesAnterior}
+  mesAtual={comparativoFormatado.mesAtual}
+  variacao={comparativoFormatado.variacao}
+/>
         {/* Debug temporário - remova depois */}
         {process.env.NODE_ENV === 'development' && (
           <div style={{fontSize: '11px', color: '#666', padding: '5px'}}>
@@ -311,3 +310,4 @@ export default function Home({
     </div>
   );
 }
+
