@@ -1,4 +1,5 @@
 import { money } from "../utils/money";
+import { useMemo } from "react";
 
 /**
  * Obtém os dados por pessoa independente da forma:
@@ -27,42 +28,56 @@ function getPessoaData(porPessoa, usuario) {
   return null;
 }
 
-
-export default function ProfileComparisonCard({ mensal, profile }) {
-  if (!mensal) {
-    return <div>❌ Sem dados mensais carregados</div>;
-  }
+export default function ProfileComparisonCard({ mes, mensal, profile }) {
+  // ✅ CALCULA MÊS ANTERIOR
+  const mesAnterior = useMemo(() => {
+    const [ano, mesNum] = mes.split('-').map(Number);
+    const mesAntNum = mesNum === 1 ? 12 : mesNum - 1;
+    const anoAnt = mesNum === 1 ? ano - 1 : ano;
+    return `${anoAnt}-${mesAntNum.toString().padStart(2, '0')}`;
+  }, [mes]);
 
   const usuario = profile?.display_name?.toLowerCase();
-  const pessoaData = getPessoaData(mensal?.porPessoa, usuario);
 
-  if (!pessoaData) {
-    return <div>⚠️ Sem dados suficientes para comparar ({usuario})</div>;
-  }
+  // ✅ DADOS ATUAIS (mes atual)
+  const pessoaAtual = getPessoaData(mensal?.[mes]?.porPessoa, usuario);
+  const atual = Number(pessoaAtual?.atual?.total ?? 0);
 
-  const atual = Number(pessoaData.atual?.total ?? 0);
-  const anterior = Number(pessoaData.anterior?.total ?? 0);
+  // ✅ DADOS ANTERIORES (mes anterior)
+  const pessoaAnterior = getPessoaData(mensal?.[mesAnterior]?.porPessoa, usuario);
+  const anterior = Number(pessoaAnterior?.atual?.total ?? pessoaAnterior?.anterior?.total ?? 0);
 
   const variacao = atual - anterior;
   const variacaoPercent = anterior
     ? ((variacao / anterior) * 100).toFixed(1)
     : 0;
 
+  if (!pessoaAtual && !pessoaAnterior) {
+    return <div>⚠️ Sem dados para comparar ({usuario})</div>;
+  }
+
   return (
     <div className="profile-comparativo-card">
-      <strong>{profile.display_name} — Comparativo mensal</strong>
-
-      <div style={{ marginTop: "8px" }}>
-        🟢 Atual: <strong>{money(atual)}</strong>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+        <strong>{profile?.display_name}</strong>
+        <span style={{ fontSize: '0.85em', opacity: 0.8 }}>
+          {mesAnterior} → {mes}
+        </span>
       </div>
+
+      <div style={{ display: 'flex', gap: '24px', marginBottom: '12px' }}>
+        <div>
+          🟢 Este mês: <strong>{money(atual)}</strong>
+        </div>
+        <div>
+          🔵 Mês passado: <strong>{money(anterior)}</strong>
+        </div>
+      </div>
+
       <div>
-        🔵 Anterior: <strong>{money(anterior)}</strong>
-      </div>
-
-      <div style={{ marginTop: "8px" }}>
-        {variacao === 0
+        📊 {variacao === 0
           ? "— sem variação"
-          : `${variacaoPercent}% (${variacao > 0 ? "gastou mais" : "gastou menos"})`}
+          : `${variacaoPercent}% ${variacao > 0 ? "↑ gastou mais" : "↓ gastou menos"}`}
       </div>
     </div>
   );
