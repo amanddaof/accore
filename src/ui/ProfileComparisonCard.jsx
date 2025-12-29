@@ -1,24 +1,18 @@
-import { useMemo } from "react";
 import { money } from "../utils/money";
 
-export default function ProfileComparisonCard({ mes, mensal, salarios, profile }) {
-  const usuario = profile?.display_name?.toLowerCase();
-
-  const [anoAtual, mesAtualNum] = mes.split('-').map(Number);
-  const mesAnteriorNum = mesAtualNum === 1 ? 12 : mesAtualNum - 1;
-  const anoAnterior = mesAnteriorNum === 12 ? anoAtual - 1 : anoAtual;
-  const mesAnterior = `${anoAnterior}-${mesAnteriorNum.toString().padStart(2, '0')}`;
-
-  function getTotal(mesStr) {
-    return mensal?.[mesStr]?.[usuario]?.total || 0;
+export default function ProfileComparisonCard({ mensal, profile }) {
+  if (!mensal?.comparativoMensal || !mensal?.porPessoa) {
+    return <div>🔄 Sem dados suficientes para comparar</div>;
   }
 
-  const totalAtual = useMemo(() => getTotal(mes), [mes, mensal, usuario]);
-  const totalAnterior = useMemo(() => getTotal(mesAnterior), [mesAnterior, mensal, usuario]);
+  const usuario = profile.display_name.toLowerCase();
 
-  const variacao = totalAtual - totalAnterior;
-  const variacaoPercent = totalAnterior
-    ? ((variacao / totalAnterior) * 100).toFixed(1)
+  const pessoaAtual   = mensal.porPessoa[usuario]?.atual?.total   ?? 0;
+  const pessoaAnterior = mensal.porPessoa[usuario]?.anterior?.total ?? 0;
+
+  const variacao = pessoaAtual - pessoaAnterior;
+  const variacaoPercent = pessoaAnterior
+    ? ((variacao / pessoaAnterior) * 100).toFixed(1)
     : 0;
 
   return (
@@ -26,10 +20,10 @@ export default function ProfileComparisonCard({ mes, mensal, salarios, profile }
       <strong>{profile.display_name} — Comparativo mensal</strong>
 
       <div style={{ marginTop: "8px" }}>
-        🟢 Atual: <strong>{money(totalAtual)}</strong>
+        🟢 Atual: <strong>{money(pessoaAtual)}</strong>
       </div>
       <div>
-        🔵 Anterior: <strong>{money(totalAnterior)}</strong>
+        🔵 Anterior: <strong>{money(pessoaAnterior)}</strong>
       </div>
 
       <div style={{ marginTop: "8px" }}>
