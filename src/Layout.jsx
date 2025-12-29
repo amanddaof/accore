@@ -62,17 +62,18 @@ export default function Layout({
 
   /* ================= COMPARATIVO ================= */
   const comparativoCard = useMemo(() => {
-  const comparativo = mensal?.comparativoMensal;
-
-  if (!profile || !comparativo) return null;
+  if (!profile || !mensal || Object.keys(mensal).length === 0)
+    return null;
 
   return (
-    <ProfileComparisonCard 
-      comparativoMensal={comparativo}  // 🔥 AGORA VEM O CERTO
+    <ProfileComparisonCard
+      mes={mes}
+      mensal={mensal}
+      salarios={salarios}
       profile={profile}
     />
   );
-}, [profile, mensal]);
+}, [profile, mes, mensal, salarios]);
 
   function handleGlobalSelect(item) {
     setOpenCards(false);
@@ -149,5 +150,6 @@ export default function Layout({
     </div>
   );
 }
+
 
 
