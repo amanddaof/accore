@@ -50,48 +50,43 @@ function agruparPorOrigem(itens = []) {
    FUNÇÃO FINAL - TOTAL REAL + POR PESSOA REAL DOS DADOS MENSAIS
 ========================================================== */
 // Substitua só esta parte na função prepararComparativo:
-function prepararComparativo(comparativoMensal, mes = "Mês atual", amandaMensal = {}, celsoMensal = {}) {
-  console.log('🔍 DEBUG COMPLETO:');
-  console.log('- comparativoMensal:', comparativoMensal);
-  console.log('- amandaMensal:', amandaMensal);
-  console.log('- celsoMensal:', celsoMensal);
-  
-  // TOTAL (mantém funcionando)
-  let mesAnterior = { label: '2025-12', total: 6257 };
-  let mesAtual = { label: '2026-01', total: 5650 };
-  let variacao = { valor: -607 };
+function prepararComparativo(comparativoMensal) {
+  if (!comparativoMensal) return null;
 
-  if (comparativoMensal?.mesAnterior && comparativoMensal?.mesAtual) {
-    mesAnterior = {
-      label: comparativoMensal.mesAnterior.label || '2025-12',
-      total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
-    };
-    mesAtual = {
-      label: comparativoMensal.mesAtual.label || mes || '2026-01',
-      total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
-    };
-    variacao = { valor: Math.round(Number(comparativoMensal.variacao?.valor || (mesAtual.total - mesAnterior.total))) };
-  }
-
-  // 🔍 DEBUG: mostra TODOS os campos disponíveis
-  console.log('Amanda campos disponíveis:', Object.keys(amandaMensal || {}));
-  console.log('Celso campos disponíveis:', Object.keys(celsoMensal || {}));
-
-  const porPessoaReal = {
-    amanda: {
-      anterior: { total: Math.round(Number(amandaMensal?.mesAnterior || amandaMensal?.gastoAnterior || amandaMensal?.totalAnterior || 2108)) },
-      atual: { total: Math.round(Number(amandaMensal?.total || amandaMensal?.gasto || 2108)) },
-      valor: 0
-    },
-    celso: {
-      anterior: { total: Math.round(Number(celsoMensal?.mesAnterior || celsoMensal?.gastoAnterior || celsoMensal?.totalAnterior || 3542)) },
-      atual: { total: Math.round(Number(celsoMensal?.total || celsoMensal?.gasto || 3542)) },
-      valor: 0
-    }
+  // === TOTAL ===
+  const mesAnterior = {
+    label: comparativoMensal.mesAnterior?.label,
+    total: Number(comparativoMensal.mesAnterior?.total ?? 0)
   };
 
-  console.log('✅ porPessoa FINAL:', porPessoaReal);
-  return { mesAnterior, mesAtual, variacao, porPessoa: porPessoaReal };
+  const mesAtual = {
+    label: comparativoMensal.mesAtual?.label,
+    total: Number(comparativoMensal.mesAtual?.total ?? 0)
+  };
+
+  const variacao = {
+    valor: mesAtual.total - mesAnterior.total
+  };
+
+  // === POR PESSOA ===
+  let porPessoa = null;
+  if (comparativoMensal.porPessoa) {
+    porPessoa = {};
+
+    for (const key of ["amanda", "celso"]) {
+      const info = comparativoMensal.porPessoa[key];
+      if (!info) continue;
+
+      porPessoa[key] = {
+        anterior: { total: Number(info.anterior?.total ?? info.anterior ?? 0) },
+        atual: { total: Number(info.atual?.total ?? info.atual ?? 0) },
+        valor: Number(info.atual?.total ?? info.atual ?? 0) -
+               Number(info.anterior?.total ?? info.anterior ?? 0)
+      };
+    }
+  }
+
+  return { mesAnterior, mesAtual, variacao, porPessoa };
 }
 
 export default function Home({
@@ -305,4 +300,5 @@ export default function Home({
     </div>
   );
 }
+
 
