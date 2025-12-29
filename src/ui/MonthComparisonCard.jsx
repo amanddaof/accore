@@ -16,22 +16,30 @@ function formatarMes(label) {
   return `${meses[Number(mes) - 1]}/${ano.slice(2)}`;
 }
 
-/* ======================================================
-   COMPONENTE PRINCIPAL — COMPATÍVEL COM O SEU HOME
-====================================================== */
-export default function MonthComparisonCard({ data, porPessoa }) {
-  if (!Array.isArray(data) || data.length < 2) return null;
+export default function MonthComparisonCard({ 
+  mesAnterior, 
+  mesAtual, 
+  variacao, 
+  porPessoa 
+}) {
+  // ✅ NOVO: aceita tanto objeto quanto array
+  let anteriorData, atualData;
+  
+  if (Array.isArray(mesAnterior)) {
+    // Formato antigo: data={[anterior, atual]}
+    [anteriorData, atualData] = mesAnterior;
+  } else {
+    // ✅ NOVO: formato do seu Home atual
+    anteriorData = mesAnterior;
+    atualData = mesAtual;
+  }
 
-  const mesAnterior = data[0];
-  const mesAtual = data[1];
+  const anteriorValor = Number(anteriorData?.total ?? anteriorData?.valor ?? 0);
+  const atualValor = Number(atualData?.total ?? atualData?.valor ?? 0);
+  const diffValor = Number(variacao?.valor ?? (atualValor - anteriorValor));
 
-  // garante número
-  const anteriorValor = mesAnterior?.total ?? mesAnterior?.valor ?? 0;
-  const atualValor = mesAtual?.total ?? mesAtual?.valor ?? 0;
-
-  const variacao = atualValor - anteriorValor;
-  const subiu = variacao > 0;
-  const igual = variacao === 0;
+  const subiu = diffValor > 0;
+  const igual = diffValor === 0;
 
   return (
     <section className="month-compare-card">
@@ -40,12 +48,12 @@ export default function MonthComparisonCard({ data, porPessoa }) {
       {/* ===================== TOTAL ===================== */}
       <div className="months">
         <div>
-          <span>{formatarMes(mesAtual?.label)}</span>
+          <span>{formatarMes(atualData?.label)}</span>
           <strong>{money(atualValor)}</strong>
         </div>
 
         <div>
-          <span>{formatarMes(mesAnterior?.label)}</span>
+          <span>{formatarMes(anteriorData?.label)}</span>
           <strong>{money(anteriorValor)}</strong>
         </div>
       </div>
@@ -58,7 +66,7 @@ export default function MonthComparisonCard({ data, porPessoa }) {
       ) : (
         <div className={`variation ${subiu ? "up" : "down"}`}>
           <span className="arrow">{subiu ? "▲" : "▼"}</span>
-          <strong>{money(Math.abs(variacao))}</strong>
+          <strong>{money(Math.abs(diffValor))}</strong>
           <span className="text">
             {subiu ? "a mais" : "a menos"} que no mês passado
           </span>
@@ -72,11 +80,9 @@ export default function MonthComparisonCard({ data, porPessoa }) {
             if (!info) return null;
 
             const nome = key === "amanda" ? "Amanda" : "Celso";
-
-            const anterior = info.anterior?.total ?? info.anterior?.valor ?? 0;
-            const atual = info.atual?.total ?? info.atual?.valor ?? 0;
+            const anterior = Number(info.anterior?.total ?? info.anterior?.valor ?? 0);
+            const atual = Number(info.atual?.total ?? info.atual?.valor ?? 0);
             const diff = atual - anterior;
-
             const sub = diff > 0;
             const eq = diff === 0;
 
@@ -86,27 +92,22 @@ export default function MonthComparisonCard({ data, porPessoa }) {
 
                 <div className="months small">
                   <div>
-                    <span>{formatarMes(mesAtual?.label)}</span>
+                    <span>{formatarMes(atualData?.label)}</span>
                     <strong>{money(atual)}</strong>
                   </div>
-
                   <div>
-                    <span>{formatarMes(mesAnterior?.label)}</span>
+                    <span>{formatarMes(anteriorData?.label)}</span>
                     <strong>{money(anterior)}</strong>
                   </div>
                 </div>
 
                 {eq ? (
-                  <div className="variation neutral tiny">
-                    Sem variação
-                  </div>
+                  <div className="variation neutral tiny">Sem variação</div>
                 ) : (
                   <div className={`variation tiny ${sub ? "up" : "down"}`}>
                     <span className="arrow">{sub ? "▲" : "▼"}</span>
                     <strong>{money(Math.abs(diff))}</strong>
-                    <span className="text">
-                      {sub ? "a mais" : "a menos"}
-                    </span>
+                    <span className="text">{sub ? "a mais" : "a menos"}</span>
                   </div>
                 )}
               </div>
