@@ -1,36 +1,33 @@
 import { money } from "../utils/money";
 
-export default function ProfileComparisonCard({ comparativoMensal, porPessoa, profile }) {
-  if (!comparativoMensal || !porPessoa || !profile) return null;
+export default function ProfileComparisonCard({ comparativoMensal, profile }) {
+  const pessoa = profile?.display_name?.toLowerCase();
+  const data = comparativoMensal?.porPessoa?.[pessoa];
 
-  const usuario = profile.display_name.toLowerCase();
+  if (!data) return null;
 
-  // pessoa atual
-  const atualPessoa = porPessoa.find(p => p.nome.toLowerCase() === usuario);
-  if (!atualPessoa) return null;
+  const anterior = data.anterior?.total || 0;
+  const atual = data.atual?.total || data.total || 0;
+  const diff = atual - anterior;
 
-  // pessoa anterior dentro do comparativo
-  const anteriorPessoa = comparativoMensal.mesAnterior?.porPessoa?.find(
-    p => p.nome.toLowerCase() === usuario
-  );
+  const percentual = anterior
+    ? ((diff / anterior) * 100).toFixed(1)
+    : 0;
 
-  const atualValor = atualPessoa.total || 0;
-  const anteriorValor = anteriorPessoa?.total || 0;
-
-  const variacao = atualValor - anteriorValor;
-  const variacaoPercent = anteriorValor ? ((variacao / anteriorValor) * 100).toFixed(1) : 0;
+  const status =
+    diff === 0 ? "Sem variação" :
+    diff > 0 ? `+${percentual}% (gastou mais)` :
+    `${percentual}% (gastou menos)`;
 
   return (
     <div className="profile-comparativo-card">
       <strong>{profile.display_name}</strong> — Comparativo mensal
 
-      <div>💸 Atual: {money(atualValor)}</div>
-      <div>📅 Anterior: {money(anteriorValor)}</div>
+      <div>💸 Atual: {money(atual)}</div>
+      <div>📅 Anterior: {money(anterior)}</div>
 
-      <div style={{ marginTop: "8px" }}>
-        {variacao > 0 && <>▲ {variacaoPercent}% (gastou mais)</>}
-        {variacao < 0 && <>▼ {variacaoPercent}% (gastou menos)</>}
-        {variacao === 0 && <>— 0% (sem variação)</>}
+      <div style={{ marginTop: "6px" }}>
+        {diff > 0 ? "▲" : diff < 0 ? "▼" : "•"} {status}
       </div>
     </div>
   );
