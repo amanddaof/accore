@@ -47,6 +47,59 @@ function agruparPorOrigem(itens = []) {
   }));
 }
 
+
+/* ==========================================================
+   adapta comparativoMensal para o formato esperado pelo card
+   (mesAnterior, mesAtual, variacao, porPessoa)
+========================================================== */
+function prepararComparativo(comparativoMensal) {
+  if (!comparativoMensal || !Array.isArray(comparativoMensal.total)) {
+    return null;
+  }
+
+  const [mesAnterior, mesAtual] = comparativoMensal.total;
+
+  const anteriorValor = mesAnterior?.total ?? mesAnterior?.valor ?? 0;
+  const atualValor = mesAtual?.total ?? mesAtual?.valor ?? 0;
+
+  const variacao = {
+    valor: atualValor - anteriorValor
+  };
+
+  let porPessoa = null;
+  if (comparativoMensal.porPessoa) {
+    porPessoa = {};
+
+    for (const key of ["amanda", "celso"]) {
+      const info = comparativoMensal.porPessoa[key];
+      if (!info) continue;
+
+      const anterior = info.anterior?.total ?? info.anterior?.valor ?? 0;
+      const atual = info.atual?.total ?? info.atual?.valor ?? 0;
+
+      porPessoa[key] = {
+        anterior,
+        atual,
+        valor: atual - anterior
+      };
+    }
+  }
+
+  return {
+    mesAnterior: {
+      label: mesAnterior.label,
+      total: anteriorValor
+    },
+    mesAtual: {
+      label: mesAtual.label,
+      total: atualValor
+    },
+    variacao,
+    porPessoa
+  };
+}
+
+
 export default function Home({
   mensal,
   comparativoMensal,
@@ -58,7 +111,6 @@ export default function Home({
   savingsGoal,
   setSavingsGoal
 }) {
-  /* ================= USUÁRIO LOGADO ================= */
   const { usuarioLogado } = useOutletContext() || {};
 
   const amanda = salarios?.amanda || { salario: 0, gasto: 0, sobra: 0 };
@@ -72,32 +124,16 @@ export default function Home({
 
   const [showDebts, setShowDebts] = useState(false);
   const [detalhePessoa, setDetalhePessoa] = useState(null);
-
-  /* ================= CATEGORIAS ================= */
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  /* ====================== DEBUG LOGS ====================== */
-  console.log("===== HOME DEBUG START =====");
-  console.log("usuarioLogado:", usuarioLogado);
- console.log("mensal:", mensal);
-  console.log("salarios:", salarios);
+  // adapta o comparativo para o formato esperado
+  const comparativoFormatado = prepararComparativo(comparativoMensal);
 
-  console.log("comparativoMensal:", comparativoMensal);
-  console.log("comparativoMensal?.total:", comparativoMensal?.total);
-  console.log("comparativoMensal?.porPessoa:", comparativoMensal?.porPessoa);
-
-  console.log("categorias:", categorias);
-  console.log("loans:", loans);
-  console.log("mes:", mes);
-  console.log("===== HOME DEBUG END =====");
-
-  // 🔑 SINCRONIZA COM USUÁRIO LOGADO (SÓ NA PRIMEIRA VEZ)
   useEffect(() => {
     if (!usuarioLogado) return;
 
     setPessoaCategorias(prev => {
       if (prev !== "Ambos") return prev;
-
       if (usuarioLogado === "Amanda") return "Amanda";
       if (usuarioLogado === "Celso") return "Celso";
       return prev;
@@ -199,10 +235,7 @@ export default function Home({
 
       {/* ==== COMPARATIVO MENSAL ==== */}
       <section className="home-card comparison-card">
-        <MonthComparisonCard
-          data={comparativoMensal?.total}
-          porPessoa={comparativoMensal?.porPessoa}
-        />
+        <MonthComparisonCard {...comparativoFormatado} porPessoa={comparativoFormatado?.porPessoa} />
       </section>
 
       <section className="home-card">
