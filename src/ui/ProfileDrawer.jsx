@@ -85,7 +85,7 @@ function AvisosList({ avisos }) {
           <span className="aviso-icon">{a.icon || "ℹ️"}</span>
           
           {a.component ? (
-            <div className="aviso-componente">{a.component}</div> // 👈 CORRIGIDO!
+            <div className="aviso-componente">{a.component}</div>
           ) : (
             <span className="aviso-texto">{a.texto}</span>
           )}
