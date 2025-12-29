@@ -68,20 +68,23 @@ function prepararComparativo(comparativoMensal) {
     valor: mesAtual.total - mesAnterior.total
   };
 
-  // === POR PESSOA ===
+  // === POR PESSOA (AQUI ESTAVA O ERRO) ===
   let porPessoa = null;
+
   if (comparativoMensal.porPessoa) {
     porPessoa = {};
 
-    for (const key of ["amanda", "celso"]) {
-      const info = comparativoMensal.porPessoa[key];
-      if (!info) continue;
+    for (const pessoa of ["amanda", "celso"]) {
+      const item = comparativoMensal.porPessoa[pessoa];
+      if (!item) continue;
 
-      porPessoa[key] = {
-        anterior: { total: Number(info.anterior?.total ?? info.anterior ?? 0) },
-        atual: { total: Number(info.atual?.total ?? info.atual ?? 0) },
-        valor: Number(info.atual?.total ?? info.atual ?? 0) -
-               Number(info.anterior?.total ?? info.anterior ?? 0)
+      const anterior = Number(item.anterior?.total ?? 0);
+      const atual = Number(item.atual?.total ?? 0);
+      
+      porPessoa[pessoa] = {
+        anterior: { total: anterior },
+        atual: { total: atual },
+        valor: atual - anterior
       };
     }
   }
@@ -297,6 +300,7 @@ export default function Home({
     </div>
   );
 }
+
 
 
 
