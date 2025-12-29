@@ -46,9 +46,6 @@ function agruparPorOrigem(itens = []) {
   }));
 }
 
-/* ==========================================================
-   VERSÃO ROBUSTA: sempre retorna dados válidos, nunca null
-========================================================== */
 function prepararComparativo(comparativoMensal, mes = "Mês atual") {
   console.log('🔍 comparativoMensal recebido:', comparativoMensal);
   
@@ -61,45 +58,94 @@ function prepararComparativo(comparativoMensal, mes = "Mês atual") {
 
   // ✅ DETECTA FORMATO 1: {mesAnterior, mesAtual} direto
   if (comparativoMensal.mesAnterior && comparativoMensal.mesAtual) {
-    return {
-      mesAnterior: {
-        label: comparativoMensal.mesAnterior.label || 'Anterior',
-        total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
-      },
-      mesAtual: {
-        label: comparativoMensal.mesAtual.label || mes,
-        total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
-      },
-      variacao: {
-        valor: Math.round(Number(comparativoMensal.variacao?.valor || 0))
-      },
-      porPessoa: comparativoMensal.porPessoa || null
+    const mesAnterior = {
+      label: comparativoMensal.mesAnterior.label || 'Anterior',
+      total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
     };
+    const mesAtual = {
+      label: comparativoMensal.mesAtual.label || mes,
+      total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
+    };
+
+    // ✅ MOCK porPessoa pra testar
+    const porPessoaMock = {
+      amanda: {
+        anterior: { total: 2800 },
+        atual: { total: 2500 },
+        valor: -300
+      },
+      celso: {
+        anterior: { total: 3457 },
+        atual: { total: 3150 },
+        valor: -307
+      }
+    };
+
+    const variacao = {
+      valor: Math.round(Number(comparativoMensal.variacao?.valor || (mesAtual.total - mesAnterior.total)))
+    };
+
+    console.log('✅ comparativo COMPLETO (com mock):', { mesAnterior, mesAtual, variacao, porPessoa: porPessoaMock });
+    
+    return { mesAnterior, mesAtual, variacao, porPessoa: porPessoaMock };
   }
 
   // ✅ DETECTA FORMATO 2: {total: [anterior, atual]}
   if (Array.isArray(comparativoMensal.total) && comparativoMensal.total.length >= 2) {
     const [anterior, atual] = comparativoMensal.total;
-    return {
-      mesAnterior: {
-        label: anterior.label || 'Anterior',
-        total: Math.round(Number(anterior?.total ?? anterior?.valor ?? 0))
-      },
-      mesAtual: {
-        label: atual.label || mes,
-        total: Math.round(Number(atual?.total ?? atual?.valor ?? 0))
-      },
-      variacao: { valor: 0 },
-      porPessoa: comparativoMensal.porPessoa || null
+    const mesAnterior = {
+      label: anterior.label || 'Anterior',
+      total: Math.round(Number(anterior?.total ?? anterior?.valor ?? 0))
     };
+    const mesAtual = {
+      label: atual.label || mes,
+      total: Math.round(Number(atual?.total ?? atual?.valor ?? 0))
+    };
+
+    const porPessoaMock = {
+      amanda: {
+        anterior: { total: 2800 },
+        atual: { total: 2500 },
+        valor: -300
+      },
+      celso: {
+        anterior: { total: 3457 },
+        atual: { total: 3150 },
+        valor: -307
+      }
+    };
+
+    console.log('✅ comparativo COMPLETO (com mock):', { mesAnterior, mesAtual, variacao: {valor: 0}, porPessoa: porPessoaMock });
+    
+    return { mesAnterior, mesAtual, variacao: {valor: 0}, porPessoa: porPessoaMock };
   }
 
-  // Fallback
+  // Fallback com mock
+  const porPessoaMock = {
+    amanda: {
+      anterior: { total: 2800 },
+      atual: { total: 2500 },
+      valor: -300
+    },
+    celso: {
+      anterior: { total: 3457 },
+      atual: { total: 3150 },
+      valor: -307
+    }
+  };
+
+  console.log('✅ comparativo FALLBACK (com mock):', { 
+    mesAnterior: { label: 'Anterior', total: 0 },
+    mesAtual: { label: mes, total: 0 },
+    variacao: { valor: 0 },
+    porPessoa: porPessoaMock 
+  });
+  
   return {
     mesAnterior: { label: 'Anterior', total: 0 },
     mesAtual: { label: mes, total: 0 },
     variacao: { valor: 0 },
-    porPessoa: null
+    porPessoa: porPessoaMock
   };
 }
 
@@ -129,7 +175,6 @@ export default function Home({
   const [detalhePessoa, setDetalhePessoa] = useState(null);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  // Sempre gera dados válidos agora
   const comparativoFormatado = prepararComparativo(comparativoMensal, mes);
 
   useEffect(() => {
@@ -236,16 +281,14 @@ export default function Home({
         )}
       </section>
 
-      {/* ==== COMPARATIVO MENSAL - AGORA SEMPRE VISÍVEL ==== */}
-      {/* ==== COMPARATIVO MENSAL - VERSÃO FUNCIONAL ==== */}
-<section className="home-card comparison-card">
-  <MonthComparisonCard 
-  mesAnterior={comparativoFormatado.mesAnterior}
-  mesAtual={comparativoFormatado.mesAtual}
-  variacao={comparativoFormatado.variacao}
-  porPessoa={comparativoFormatado.porPessoa}
-/>
-</section>
+      <section className="home-card comparison-card">
+        <MonthComparisonCard 
+          mesAnterior={comparativoFormatado.mesAnterior}
+          mesAtual={comparativoFormatado.mesAtual}
+          variacao={comparativoFormatado.variacao}
+          porPessoa={comparativoFormatado.porPessoa}
+        />
+      </section>
 
       <section className="home-card">
         <header className="section-title">Evolução anual</header>
@@ -316,10 +359,3 @@ export default function Home({
     </div>
   );
 }
-
-
-
-
-
-
-
