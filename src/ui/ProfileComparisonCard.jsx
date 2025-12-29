@@ -1,11 +1,20 @@
 import { money } from "../utils/money";
-import { useMemo } from "react";
 
+/**
+ * Obtém os dados por pessoa independente da forma:
+ * 1) objeto: { amanda: { atual, anterior } }
+ * 2) array:  [ { nome: "Amanda", atual, anterior } ]
+ */
 function getPessoaData(porPessoa, usuario) {
   if (!porPessoa) return null;
 
+  // ✅ CORRIGIDO: testa ambas estruturas
   if (!Array.isArray(porPessoa) && porPessoa[usuario]) {
-    return porPessoa[usuario];
+    const data = porPessoa[usuario];
+    return {
+      atual: { total: data.total ?? data.atual?.total ?? data.gasto ?? 0 },
+      anterior: { total: data.anterior?.total ?? data.anterior ?? 0 }
+    };
   }
 
   if (Array.isArray(porPessoa)) {
@@ -19,41 +28,37 @@ function getPessoaData(porPessoa, usuario) {
   return null;
 }
 
-export default function ProfileComparisonCard({ mes, mensal, profile }) {
+export default function ProfileComparisonCard({ mensal, profile }) {
   const usuario = profile?.display_name?.toLowerCase();
-  const pessoaData = getPessoaData(mensal?.porPessoa, usuario); // ✅ MES ATUAL funcionando
-
-  // ✅ CORRIGIDO: MÊS ANTERIOR do MESMO objeto porPessoa
-  const mesAnteriorData = useMemo(() => {
-    if (!pessoaData?.anterior?.total) return 0;
-    return Number(pessoaData.anterior.total);
-  }, [pessoaData]);
-
-  const atual = Number(pessoaData?.atual?.total ?? 0);
-  const anterior = mesAnteriorData;
-
-  const variacao = atual - anterior;
-  const variacaoPercent = anterior ? ((variacao / anterior) * 100).toFixed(1) : 0;
+  const pessoaData = getPessoaData(mensal?.porPessoa, usuario);
 
   if (!pessoaData) {
-    return <div>⚠️ Sem dados para comparar ({usuario})</div>;
+    return <div>⚠️ Sem dados suficientes para comparar ({usuario})</div>;
   }
+
+  const atual = Number(pessoaData.atual?.total ?? 0);
+  const anterior = Number(pessoaData.anterior?.total ?? 0); // ✅ AGORA PEGA O ANTERIOR
+
+  const variacao = atual - anterior;
+  const variacaoPercent = anterior
+    ? ((variacao / anterior) * 100).toFixed(1)
+    : 0;
 
   return (
     <div className="profile-comparativo-card">
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
-        <strong>{profile?.display_name}</strong>
-        <span style={{ fontSize: '0.85em', opacity: 0.8 }}>Este mês vs anterior</span>
-      </div>
+      <strong>{profile.display_name} — Comparativo mensal</strong>
 
-      <div style={{ display: 'flex', gap: '24px', marginBottom: '12px' }}>
-        <div>🟢 Este mês: <strong>{money(atual)}</strong></div>
-        <div>🔵 Mês passado: <strong>{money(anterior)}</strong></div>
+      <div style={{ marginTop: "8px" }}>
+        🟢 Atual: <strong>{money(atual)}</strong>
       </div>
-
       <div>
-        📊 {variacao === 0 ? "— sem variação" : 
-          `${variacaoPercent}% ${variacao > 0 ? "↑ gastou mais" : "↓ gastou menos"}`}
+        🔵 Anterior: <strong>{money(anterior)}</strong>
+      </div>
+
+      <div style={{ marginTop: "8px" }}>
+        {variacao === 0
+          ? "— sem variação"
+          : `${variacaoPercent}% (${variacao > 0 ? "gastou mais" : "gastou menos"})`}
       </div>
     </div>
   );
