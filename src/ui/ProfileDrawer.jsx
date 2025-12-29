@@ -10,7 +10,7 @@ export default function ProfileDrawer({
   avisos = [],
   onProfileUpdate
 }) {
-  const [modo, setModo] = useState("avisos");
+  const [modo, setModo] = useState("avisos"); // "avisos" | "preferencias"
 
   if (!open) {
     if (modo !== "avisos") setModo("avisos");
@@ -22,13 +22,20 @@ export default function ProfileDrawer({
     onClose();
   }
 
+  // separa os avisos em duas partes:
+  const avisoComparativo = avisos.find(a => a.tipo === "comparativo");
+  const avisosRestantes = avisos.filter(a => a.tipo !== "comparativo");
+
+
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
       <aside className="profile-drawer" onClick={e => e.stopPropagation()}>
-        
-        {/* ===== HEADER ===== */}
+
+        {/* ================= HEADER ================= */}
         <header className="profile-drawer-header center">
-          <button className="close-btn" onClick={handleClose}>✕</button>
+          <button className="close-btn" onClick={handleClose}>
+            ✕
+          </button>
 
           <div className="profile-avatar-large">
             {avatarUrl ? (
@@ -44,29 +51,45 @@ export default function ProfileDrawer({
           </small>
         </header>
 
-        {/* ===== AÇÕES ===== */}
+
+        {/* ================= BOTÕES DE MODO ================= */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
-            <button className="profile-link-button" onClick={() => setModo("preferencias")}>
+            <button
+              className="profile-link-button"
+              onClick={() => setModo("preferencias")}
+            >
               ⚙️ Preferências
             </button>
           ) : (
-            <button className="profile-link-button" onClick={() => setModo("avisos")}>
+            <button
+              className="profile-link-button"
+              onClick={() => setModo("avisos")}
+            >
               ← Voltar para avisos
             </button>
           )}
         </div>
 
-        {/* ===== CONTEÚDO ===== */}
+
+        {/* ================= CONTEÚDO ================= */}
         <div className="profile-drawer-content">
-          
+
+          {/* 🎯 mostra o comparativo sempre que estiver em avisos */}
+          {modo === "avisos" && avisoComparativo && (
+            <div style={{ marginBottom: "24px" }}>
+              {avisoComparativo.component}
+            </div>
+          )}
+
+          {/* 🔔 mostra os demais avisos */}
           {modo === "avisos" ? (
-            <AvisosList avisos={avisos} />
+            <AvisosList avisos={avisosRestantes} />
           ) : (
             <Profile onProfileUpdate={onProfileUpdate} />
           )}
-
         </div>
+
       </aside>
     </div>
   );
@@ -74,12 +97,9 @@ export default function ProfileDrawer({
 
 
 /* ======================================================
-   LISTA DE AVISOS — AGORA RENDERIZA COMPONENTES CERTO
+   LISTA DE AVISOS COM COMPONENTE EMBUTIDO
 ====================================================== */
 function AvisosList({ avisos }) {
-  console.log("🔎 Avisos recebidos no Drawer:", avisos);
-
-  // 🛑 nada?
   if (!avisos || avisos.length === 0) {
     return (
       <div className="profile-empty">
@@ -91,11 +111,9 @@ function AvisosList({ avisos }) {
   return (
     <ul className="profile-avisos-list">
       {avisos.map((a, idx) => (
-        <li key={idx} className="profile-aviso">
-          {/* Ícone */}
-          {a.icon && <span className="aviso-icon">{a.icon}</span>}
+        <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
+          <span className="aviso-icon">{a.icon || "ℹ️"}</span>
 
-          {/* 🔥 AQUI: se existir component, renderiza ele */}
           {a.component ? (
             <div className="aviso-componente">{a.component}</div>
           ) : (
