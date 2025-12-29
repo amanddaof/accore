@@ -52,19 +52,14 @@ function agruparPorOrigem(itens = []) {
 function prepararComparativo(comparativoMensal, mes = "Mês atual") {
   console.log('🔍 comparativoMensal recebido:', comparativoMensal);
   
-  const fallback = {
-    mesAnterior: { label: 'Mês anterior', total: 0 },
+  if (!comparativoMensal) return {
+    mesAnterior: { label: 'Anterior', total: 0 },
     mesAtual: { label: mes, total: 0 },
     variacao: { valor: 0 },
     porPessoa: null
   };
 
-  if (!comparativoMensal) {
-    console.warn('❌ comparativoMensal é null/undefined');
-    return fallback;
-  }
-
-  // ✅ FIX: Math.round() ANTES do Number()
+  // TOTAL
   let mesAnterior = { label: 'Anterior', total: 0 };
   let mesAtual = { label: mes, total: 0 };
 
@@ -74,32 +69,35 @@ function prepararComparativo(comparativoMensal, mes = "Mês atual") {
     mesAtual.total = Math.round(Number(atual?.total ?? atual?.valor ?? 0));
     mesAnterior.label = anterior.label || 'Anterior';
     mesAtual.label = atual.label || mes;
-  } else if (comparativoMensal.total) {
-    mesAtual.total = Math.round(Number(comparativoMensal.total?.total ?? comparativoMensal.total?.valor ?? 0));
   }
 
-  // ✅ Usa os dados originais se já vierem no formato certo
-  if (comparativoMensal.mesAnterior) {
-    mesAnterior = {
-      label: comparativoMensal.mesAnterior.label || 'Anterior',
-      total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
-    };
-  }
-  if (comparativoMensal.mesAtual) {
-    mesAtual = {
-      label: comparativoMensal.mesAtual.label || mes,
-      total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
-    };
+  // ✅ POR PESSOA - Restaura a lógica original
+  let porPessoa = null;
+  if (comparativoMensal.porPessoa) {
+    porPessoa = {};
+    for (const key of ["amanda", "celso"]) {
+      const info = comparativoMensal.porPessoa[key];
+      if (!info) continue;
+
+      const anterior = Math.round(Number(info.anterior?.total ?? info.anterior?.valor ?? 0));
+      const atual = Math.round(Number(info.atual?.total ?? info.atual?.valor ?? 0));
+
+      porPessoa[key] = {
+        anterior: { total: anterior },
+        atual: { total: atual },
+        valor: atual - anterior
+      };
+    }
   }
 
   const variacao = { 
     valor: Math.round(Number(comparativoMensal?.variacao?.valor ?? (mesAtual.total - mesAnterior.total))) 
   };
 
-  console.log('✅ comparativo formatado:', { mesAnterior, mesAtual, variacao });
-  return { mesAnterior, mesAtual, variacao, porPessoa: null };
+  console.log('✅ comparativo COMPLETO:', { mesAnterior, mesAtual, variacao, porPessoa });
+  
+  return { mesAnterior, mesAtual, variacao, porPessoa };
 }
-
 
 export default function Home({
   mensal,
@@ -314,6 +312,7 @@ export default function Home({
     </div>
   );
 }
+
 
 
 
