@@ -24,10 +24,9 @@ export default function ProfileDrawer({
 
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
-      <aside
-        className="profile-drawer"
-        onClick={e => e.stopPropagation()}
-      >
+      <aside className="profile-drawer" onClick={e => e.stopPropagation()}>
+        
+        {/* ===== HEADER ===== */}
         <header className="profile-drawer-header center">
           <button className="close-btn" onClick={handleClose}>✕</button>
 
@@ -45,6 +44,7 @@ export default function ProfileDrawer({
           </small>
         </header>
 
+        {/* ===== AÇÕES ===== */}
         <div className="profile-drawer-action">
           {modo === "avisos" ? (
             <button className="profile-link-button" onClick={() => setModo("preferencias")}>
@@ -57,19 +57,29 @@ export default function ProfileDrawer({
           )}
         </div>
 
+        {/* ===== CONTEÚDO ===== */}
         <div className="profile-drawer-content">
+          
           {modo === "avisos" ? (
             <AvisosList avisos={avisos} />
           ) : (
             <Profile onProfileUpdate={onProfileUpdate} />
           )}
+
         </div>
       </aside>
     </div>
   );
 }
 
+
+/* ======================================================
+   LISTA DE AVISOS — AGORA RENDERIZA COMPONENTES CERTO
+====================================================== */
 function AvisosList({ avisos }) {
+  console.log("🔎 Avisos recebidos no Drawer:", avisos);
+
+  // 🛑 nada?
   if (!avisos || avisos.length === 0) {
     return (
       <div className="profile-empty">
@@ -81,17 +91,18 @@ function AvisosList({ avisos }) {
   return (
     <ul className="profile-avisos-list">
       {avisos.map((a, idx) => (
-  <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
-    <span className="aviso-icon">{a.icon || "ℹ️"}</span>
-          
-    {a.component ? (
-      <div className="aviso-componente">{a.component}</div>
-    ) : (
-      <span className="aviso-texto">{a.texto}</span>
-    )}
-  </li>
-))}
+        <li key={idx} className="profile-aviso">
+          {/* Ícone */}
+          {a.icon && <span className="aviso-icon">{a.icon}</span>}
 
+          {/* 🔥 AQUI: se existir component, renderiza ele */}
+          {a.component ? (
+            <div className="aviso-componente">{a.component}</div>
+          ) : (
+            <span className="aviso-texto">{a.texto}</span>
+          )}
+        </li>
+      ))}
     </ul>
   );
 }
