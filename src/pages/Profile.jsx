@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserProfile, updateUserProfile } from "../services/userProfile";
 import { uploadAvatar } from "../services/avatar";
-import MonthComparisonCard from "./MonthComparisonCard"; // ajuste o caminho
+import MonthComparisonCard from "../ui/MonthComparisonCard";
 import "./Profile.css";
 
 export default function Profile({ onProfileUpdate }) {
