@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { getUserProfile } from "./services/userProfile";
-
 import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
 import Footer from "./ui/Footer";
@@ -62,18 +61,17 @@ export default function Layout({
 
   /* ================= COMPARATIVO ================= */
   const comparativoCard = useMemo(() => {
-  if (!profile || !mensal || Object.keys(mensal).length === 0)
-    return null;
+    if (!profile || !mensal || Object.keys(mensal).length === 0) return null;
 
-  return (
-    <ProfileComparisonCard
-      mes={mes}
-      mensal={mensal}
-      salarios={salarios}
-      profile={profile}
-    />
-  );
-}, [profile, mes, mensal, salarios]);
+    return (
+      <ProfileComparisonCard
+        mes={mes}
+        mensal={mensal}
+        salarios={salarios}
+        profile={profile}
+      />
+    );
+  }, [profile, mes, mensal, salarios]); // ✅ dependências corretas
 
   function handleGlobalSelect(item) {
     setOpenCards(false);
@@ -130,7 +128,6 @@ export default function Layout({
 
         <Footer />
 
-        {/* DRAWERS */}
         <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
         <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
         <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
@@ -150,6 +147,3 @@ export default function Layout({
     </div>
   );
 }
-
-
-
