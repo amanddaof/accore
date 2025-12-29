@@ -71,13 +71,12 @@ export default function Home({
 
   const [showDebts, setShowDebts] = useState(false);
   const [detalhePessoa, setDetalhePessoa] = useState(null);
-
-  /* ================= CATEGORIAS ================= */
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  /* ====================== ADAPTAR COMPARATIVO ====================== */
-  // transforma o formato novo {mesAtual, mesAnterior, variacao}
-  // de volta para o formato antigo {total:[], porPessoa:..., valor}
+  /* ============================================================
+     ADAPTAR COMPARATIVO PARA FORMATO ESPERADO PELO CARD ANTIGO
+     (mantendo tudo igual ao projeto que funciona)
+  ============================================================ */
   let comparativoAdaptado = comparativoMensal;
 
   if (
@@ -85,36 +84,38 @@ export default function Home({
     comparativoMensal.mesAtual &&
     comparativoMensal.mesAnterior
   ) {
-    const adaptItem = (i) => i ? { ...i, valor: i.total } : { valor: 0 };
+    const adaptItem = (i) =>
+      i
+        ? {
+            ...i,
+            valor: i.total ?? i.valor ?? 0 // garante info.valor
+          }
+        : { valor: 0 };
+
+    const adaptPessoa = (p) =>
+      p
+        ? {
+            anterior: adaptItem(p.anterior),
+            atual: adaptItem(p.atual)
+          }
+        : null;
 
     comparativoAdaptado = {
       total: [
         adaptItem(comparativoMensal.mesAnterior),
-        adaptItem(comparativoMensal.mesAtual),
+        adaptItem(comparativoMensal.mesAtual)
       ],
       porPessoa: comparativoMensal.porPessoa
         ? {
-            amanda: {
-              anterior: adaptItem(comparativoMensal.porPessoa.amanda?.anterior),
-              atual: adaptItem(comparativoMensal.porPessoa.amanda?.atual),
-            },
-            celso: {
-              anterior: adaptItem(comparativoMensal.porPessoa.celso?.anterior),
-              atual: adaptItem(comparativoMensal.porPessoa.celso?.atual),
-            },
+            amanda: adaptPessoa(comparativoMensal.porPessoa.amanda),
+            celso: adaptPessoa(comparativoMensal.porPessoa.celso)
           }
         : null,
-      variacao: comparativoMensal.variacao,
+      variacao: comparativoMensal.variacao || null
     };
   }
 
-  /* ====================== DEBUG LOGS ====================== */
-  console.log("===== HOME DEBUG START =====");
-  console.log("comparativoMensal (bruto):", comparativoMensal);
-  console.log("comparativoAdaptado:", comparativoAdaptado);
-  console.log("===== HOME DEBUG END =====");
-
-  /* ================= SINCRONIZA COM USUÁRIO ================= */
+  /* ================= SINCRONIZAR COM LOGIN ================= */
   useEffect(() => {
     if (!usuarioLogado) return;
 
