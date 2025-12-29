@@ -58,15 +58,21 @@ export default function Layout({
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS ================= */
+  /* ================= AVISOS + COMPARATIVO ================= */
   const avisos = useMemo(() => {
-    if (!profile) return [];
+    if (!profile) return { lista: [], comparativoMensal: null, porPessoa: null };
 
-    return buildMonthlyAlerts({
+    const lista = buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
-  }, [profile, sobraIndividualMes]);
+
+    return {
+      lista,
+      comparativoMensal: mensal?.comparativoMensal || null,
+      porPessoa: mensal?.porPessoa || null
+    };
+  }, [profile, sobraIndividualMes, mensal]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -94,39 +100,37 @@ export default function Layout({
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Header
-  mes={mes}
-  onMesChange={setMes}
-  onReload={reload}
+          mes={mes}
+          onMesChange={setMes}
+          onReload={reload}
 
-  /* 🔔 AVISOS DO PERFIL — AGORA PASSANDO PARA O HEADER */
-  avisos={avisos}
+          avisos={avisos}
 
-  mensal={mensal}
-  salarios={salarios}
-  transactions={transactions}
-  reservations={reservations}
-  bills={bills}
-  loans={loans}
+          mensal={mensal}
+          salarios={salarios}
+          transactions={transactions}
+          reservations={reservations}
+          bills={bills}
+          loans={loans}
 
-  onGlobalSelect={handleGlobalSelect}
+          onGlobalSelect={handleGlobalSelect}
 
-  onOpenCards={() => setOpenCards(true)}
-  isCardsOpen={openCards}
-  onOpenExterno={() => setOpenExterno(true)}
-  isExternoOpen={openExterno}
-  onOpenReservas={() => setOpenReservas(true)}
-  isReservasOpen={openReservas}
-  onOpenBills={() => setOpenBills(true)}
-  isBillsOpen={openBills}
-  onOpenIncomes={() => setOpenIncomes(true)}
-  isIncomesOpen={openIncomes}
+          onOpenCards={() => setOpenCards(true)}
+          isCardsOpen={openCards}
+          onOpenExterno={() => setOpenExterno(true)}
+          isExternoOpen={openExterno}
+          onOpenReservas={() => setOpenReservas(true)}
+          isReservasOpen={openReservas}
+          onOpenBills={() => setOpenBills(true)}
+          isBillsOpen={openBills}
+          onOpenIncomes={() => setOpenIncomes(true)}
+          isIncomesOpen={openIncomes}
 
-  onOpenProfile={() => setOpenProfile(true)}
-  avatarUrl={profile?.avatar_url || null}
-/>
+          onOpenProfile={() => setOpenProfile(true)}
+          avatarUrl={profile?.avatar_url || null}
+        />
 
-
-        {/* 👇 O USUÁRIO LOGADO FICA DISPONÍVEL PARA TODAS AS ROTAS */}
+        {/* 👇 USUÁRIO LOGADO PASSADO PARA ROTAS */}
         <main style={{ flex: 1 }}>
           <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
@@ -174,4 +178,3 @@ export default function Layout({
     </div>
   );
 }
-
