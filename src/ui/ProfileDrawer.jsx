@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
+import MonthComparisonCard from "../ui/MonthComparisonCard";
 import "./ProfileDrawer.css";
 
 export default function ProfileDrawer({
