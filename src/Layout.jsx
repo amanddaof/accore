@@ -94,6 +94,9 @@ const avisos = useMemo(() => {
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
+console.log("🌙 mensal:", mensal);
+console.log("🧾 avisos estruturados:", avisos);
+console.log("📌 comparativoMensal dentro de avisos:", avisos.comparativoMensal);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
@@ -179,4 +182,5 @@ const avisos = useMemo(() => {
     </div>
   );
 }
+
 
