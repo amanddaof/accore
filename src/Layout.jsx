@@ -64,12 +64,11 @@ export default function Layout({
   const comparativoCard = useMemo(() => {
     if (!profile || !mensal || Object.keys(mensal).length === 0) return null;
     return (
-      <ProfileComparisonCard
-        mes={mes}
-        mensal={mensal}
-        salarios={salarios}
-        profile={profile}
-      />
+      <ProfileComparisonCard 
+  comparativoMensal={mensal?.comparativoMensal}
+  profile={profile}
+/>
+
     );
   }, [profile, mes, mensal, salarios]);
 
@@ -148,3 +147,4 @@ export default function Layout({
     </div>
   );
 }
+
