@@ -22,7 +22,6 @@ export default function Layout({
   reload,
   cards,
   mensal,
-  comparativoMensal,   // <<<<<< ADICIONADO
   salarios,
   transactions,
   reservations,
@@ -39,44 +38,40 @@ export default function Layout({
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    getUserProfile().then(setProfile).catch(console.error);
+    getUserProfile()
+      .then(setProfile)
+      .catch(console.error);
   }, []);
 
+  /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
-
-    if (profile.display_name === "Amanda") return salarios.amanda?.sobra ?? 0;
-    if (profile.display_name === "Celso") return salarios.celso?.sobra ?? 0;
-
-    return 0;
+    return profile.display_name === "Amanda"
+      ? salarios.amanda?.sobra ?? 0
+      : salarios.celso?.sobra ?? 0;
   }, [profile, salarios]);
 
-  /* ====== AVISOS (com comparativo por pessoa) ====== */
-  const avisos = useMemo(() => {
+  /* ================= AVISOS ================= */
+  const avisosLista = useMemo(() => {
     if (!profile) return [];
-
-    const base = buildMonthlyAlerts({
+    return buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
+  }, [profile, sobraIndividualMes]);
 
-    // só adiciona se existir comparação real (igual funciona na Home)
-    if (comparativoMensal && comparativoMensal.porPessoa) {
-      base.push({
-        tipo: "comparativo",
-        icon: "👥",
-        texto: "Comparativo mensal",
-        component: (
-          <ProfileComparisonCard
-            comparativoMensal={comparativoMensal}
-            profile={profile}
-          />
-        )
-      });
-    }
-
-    return base;
-  }, [profile, sobraIndividualMes, comparativoMensal]);
+  /* ================= COMPARATIVO ================= */
+  const comparativoCard = useMemo(() => {
+    if (!profile || !mensal || Object.keys(mensal).length === 0) return null;
+    return (
+      <ProfileComparisonCard
+        mes={mes}
+        mensal={mensal}
+        salarios={salarios}
+        profile={profile}
+      />
+    );
+  }, [profile, mes, mensal, salarios]);
 
   function handleGlobalSelect(item) {
     setOpenCards(false);
@@ -84,6 +79,7 @@ export default function Layout({
     setOpenReservas(false);
     setOpenBills(false);
     setOpenIncomes(false);
+
     if (item.type === "transaction") setOpenCards(true);
     if (item.type === "externo") setOpenExterno(true);
     if (item.type === "reservation") setOpenReservas(true);
@@ -98,13 +94,13 @@ export default function Layout({
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}
+          avisos={avisosLista}
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -113,10 +109,15 @@ export default function Layout({
           loans={loans}
           onGlobalSelect={handleGlobalSelect}
           onOpenCards={() => setOpenCards(true)}
+          isCardsOpen={openCards}
           onOpenExterno={() => setOpenExterno(true)}
+          isExternoOpen={openExterno}
           onOpenReservas={() => setOpenReservas(true)}
+          isReservasOpen={openReservas}
           onOpenBills={() => setOpenBills(true)}
+          isBillsOpen={openBills}
           onOpenIncomes={() => setOpenIncomes(true)}
+          isIncomesOpen={openIncomes}
           onOpenProfile={() => setOpenProfile(true)}
           avatarUrl={profile?.avatar_url || null}
         />
@@ -127,6 +128,7 @@ export default function Layout({
 
         <Footer />
 
+        {/* DRAWERS */}
         <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
         <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
         <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
@@ -138,7 +140,8 @@ export default function Layout({
           onClose={() => setOpenProfile(false)}
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
-          avisos={avisos}
+          avisos={avisosLista}
+          comparativoCard={comparativoCard}
           onProfileUpdate={handleProfileUpdate}
         />
       </div>
