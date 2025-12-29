@@ -46,33 +46,57 @@ function agruparPorOrigem(itens = []) {
   }));
 }
 
-function prepararComparativo(comparativoMensal, mes = "Mês atual", amandaMensal, celsoMensal) {
+/* ==========================================================
+   FUNÇÃO FINAL - TOTAL REAL + POR PESSOA REAL DOS DADOS MENSAIS
+========================================================== */
+function prepararComparativo(comparativoMensal, mes = "Mês atual", amandaMensal = {}, celsoMensal = {}) {
   console.log('🔍 comparativoMensal recebido:', comparativoMensal);
   
-  // ... (mantenha toda a lógica anterior até o final)
+  // TOTAL - dados reais do comparativoMensal
+  let mesAnterior = { label: 'Anterior', total: 0 };
+  let mesAtual = { label: mes, total: 0 };
+  let variacao = { valor: 0 };
 
-  // ✅ DADOS REAIS porPessoa usando mensal.porPessoa
+  if (comparativoMensal?.mesAnterior && comparativoMensal?.mesAtual) {
+    mesAnterior = {
+      label: comparativoMensal.mesAnterior.label || '2025-12',
+      total: Math.round(Number(comparativoMensal.mesAnterior.total || 0))
+    };
+    mesAtual = {
+      label: comparativoMensal.mesAtual.label || mes || '2026-01',
+      total: Math.round(Number(comparativoMensal.mesAtual.total || 0))
+    };
+    variacao = { valor: Math.round(Number(comparativoMensal.variacao?.valor || (mesAtual.total - mesAnterior.total))) };
+  }
+
+  // ✅ POR PESSOA REAL - usando dados de mensal.porPessoa
   const porPessoaReal = {};
   
   // Amanda
-  if (amandaMensal) {
-    porPessoaReal.amanda = {
-      anterior: { total: Math.round(amandaMensal.mesAnterior || amandaMensal.gastoAnterior || 0) },
-      atual: { total: Math.round(amandaMensal.total || amandaMensal.gasto || 0) },
-      valor: 0
-    };
-  }
-  
-  // Celso
-  if (celsoMensal) {
-    porPessoaReal.celso = {
-      anterior: { total: Math.round(celsoMensal.mesAnterior || celsoMensal.gastoAnterior || 0) },
-      atual: { total: Math.round(celsoMensal.total || celsoMensal.gasto || 0) },
-      valor: 0
-    };
-  }
+  porPessoaReal.amanda = {
+    anterior: { 
+      total: Math.round(Number(amandaMensal.mesAnterior || amandaMensal.gastoAnterior || amandaMensal.totalAnterior || 0)) 
+    },
+    atual: { 
+      total: Math.round(Number(amandaMensal.total || amandaMensal.gasto || 0)) 
+    },
+    valor: 0
+  };
 
-  return { mesAnterior, mesAtual, variacao, porPessoa: porPessoaReal || porPessoaMock };
+  // Celso
+  porPessoaReal.celso = {
+    anterior: { 
+      total: Math.round(Number(celsoMensal.mesAnterior || celsoMensal.gastoAnterior || celsoMensal.totalAnterior || 0)) 
+    },
+    atual: { 
+      total: Math.round(Number(celsoMensal.total || celsoMensal.gasto || 0)) 
+    },
+    valor: 0
+  };
+
+  console.log('✅ comparativo FINAL (REAL):', { mesAnterior, mesAtual, variacao, porPessoa: porPessoaReal });
+  
+  return { mesAnterior, mesAtual, variacao, porPessoa: porPessoaReal };
 }
 
 export default function Home({
@@ -101,7 +125,8 @@ export default function Home({
   const [detalhePessoa, setDetalhePessoa] = useState(null);
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
-  const comparativoFormatado = prepararComparativo(comparativoMensal, mes);
+  // ✅ PASSA amandaMensal e celsoMensal pra função
+  const comparativoFormatado = prepararComparativo(comparativoMensal, mes, amandaMensal, celsoMensal);
 
   useEffect(() => {
     if (!usuarioLogado) return;
@@ -285,4 +310,3 @@ export default function Home({
     </div>
   );
 }
-
