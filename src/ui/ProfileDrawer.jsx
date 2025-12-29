@@ -81,18 +81,17 @@ function AvisosList({ avisos }) {
   return (
     <ul className="profile-avisos-list">
       {avisos.map((a, idx) => (
-        <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
-          <span className="aviso-icon">{a.icon || "ℹ️"}</span>
+  <li key={idx} className={`profile-aviso ${a.tipo || ""}`}>
+    <span className="aviso-icon">{a.icon || "ℹ️"}</span>
+          
+    {a.component ? (
+      <div className="aviso-componente">{a.component}</div>
+    ) : (
+      <span className="aviso-texto">{a.texto}</span>
+    )}
+  </li>
+))}
 
-          {a.component ? (
-            <div className="aviso-componente">
-              {a.component}
-            </div>
-          ) : (
-            <span className="aviso-texto">{a.texto}</span>
-          )}
-        </li>
-      ))}
     </ul>
   );
 }
