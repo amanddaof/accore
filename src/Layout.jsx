@@ -12,8 +12,8 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
+import ProfileComparisonCard from "./ui/ProfileComparisonCard"; // 👈 NOVO!
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
-import MonthComparisonCard from "./ui/MonthComparisonCard"; // 👈 adicionado
 
 export default function Layout({
   mes,
@@ -62,17 +62,25 @@ export default function Layout({
       saldoMes: sobraIndividualMes
     });
 
-    // 👈 COMPARATIVO como aviso automático!
+    // 👈 COMPARATIVO como aviso automático com NÚMEROS REAIS!
     return [
       ...alerts,
       {
         icon: "👥",
         texto: "Comparativo mensal por pessoa",
         tipo: "comparativo",
-        component: <MonthComparisonCard mes={mes} mensal={mensal} salarios={salarios} />
+        component: (
+          <ProfileComparisonCard 
+            mes={mes}
+            mensal={mensal}
+            salarios={salarios}
+            transactions={transactions}
+            profile={profile}
+          />
+        )
       }
     ];
-  }, [profile, sobraIndividualMes, mes, mensal, salarios]);
+  }, [profile, sobraIndividualMes, mes, mensal, salarios, transactions]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
