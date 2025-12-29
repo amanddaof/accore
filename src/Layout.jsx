@@ -61,33 +61,36 @@ export default function Layout({
 
 
   /* ================= AVISOS (INCLUINDO COMPARATIVO) ================= */
-  const avisos = useMemo(() => {
-    if (!profile) return [];
+  /* ================= AVISOS (INCLUINDO COMPARATIVO) ================= */
+const avisos = useMemo(() => {
+  if (!profile) return [];
 
-    const listaBase = buildMonthlyAlerts({
-      perfil: profile,
-      saldoMes: sobraIndividualMes,
+  const listaBase = buildMonthlyAlerts({
+    perfil: profile,
+    saldoMes: sobraIndividualMes,
+  });
+
+  // 🛑 garante que os dados que queremos existem
+  const comparativoMensal = mensal?.comparativoMensal;
+  const porPessoa = mensal?.porPessoa;
+
+  if (comparativoMensal && porPessoa) {
+    listaBase.push({
+      tipo: "comparativo",
+      icon: "👥",
+      texto: "Comparativo mensal",
+      component: (
+        <ProfileComparisonCard
+          comparativoMensal={comparativoMensal}
+          porPessoa={porPessoa}
+          profile={profile}
+        />
+      )
     });
+  }
 
-    // 👇 garante que tenha dados antes de mostrar o comparativo pessoal
-    if (mensal?.comparativoMensal && mensal?.porPessoa) {
-      listaBase.push({
-        tipo: "comparativo",
-        icon: "👥",
-        texto: "Comparativo mensal",
-        component: (
-          <ProfileComparisonCard
-            comparativoMensal={mensal.comparativoMensal}
-            porPessoa={mensal.porPessoa}
-            profile={profile}
-          />
-        ),
-      });
-    }
-
-    return listaBase;
-  }, [profile, sobraIndividualMes, mensal]);
-
+  return listaBase;
+}, [profile, sobraIndividualMes, mensal]);
 
   /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
@@ -166,3 +169,4 @@ export default function Layout({
     </div>
   );
 }
+
