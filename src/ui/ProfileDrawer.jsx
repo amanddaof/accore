@@ -61,6 +61,10 @@ export default function ProfileDrawer({
       }
     };
   }
+console.log("🧭 Drawer userName:", userName);
+console.log("🔑 chavePessoa:", chavePessoa);
+console.log("📦 porPessoa recebido:", porPessoa);
+console.log("🎯 porPessoa[chavePessoa]:", porPessoa?.[chavePessoa]);
 
   return (
     <div className="profile-drawer-overlay" onClick={handleClose}>
