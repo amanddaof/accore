@@ -26,7 +26,6 @@ export default function Layout({
   bills,
   loans
 }) {
-  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -34,71 +33,54 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
-  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    getUserProfile()
-      .then(setProfile)
-      .catch(console.error);
+    getUserProfile().then(setProfile).catch(console.error);
   }, []);
 
-  /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
 
     if (profile.display_name === "Amanda") {
       return salarios.amanda?.sobra ?? 0;
     }
-
     if (profile.display_name === "Celso") {
       return salarios.celso?.sobra ?? 0;
     }
-
     return 0;
   }, [profile, salarios]);
 
-  /* =======================================================
-      🔥 COMPARATIVO INDIVIDUAL PARA O PERFIL
-     ======================================================= */
-  function prepararComparativoPerfil(mensal) {
-    if (!mensal || !mensal.porPessoa || !mensal.comparativoMensal) return null;
-
-    const [amanda, celso] = mensal.porPessoa;
-    const cmp = mensal.comparativoMensal;
-
-    return {
-      mesAnterior: cmp.mesAnterior,
-      mesAtual: cmp.mesAtual,
-      variacao: cmp.variacao,
-      porPessoa: {
-        amanda: {
-          anterior: { total: amanda?.gastoAnterior ?? 0 },
-          atual: { total: amanda?.gasto ?? 0 },
-        },
-        celso: {
-          anterior: { total: celso?.gastoAnterior ?? 0 },
-          atual: { total: celso?.gasto ?? 0 },
-        }
-      }
-    };
-  }
-
-  const comparativoMensalPerfil = useMemo(() => prepararComparativoPerfil(mensal), [mensal]);
-
-  /* ================= AVISOS ================= */
+  /* 🔥 AQUI: avisos + comparativo + porPessoa */
   const avisos = useMemo(() => {
-    if (!profile) return { lista: [] };
+    if (!profile) return { lista: [], comparativoMensal: null, porPessoa: null };
 
     const lista = buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
 
-    return { lista };
-  }, [profile, sobraIndividualMes]);
+    return {
+      lista,
+      comparativoMensal: mensal?.comparativoMensal || null,
+      porPessoa: mensal?.porPessoa || null
+    };
+  }, [profile, sobraIndividualMes, mensal]);
 
-  /* ================= UPDATE PERFIL ================= */
+  function handleGlobalSelect(item) {
+    setOpenCards(false);
+    setOpenExterno(false);
+    setOpenReservas(false);
+    setOpenBills(false);
+    setOpenIncomes(false);
+
+    if (item.type === "transaction") setOpenCards(true);
+    if (item.type === "externo") setOpenExterno(true);
+    if (item.type === "reservation") setOpenReservas(true);
+    if (item.type === "bill") setOpenBills(true);
+    if (item.type === "income") setOpenIncomes(true);
+  }
+
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
@@ -112,34 +94,49 @@ export default function Layout({
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}
+          avisos={avisos.lista}
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
           reservations={reservations}
           bills={bills}
           loans={loans}
-
-          onGlobalSelect={() => {}}
+          onGlobalSelect={handleGlobalSelect}
+          onOpenCards={() => setOpenCards(true)}
+          isCardsOpen={openCards}
+          onOpenExterno={() => setOpenExterno(true)}
+          isExternoOpen={openExterno}
+          onOpenReservas={() => setOpenReservas(true)}
+          isReservasOpen={openReservas}
+          onOpenBills={() => setOpenBills(true)}
+          isBillsOpen={openBills}
+          onOpenIncomes={() => setOpenIncomes(true)}
+          isIncomesOpen={openIncomes}
           onOpenProfile={() => setOpenProfile(true)}
           avatarUrl={profile?.avatar_url || null}
         />
 
-        {/* 👇 USUÁRIO LOGADO PASSADO PARA ROTAS */}
         <main style={{ flex: 1 }}>
           <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
 
         <Footer />
 
-        {/* ================= DRAWERS ================= */}
+        <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
+        <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
+        <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
+        <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
+        <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
+
+        {/*  🔥 AQUI AGORA VAI TUDO */}
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
           avisos={avisos.lista}
-          comparativoMensal={comparativoMensalPerfil} // 🔥 PASSANDO O COMPARATIVO
+          comparativoMensal={avisos.comparativoMensal}
+          porPessoa={avisos.porPessoa}
           onProfileUpdate={handleProfileUpdate}
         />
       </div>
