@@ -182,7 +182,7 @@ export default function Home({
         )}
       </section>
 
-      <section className="home-card">
+      <section className="home-card comparison-card">
         <MonthComparisonCard
           data={comparativoMensal?.total}
           porPessoa={comparativoMensal?.porPessoa}
@@ -258,3 +258,4 @@ export default function Home({
     </div>
   );
 }
+
