@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { getUserProfile } from "./services/userProfile";
+
 import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
 import Footer from "./ui/Footer";
@@ -12,7 +13,8 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
-import ProfileComparisonCard from "./ui/ProfileComparisonCard"; 
+import ProfileComparisonCard from "./ui/ProfileComparisonCard";
+
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
@@ -27,6 +29,7 @@ export default function Layout({
   bills,
   loans
 }) {
+  /* ================= DRAWERS ================= */
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
   const [openReservas, setOpenReservas] = useState(false);
@@ -34,6 +37,7 @@ export default function Layout({
   const [openIncomes, setOpenIncomes] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
 
+  /* ================= PERFIL ================= */
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -42,14 +46,17 @@ export default function Layout({
       .catch(console.error);
   }, []);
 
+  /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
+
     if (profile.display_name === "Amanda") return salarios.amanda?.sobra ?? 0;
     if (profile.display_name === "Celso") return salarios.celso?.sobra ?? 0;
+
     return 0;
   }, [profile, salarios]);
 
-  /** 🔥 AVISOS + COMPARATIVO INDIVIDUAL */
+  /* ================= AVISOS + COMPARATIVO ================= */
   const avisos = useMemo(() => {
     if (!profile) return [];
 
@@ -58,6 +65,7 @@ export default function Layout({
       saldoMes: sobraIndividualMes
     });
 
+    // 👉 aqui o comparativo entra como componente dentro da lista de avisos
     return [
       ...alerts,
       {
@@ -68,15 +76,16 @@ export default function Layout({
           <ProfileComparisonCard
             mes={mes}
             mensal={mensal}
-            comparativoMensal={mensal?.comparativoMensal} // 🔥 envia real
             salarios={salarios}
+            transactions={transactions}
             profile={profile}
           />
         )
       }
     ];
-  }, [profile, sobraIndividualMes, mes, mensal, salarios]);
+  }, [profile, sobraIndividualMes, mes, mensal, salarios, transactions]);
 
+  /* ================= BUSCA GLOBAL ================= */
   function handleGlobalSelect(item) {
     setOpenCards(false);
     setOpenExterno(false);
@@ -91,6 +100,7 @@ export default function Layout({
     if (item.type === "income") setOpenIncomes(true);
   }
 
+  /* ================= UPDATE PERFIL ================= */
   function handleProfileUpdate(novoPerfil) {
     setProfile(novoPerfil);
   }
@@ -100,11 +110,13 @@ export default function Layout({
       <Sidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
+        {/* 🔥 agora o Header recebe avisos completo */}
         <Header
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos} // 👈 agora correto
+          avisos={avisos}
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -126,18 +138,21 @@ export default function Layout({
           avatarUrl={profile?.avatar_url || null}
         />
 
+        {/* 👇 usuário logado disponível para rotas */}
         <main style={{ flex: 1 }}>
           <Outlet context={{ usuarioLogado: profile?.display_name || null }} />
         </main>
 
         <Footer />
 
+        {/* drawers */}
         <CardsDrawer open={openCards} onClose={() => setOpenCards(false)} cards={cards} mes={mes} />
         <ExternoDrawer open={openExterno} onClose={() => setOpenExterno(false)} mes={mes} />
         <ReservasDrawer open={openReservas} onClose={() => setOpenReservas(false)} />
         <BillsDrawer open={openBills} onClose={() => setOpenBills(false)} mes={mes} />
         <IncomeDrawer open={openIncomes} onClose={() => setOpenIncomes(false)} />
 
+        {/* 🔥 Drawer recebe avisos, incluindo o componente */}
         <ProfileDrawer
           open={openProfile}
           onClose={() => setOpenProfile(false)}
