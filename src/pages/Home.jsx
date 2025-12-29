@@ -227,19 +227,16 @@ export default function Home({
 
       {/* ==== COMPARATIVO MENSAL - AGORA SEMPRE VISÍVEL ==== */}
       <section className="home-card comparison-card">
-        <MonthComparisonCard 
-  mesAnterior={comparativoFormatado.mesAnterior}
-  mesAtual={comparativoFormatado.mesAtual}
-  variacao={comparativoFormatado.variacao}
-/>
-        {/* Debug temporário - remova depois */}
-        {process.env.NODE_ENV === 'development' && (
-          <div style={{fontSize: '11px', color: '#666', padding: '5px'}}>
-            Debug: {comparativoFormatado.mesAtual.total.toLocaleString()} | 
-            Ant: {comparativoFormatado.mesAnterior.total.toLocaleString()}
-          </div>
-        )}
-      </section>
+  <header>Comparativo Mensal</header>
+  <div style={{padding: '20px'}}>
+    <div><strong>{comparativoFormatado.mesAnterior.label}:</strong> {money(comparativoFormatado.mesAnterior.total)}</div>
+    <div><strong>{comparativoFormatado.mesAtual.label}:</strong> {money(comparativoFormatado.mesAtual.total)}</div>
+    <div style={{color: comparativoFormatado.variacao.valor < 0 ? 'red' : 'green'}}>
+      Variação: {money(comparativoFormatado.variacao.valor)} ({comparativoFormatado.variacao.percentual?.toFixed(1)}%)
+    </div>
+  </div>
+</section>
+
 
       <section className="home-card">
         <header className="section-title">Evolução anual</header>
@@ -310,4 +307,5 @@ export default function Home({
     </div>
   );
 }
+
 
