@@ -21,6 +21,7 @@ function agruparPorOrigem(itens = []) {
 
     if (i.tipo === "Conta da casa") {
       origem = "Conta da casa";
+
       const real = Number(i.item.valor_real || 0);
       const previsto = Number(i.item.valor_previsto || 0);
       valor = real > 0 ? real : previsto;
@@ -57,7 +58,6 @@ export default function Home({
   savingsGoal,
   setSavingsGoal
 }) {
-  /* ================= USUÁRIO LOGADO ================= */
   const { usuarioLogado } = useOutletContext() || {};
 
   const amanda = salarios?.amanda || { salario: 0, gasto: 0, sobra: 0 };
@@ -76,13 +76,8 @@ export default function Home({
   const [pessoaCategorias, setPessoaCategorias] = useState("Ambos");
 
   /* ====================== ADAPTAR COMPARATIVO ====================== */
-  /** 
-   * backend agora envia:
-   * { mesAtual, mesAnterior, variacao }
-   *
-   * o MonthComparisonCard (que funciona) espera:
-   * { total: [...], porPessoa: {...} }
-   */
+  // transforma o formato novo {mesAtual, mesAnterior, variacao}
+  // de volta para o formato antigo {total:[], porPessoa:..., valor}
   let comparativoAdaptado = comparativoMensal;
 
   if (
@@ -90,37 +85,41 @@ export default function Home({
     comparativoMensal.mesAtual &&
     comparativoMensal.mesAnterior
   ) {
+    const adaptItem = (i) => i ? { ...i, valor: i.total } : { valor: 0 };
+
     comparativoAdaptado = {
       total: [
-        comparativoMensal.mesAnterior,
-        comparativoMensal.mesAtual
+        adaptItem(comparativoMensal.mesAnterior),
+        adaptItem(comparativoMensal.mesAtual),
       ],
-      porPessoa: comparativoMensal.porPessoa || null,
+      porPessoa: comparativoMensal.porPessoa
+        ? {
+            amanda: {
+              anterior: adaptItem(comparativoMensal.porPessoa.amanda?.anterior),
+              atual: adaptItem(comparativoMensal.porPessoa.amanda?.atual),
+            },
+            celso: {
+              anterior: adaptItem(comparativoMensal.porPessoa.celso?.anterior),
+              atual: adaptItem(comparativoMensal.porPessoa.celso?.atual),
+            },
+          }
+        : null,
       variacao: comparativoMensal.variacao,
     };
   }
 
   /* ====================== DEBUG LOGS ====================== */
   console.log("===== HOME DEBUG START =====");
-  console.log("usuarioLogado:", usuarioLogado);
-  console.log("mensal:", mensal);
-  console.log("salarios:", salarios);
-
   console.log("comparativoMensal (bruto):", comparativoMensal);
   console.log("comparativoAdaptado:", comparativoAdaptado);
-
-  console.log("categorias:", categorias);
-  console.log("loans:", loans);
-  console.log("mes:", mes);
   console.log("===== HOME DEBUG END =====");
 
-  // 🔑 SINCRONIZA COM USUÁRIO LOGADO (SÓ NA PRIMEIRA VEZ)
+  /* ================= SINCRONIZA COM USUÁRIO ================= */
   useEffect(() => {
     if (!usuarioLogado) return;
 
     setPessoaCategorias(prev => {
       if (prev !== "Ambos") return prev;
-
       if (usuarioLogado === "Amanda") return "Amanda";
       if (usuarioLogado === "Celso") return "Celso";
       return prev;
