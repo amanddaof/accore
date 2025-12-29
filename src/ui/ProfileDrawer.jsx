@@ -1,14 +1,9 @@
 import { useState } from "react";
 import Profile from "../pages/Profile";
-import MonthComparisonCard from "../ui/MonthComparisonCard";
 import "./ProfileDrawer.css";
 
-/**
- * Drawer do Perfil do Usuário
- * - Abre mostrando avisos
- * - Botão leva para Preferências
- * - Ao fechar (ou reabrir), sempre volta para avisos
- */
+import MonthComparisonCard from "./MonthComparisonCard"; // ⬅️ ADICIONADO
+
 export default function ProfileDrawer({
   open,
   onClose,
@@ -19,48 +14,43 @@ export default function ProfileDrawer({
 }) {
   const [modo, setModo] = useState("avisos"); // "avisos" | "preferencias"
 
-  // 🔒 sempre abre em avisos
+  // 🔒 garante que sempre abre em "avisos"
   if (!open) {
     if (modo !== "avisos") setModo("avisos");
     return null;
   }
 
-  const listaAvisos = avisos?.lista || [];
-
-  /* =====================================================
-     🔍 COMPARATIVO POR PESSOA (Amanda / Celso)
-     aparece apenas na aba de avisos
-  ===================================================== */
-  const comparativo = avisos?.comparativoMensal;
-  const pessoaLogada = userName?.toLowerCase(); // "amanda" | "celso"
-  let comparativoPessoa = null;
-
-  if (comparativo?.porPessoa?.[pessoaLogada]) {
-    const dados = comparativo.porPessoa[pessoaLogada];
-
-    comparativoPessoa = {
-      mesAnterior: comparativo.mesAnterior,
-      mesAtual: comparativo.mesAtual,
-      variacao: {
-        valor:
-          Number(dados?.atual?.total || 0) -
-          Number(dados?.anterior?.total || 0)
-      },
-      porPessoa: {
-        [pessoaLogada]: {
-          anterior: { total: Number(dados?.anterior?.total || 0) },
-          atual: { total: Number(dados?.atual?.total || 0) },
-          valor:
-            Number(dados?.atual?.total || 0) -
-            Number(dados?.anterior?.total || 0)
-        }
-      }
-    };
-  }
-
   function handleClose() {
     setModo("avisos");
     onClose();
+  }
+
+  // 🔎 pegamos os valores vindos do Layout
+  const listaAvisos = avisos.lista || [];
+  const comparativoMensal = avisos.comparativoMensal || null;
+  const porPessoa = avisos.porPessoa || null;
+
+  // 🧠 quem está logado
+  const chavePessoa = userName.toLowerCase();
+
+  // 🎯 dados da pessoa logada no comparativo
+  const dadosPessoa = porPessoa?.[chavePessoa] || null;
+
+  // 📌 estrutura para o card
+  let comparativoRender = null;
+  if (comparativoMensal && dadosPessoa) {
+    comparativoRender = {
+      mesAnterior: comparativoMensal.mesAnterior,
+      mesAtual: comparativoMensal.mesAtual,
+      variacao: { valor: Number(dadosPessoa.atual.total) - Number(dadosPessoa.anterior.total) },
+      porPessoa: {
+        [chavePessoa]: {
+          anterior: { total: Number(dadosPessoa.anterior.total) },
+          atual: { total: Number(dadosPessoa.atual.total) },
+          valor: Number(dadosPessoa.atual.total) - Number(dadosPessoa.anterior.total)
+        }
+      }
+    };
   }
 
   return (
@@ -111,26 +101,24 @@ export default function ProfileDrawer({
         {/* ================= CONTEÚDO ================= */}
         <div className="profile-drawer-content">
 
-          {modo === "avisos" ? (
-            <>
-              {/* 👇 novo bloco com comparativo por pessoa */}
-              {comparativoPessoa && (
-                <div className="profile-comparison-section">
-                  <MonthComparisonCard
-                    mesAnterior={comparativoPessoa.mesAnterior}
-                    mesAtual={comparativoPessoa.mesAtual}
-                    variacao={comparativoPessoa.variacao}
-                    porPessoa={comparativoPessoa.porPessoa}
-                  />
-                </div>
-              )}
+          {/* ⭐ NOVO: comparativo mensal do usuário logado */}
+          {modo === "avisos" && comparativoRender && (
+            <div style={{ marginBottom: "20px" }}>
+              <MonthComparisonCard
+                mesAnterior={comparativoRender.mesAnterior}
+                mesAtual={comparativoRender.mesAtual}
+                variacao={comparativoRender.variacao}
+                porPessoa={comparativoRender.porPessoa}
+              />
+            </div>
+          )}
 
-              <AvisosList avisos={listaAvisos} />
-            </>
+          {/* 🔔 avisos normais */}
+          {modo === "avisos" ? (
+            <AvisosList avisos={listaAvisos} />
           ) : (
             <Profile onProfileUpdate={onProfileUpdate} />
           )}
-
         </div>
       </aside>
     </div>
@@ -160,4 +148,3 @@ function AvisosList({ avisos }) {
     </ul>
   );
 }
-
