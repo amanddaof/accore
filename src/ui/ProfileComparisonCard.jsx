@@ -9,15 +9,18 @@ export default function ProfileComparisonCard({
 }) {
   const usuario = profile?.display_name?.toLowerCase();
 
+  // 🎯 CAMINHO CORRETO: mensal.comparativoMensal.porPessoa
   const dadosPessoa = useMemo(() => {
-    if (!mensal?.comparativoMensal?.porPessoa) return null;
-    return mensal.comparativoMensal.porPessoa[usuario] || null;
+    const comp = mensal?.comparativoMensal?.porPessoa;
+    if (!comp || !usuario) return null;
+    return comp[usuario] || null;
   }, [mensal, usuario]);
 
+  // ⛔ sem dados? não mostra nada
   if (!dadosPessoa) return null;
 
-  const gastoAtual = Number(dadosPessoa.atual || 0);
-  const gastoAnterior = Number(dadosPessoa.anterior || 0);
+  const gastoAtual = Number(dadosPessoa.atual ?? 0);
+  const gastoAnterior = Number(dadosPessoa.anterior ?? 0);
 
   const variacao = gastoAtual - gastoAnterior;
   const variacaoPercent = gastoAnterior
@@ -35,7 +38,6 @@ export default function ProfileComparisonCard({
 
   return (
     <div className="profile-comparativo-card">
-
       <div className="comparativo-header">
         <span className="comparativo-icon">👥</span>
         <span className="comparativo-titulo">
