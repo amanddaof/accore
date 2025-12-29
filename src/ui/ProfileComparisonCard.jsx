@@ -1,66 +1,61 @@
 import { useMemo } from "react";
+import { money } from "../utils/money";
 
 export default function ProfileComparisonCard({ 
-  mes, 
-  mensal, 
-  salarios, 
-  profile 
+  mes,
+  mensal,
+  salarios,
+  profile
 }) {
-  const [anoAtual, mesAtualNum] = mes.split('-').map(Number);
-  const mesAnteriorNum = mesAtualNum === 1 ? 12 : mesAtualNum - 1;
-  const anoAnterior = mesAnteriorNum === 12 ? anoAtual - 1 : anoAtual;
-  const mesAnterior = `${anoAnterior}-${mesAnteriorNum.toString().padStart(2, '0')}`;
-
   const usuario = profile?.display_name?.toLowerCase();
 
-  // DADOS ATUAIS
-  const gastoAtual = useMemo(() => {
-    if (!mensal?.[mes]?.[usuario]) return 0;
-    return mensal[mes][usuario].gasto || 0;
-  }, [mensal, mes, usuario]);
+  const dadosPessoa = useMemo(() => {
+    if (!mensal?.comparativoMensal?.porPessoa) return null;
+    return mensal.comparativoMensal.porPessoa[usuario] || null;
+  }, [mensal, usuario]);
 
-  const sobraAtual = useMemo(() => {
-    if (!salarios || !usuario) return 0;
-    const salarioKey = usuario === 'amanda' ? 'amanda' : 'celso';
-    return salarios[salarioKey]?.sobra || 0;
-  }, [salarios, usuario]);
+  if (!dadosPessoa) return null;
 
-  // DADOS ANTERIORES
-  const gastoAnterior = useMemo(() => {
-    if (!mensal?.[mesAnterior]?.[usuario]) return 0;
-    return mensal[mesAnterior][usuario].gasto || 0;
-  }, [mensal, mesAnterior, usuario]);
+  const gastoAtual = Number(dadosPessoa.atual || 0);
+  const gastoAnterior = Number(dadosPessoa.anterior || 0);
 
   const variacao = gastoAtual - gastoAnterior;
-  const variacaoPercent = gastoAnterior ? 
-    ((variacao / gastoAnterior) * 100).toFixed(1) : 0;
+  const variacaoPercent = gastoAnterior
+    ? ((variacao / gastoAnterior) * 100).toFixed(1)
+    : 0;
 
-  const statusTexto = variacao === 0 ? "Sem variação" :
-    variacao > 0 ? `+${variacaoPercent}%` : `${variacaoPercent}%`;
+  const statusTexto =
+    variacao === 0
+      ? "Sem variação"
+      : variacao > 0
+      ? `+${variacaoPercent}% a mais`
+      : `${variacaoPercent}% a menos`;
+
+  const sobraAtual = salarios?.[usuario]?.sobra ?? 0;
 
   return (
     <div className="profile-comparativo-card">
+
       <div className="comparativo-header">
         <span className="comparativo-icon">👥</span>
         <span className="comparativo-titulo">
-          {profile?.display_name || ''} vs mês passado
-          <small>{mesAnterior} → {mes}</small>
+          {profile?.display_name} — comparação mensal
         </span>
       </div>
 
       <div className="comparativo-grid">
         <div className="comparativo-item">
-          <div className="valor-atual">R$ {gastoAtual.toFixed(2)}</div>
+          <div className="valor-atual">{money(gastoAtual)}</div>
           <small>Este mês</small>
         </div>
 
         <div className="comparativo-item">
-          <div className="valor-anterior">R$ {gastoAnterior.toFixed(2)}</div>
+          <div className="valor-anterior">{money(gastoAnterior)}</div>
           <small>Mês passado</small>
         </div>
 
         <div className="comparativo-item variacao">
-          <div className={`variacao-numero ${variacao >= 0 ? 'pos' : 'neg'}`}>
+          <div className={`variacao-numero ${variacao >= 0 ? "pos" : "neg"}`}>
             {statusTexto}
           </div>
           <small>Variação</small>
@@ -68,7 +63,7 @@ export default function ProfileComparisonCard({
       </div>
 
       <div className="comparativo-sobra">
-        💰 Sobra: <strong>R$ {sobraAtual.toFixed(2)}</strong>
+        💰 Sobra: <strong>{money(sobraAtual)}</strong>
       </div>
     </div>
   );
