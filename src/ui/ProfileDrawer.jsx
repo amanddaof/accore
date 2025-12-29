@@ -102,16 +102,14 @@ export default function ProfileDrawer({
         <div className="profile-drawer-content">
 
           {/* ⭐ NOVO: comparativo mensal do usuário logado */}
-          {modo === "avisos" && comparativoRender && (
-            <div style={{ marginBottom: "20px" }}>
-              <MonthComparisonCard
-                mesAnterior={comparativoRender.mesAnterior}
-                mesAtual={comparativoRender.mesAtual}
-                variacao={comparativoRender.variacao}
-                porPessoa={comparativoRender.porPessoa}
-              />
-            </div>
-          )}
+{modo === "avisos" && comparativoMensal && porPessoa && (
+  <div style={{ marginBottom: "20px" }}>
+    <MonthComparisonCard 
+      data={comparativoMensal}
+      porPessoa={porPessoa}
+    />
+  </div>
+)}
 
           {/* 🔔 avisos normais */}
           {modo === "avisos" ? (
