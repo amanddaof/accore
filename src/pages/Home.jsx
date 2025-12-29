@@ -228,47 +228,12 @@ export default function Home({
       {/* ==== COMPARATIVO MENSAL - AGORA SEMPRE VISÍVEL ==== */}
       {/* ==== COMPARATIVO MENSAL - VERSÃO FUNCIONAL ==== */}
 <section className="home-card comparison-card">
-  <header className="section-title">Comparativo Mensal</header>
-  
-  <div style={{ 
-    display: 'grid', 
-    gridTemplateColumns: '1fr 1fr', 
-    gap: '15px', 
-    padding: '10px 0',
-    textAlign: 'center'
-  }}>
-    <div>
-      <div style={{fontSize: '12px', color: '#666', marginBottom: '5px'}}>
-        {comparativoFormatado.mesAnterior.label}
-      </div>
-      <div style={{fontSize: '24px', fontWeight: 'bold'}}>
-        {money(Math.round(comparativoFormatado.mesAnterior.total))}
-      </div>
-    </div>
-    
-    <div>
-      <div style={{fontSize: '12px', color: '#666', marginBottom: '5px'}}>
-        {comparativoFormatado.mesAtual.label}
-      </div>
-      <div style={{fontSize: '24px', fontWeight: 'bold'}}>
-        {money(Math.round(comparativoFormatado.mesAtual.total))}
-      </div>
-    </div>
-  </div>
-  
-  <div style={{
-    textAlign: 'center',
-    padding: '10px',
-    borderRadius: '8px',
-    background: comparativoFormatado.variacao.valor >= 0 ? '#e8f5e8' : '#ffe8e8',
-    color: comparativoFormatado.variacao.valor >= 0 ? '#2e7d32' : '#c62828',
-    fontWeight: 'bold'
-  }}>
-    Variação: {money(Math.round(comparativoFormatado.variacao.valor))}
-    <span style={{fontSize: '14px'}}>
-      ({((comparativoFormatado.variacao.valor / comparativoFormatado.mesAnterior.total)*100).toFixed(1)}%)
-    </span>
-  </div>
+  <MonthComparisonCard 
+  mesAnterior={comparativoFormatado.mesAnterior}
+  mesAtual={comparativoFormatado.mesAtual}
+  variacao={comparativoFormatado.variacao}
+  porPessoa={comparativoFormatado.porPessoa}
+/>
 </section>
 
       <section className="home-card">
@@ -340,6 +305,7 @@ export default function Home({
     </div>
   );
 }
+
 
 
 
