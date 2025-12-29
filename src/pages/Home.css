@@ -635,15 +635,5 @@
   gap: 18px;
 }
 
-.comparison-card {
-  min-height: 220px;
-  background:
-    linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.35)),
-    var(--fallback-bg, linear-gradient(155deg, #15182f, #0a0d22));
-}
 
-.compare-tabs button.active {
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-}
 
