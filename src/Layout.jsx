@@ -13,7 +13,7 @@ import BillsDrawer from "./ui/BillsDrawer";
 import IncomeDrawer from "./ui/IncomeDrawer";
 
 import ProfileDrawer from "./ui/ProfileDrawer";
-import ProfileComparisonCard from "./ui/ProfileComparisonCard"; // 👈 necessário
+import ProfileComparisonCard from "./ui/ProfileComparisonCard";
 import { buildMonthlyAlerts } from "./calculations/notifications/buildMonthlyAlerts";
 
 export default function Layout({
@@ -48,48 +48,38 @@ export default function Layout({
   /* ================= SOBRA INDIVIDUAL ================= */
   const sobraIndividualMes = useMemo(() => {
     if (!profile || !salarios) return 0;
-
-    if (profile.display_name === "Amanda") {
-      return salarios.amanda?.sobra ?? 0;
-    }
-
-    if (profile.display_name === "Celso") {
-      return salarios.celso?.sobra ?? 0;
-    }
-
+    const nome = profile.display_name;
+    if (nome === "Amanda") return salarios.amanda?.sobra ?? 0;
+    if (nome === "Celso") return salarios.celso?.sobra ?? 0;
     return 0;
   }, [profile, salarios]);
 
-  /* ================= AVISOS (INCLUINDO COMPARATIVO) ================= */
+  /* ================= AVISOS COM COMPARATIVO ================= */
   const avisos = useMemo(() => {
     if (!profile) return [];
 
-    const listaBase = buildMonthlyAlerts({
+    const base = buildMonthlyAlerts({
       perfil: profile,
       saldoMes: sobraIndividualMes
     });
 
-    // ⚠️ se não tiver dados mensais, não coloca o card
-    if (!mensal || Object.keys(mensal).length === 0) {
-      return listaBase;
+    // ⚠️ comparativo só aparece se tiver dados mensais
+    if (mensal && Object.keys(mensal).length > 0) {
+      base.push({
+        icon: "👥",
+        tipo: "comparativo",
+        component: (
+          <ProfileComparisonCard
+            mes={mes}
+            mensal={mensal}
+            salarios={salarios}
+            profile={profile}
+          />
+        )
+      });
     }
 
-    // 👇 AQUI adicionamos o componente dentro da lista de avisos
-    listaBase.push({
-      icon: "👥",
-      texto: "Comparativo mensal",
-      tipo: "comparativo",
-      component: (
-        <ProfileComparisonCard
-          mes={mes}
-          mensal={mensal}
-          salarios={salarios}
-          profile={profile}
-        />
-      )
-    });
-
-    return listaBase;
+    return base;
   }, [profile, sobraIndividualMes, mes, mensal, salarios]);
 
   /* ================= BUSCA GLOBAL ================= */
@@ -120,7 +110,7 @@ export default function Layout({
           mes={mes}
           onMesChange={setMes}
           onReload={reload}
-          avisos={avisos}            {/* 🔥 agora envia o pacote certo */}
+          avisos={avisos}     // << só isso já leva o comparativo para o ProfileDrawer
           mensal={mensal}
           salarios={salarios}
           transactions={transactions}
@@ -159,7 +149,7 @@ export default function Layout({
           onClose={() => setOpenProfile(false)}
           userName={profile?.display_name || "Usuário"}
           avatarUrl={profile?.avatar_url || null}
-          avisos={avisos}           {/* 🔥 envia avisos com o component */}
+          avisos={avisos}
           onProfileUpdate={handleProfileUpdate}
         />
       </div>
