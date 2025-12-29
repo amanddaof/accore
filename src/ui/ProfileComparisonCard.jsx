@@ -1,71 +1,42 @@
 import { useMemo } from "react";
-import { money } from "../utils/money";
 
 export default function ProfileComparisonCard({ 
-  mes,
-  mensal,
-  salarios,
-  profile
+  comparativoMensal, 
+  mensal, 
+  profile 
 }) {
   const usuario = profile?.display_name?.toLowerCase();
 
-  // 🎯 CAMINHO CORRETO: mensal.comparativoMensal.porPessoa
-  const dadosPessoa = useMemo(() => {
-    const comp = mensal?.comparativoMensal?.porPessoa;
-    if (!comp || !usuario) return null;
-    return comp[usuario] || null;
+  // 🔥 pega o atual no formato REAL do mensal
+  const atual = useMemo(() => {
+    return mensal?.porPessoa?.find(p => 
+      p.nome.toLowerCase() === usuario
+    )?.total || 0;
   }, [mensal, usuario]);
 
-  // ⛔ sem dados? não mostra nada
-  if (!dadosPessoa) return null;
+  // 🔥 pega o anterior do comparativo do backend
+  const anterior = useMemo(() => {
+    return comparativoMensal?.porPessoa?.[usuario]?.anterior?.total || 0;
+  }, [comparativoMensal, usuario]);
 
-  const gastoAtual = Number(dadosPessoa.atual ?? 0);
-  const gastoAnterior = Number(dadosPessoa.anterior ?? 0);
-
-  const variacao = gastoAtual - gastoAnterior;
-  const variacaoPercent = gastoAnterior
-    ? ((variacao / gastoAnterior) * 100).toFixed(1)
-    : 0;
-
-  const statusTexto =
-    variacao === 0
-      ? "Sem variação"
-      : variacao > 0
-      ? `+${variacaoPercent}% a mais`
-      : `${variacaoPercent}% a menos`;
-
-  const sobraAtual = salarios?.[usuario]?.sobra ?? 0;
+  const variacao = atual - anterior;
+  const variacaoPercent = anterior ? ((variacao / anterior) * 100).toFixed(1) : 0;
 
   return (
     <div className="profile-comparativo-card">
-      <div className="comparativo-header">
-        <span className="comparativo-icon">👥</span>
-        <span className="comparativo-titulo">
-          {profile?.display_name} — comparação mensal
-        </span>
-      </div>
+      <strong>{profile?.display_name}</strong> — Comparativo mensal
+      <br />
 
-      <div className="comparativo-grid">
-        <div className="comparativo-item">
-          <div className="valor-atual">{money(gastoAtual)}</div>
-          <small>Este mês</small>
-        </div>
+      <div>💸 Atual: R$ {atual.toFixed(2)}</div>
+      <div>📆 Anterior: R$ {anterior.toFixed(2)}</div>
 
-        <div className="comparativo-item">
-          <div className="valor-anterior">{money(gastoAnterior)}</div>
-          <small>Mês passado</small>
-        </div>
-
-        <div className="comparativo-item variacao">
-          <div className={`variacao-numero ${variacao >= 0 ? "pos" : "neg"}`}>
-            {statusTexto}
-          </div>
-          <small>Variação</small>
-        </div>
-      </div>
-
-      <div className="comparativo-sobra">
-        💰 Sobra: <strong>{money(sobraAtual)}</strong>
+      <div style={{ marginTop: 8 }}>
+        {variacao === 0
+          ? "Sem variação"
+          : variacao > 0
+          ? `▲ +${variacaoPercent}% (gastou mais)`
+          : `▼ ${variacaoPercent}% (gastou menos)`
+        }
       </div>
     </div>
   );
