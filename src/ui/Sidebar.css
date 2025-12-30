@@ -12,7 +12,7 @@
   align-items: center;
   padding: 14px 0;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.45);
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 10;
   transition: width 0.25s ease;
