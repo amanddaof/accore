@@ -69,10 +69,10 @@ export default function ProfileDrawer({
 
           {/* ⭐ COMPARATIVO — aparece ANTES dos avisos */}
           {modo === "avisos" && comparativoCard && (
-            <div style={{ marginBottom: "24px" }}>
-              {comparativoCard}
-            </div>
-          )}
+  <div className="profile-comparativo-card-wrapper">
+    {comparativoCard}
+  </div>
+)}
 
           {/* 🔔 avisos normais */}
           {modo === "avisos" ? (
