@@ -65,6 +65,7 @@ export default function App() {
               reload={reload}
               cards={cards}
               mensal={mensal}
+			  comparativoMensal={comparativoMensal}
               salarios={salarios}
 
               /* 🔍 BUSCA GLOBAL */
