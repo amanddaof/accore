@@ -3,7 +3,7 @@
 ================================ */
 
 .sidebar {
-  width: 58px;
+  width: 63px;
   height: 100vh;
   background: rgba(10, 12, 28, 0.85);
   backdrop-filter: blur(10px);
@@ -16,6 +16,10 @@
   top: 0;
   z-index: 10;
   transition: width 0.25s ease;
+}
+
+.sidebar-icon {
+  width: 50%;
 }
 
 /* quando abre */
@@ -212,4 +216,10 @@
   user-select: none;
   pointer-events: none;
   display: block;
+}
+
+.sidebar-icon {
+  width: 38px;    /* tenta esse tamanho */
+  height: 38px;
+  object-fit: contain;
 }
