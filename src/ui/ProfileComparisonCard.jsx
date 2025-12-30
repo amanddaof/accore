@@ -1,5 +1,5 @@
 import { money } from "../utils/money";
-import { formatMes } from "../utils/formatMes"; // ⬅️ usa função de formatação
+import { formatMes } from "../utils/formatMes";
 import "./ProfileComparisonCard.css";
 
 export default function ProfileComparisonCard({ mensal, profile }) {
