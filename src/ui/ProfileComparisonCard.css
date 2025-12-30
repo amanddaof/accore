@@ -1,0 +1,69 @@
+.pcard {
+  padding: 6px 0 10px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.pcard-title {
+  display: block;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+/* barra divisória */
+.pcard-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 4px 0 10px;
+}
+
+/* linhas principais */
+.pcard-line {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;          /* distância controlada */
+  margin-bottom: 3px;
+}
+
+.pcard-line span {
+  min-width: 70px;    /* rótulo mais enxuto */
+  opacity: .9;
+}
+
+.pcard-valor {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* seta integrada visualmente */
+.pcard-seta {
+  font-size: 14px;
+  margin-left: 6px;
+  font-weight: 700;
+}
+.pcard-seta.mais { color: #ff6f6f; }
+.pcard-seta.menos { color: #8aff8a; }
+
+/* resultado final */
+.pcard-resultado {
+  margin-top: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pcard-resultado strong {
+  font-weight: 700;
+}
+
+.pcard-resultado .mais { color: #ff6f6f; }
+.pcard-resultado .menos { color: #8aff8a; }
+.pcard-resultado .igual { color: #e0e0e0; }
+
+.pcard-legenda {
+  opacity: 0.8;
+}
