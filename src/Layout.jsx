@@ -26,7 +26,8 @@ export default function Layout({
   transactions,
   reservations,
   bills,
-  loans
+  loans,
+  comparativoMensal
 }) {
   const [openCards, setOpenCards] = useState(false);
   const [openExterno, setOpenExterno] = useState(false);
@@ -65,20 +66,22 @@ export default function Layout({
   }, [profile, sobraIndividualMes]);
 
   // =====================================================
-  // COMPARATIVO — card do perfil
-  // =====================================================
-  const comparativoCard = useMemo(() => {
-    if (!profile || !mensal || Object.keys(mensal).length === 0) return null;
+// COMPARATIVO — card do perfil (corrigido)
+// =====================================================
+const comparativoCard = useMemo(() => {
+  // agora valida comparativoMensal em vez de mensal
+  if (!profile || !comparativoMensal || Object.keys(comparativoMensal).length === 0)
+    return null;
 
-    return (
-      <ProfileComparisonCard
-        mes={mes}
-        mensal={mensal}
-        salarios={salarios}
-        profile={profile}
-      />
-    );
-  }, [profile, mes, mensal, salarios]);
+  return (
+    <ProfileComparisonCard
+      mes={mes}
+      mensal={comparativoMensal}   // <-- aqui é o ajuste que faz o mês anterior aparecer
+      salarios={salarios}
+      profile={profile}
+    />
+  );
+}, [profile, mes, comparativoMensal, salarios]);
 
   // =====================================================
   // BUSCA GLOBAL
