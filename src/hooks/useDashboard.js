@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { processarReservasPendentes } from "../services/reservations.processor";
-import { compararMediaMeses } from "../calculations/monthComparisonAverage";
 import { compararPeriodos } from "../calculations/monthComparisonPeriods";
 
 import {
@@ -47,7 +46,7 @@ function mesAnteriorISO(mes) {
 }
 
 /* ======================================================
-   🔑 SALÁRIO VIGENTE NO MÊS (ÚNICA CORREÇÃO REAL)
+   🔑 SALÁRIO VIGENTE NO MÊS
 ====================================================== */
 function salarioNoMes(historico, pessoa, mesISO) {
   if (!historico?.length || !mesISO) return null;
@@ -178,7 +177,7 @@ export function useDashboard() {
   }, [mesAnterior, dados]);
 
   /* ======================================================
-     COMPARATIVOS
+     🟢 COMPARATIVO INDIVIDUAL — CORRIGIDO
   ====================================================== */
   const comparativoMensal = useMemo(() => {
     if (!mes || !mesAnterior) return null;
@@ -187,12 +186,36 @@ export function useDashboard() {
     const totalAnterior = calcularTotalMensal(mesAnterior, dados);
     const valor = totalAtual - totalAnterior;
 
+    // corrigido — agora convertemos array para objeto com chave amanda/celso
+    const [baseAmandaAtual, baseCelsoAtual] = calcularGastosPorPessoa(mes, dados);
+    const [baseAmandaAnterior, baseCelsoAnterior] = calcularGastosPorPessoa(mesAnterior, dados);
+
+    const amandaAtual = baseAmandaAtual?.total ?? 0;
+    const amandaAnterior = baseAmandaAnterior?.total ?? 0;
+
+    const celsoAtual = baseCelsoAtual?.total ?? 0;
+    const celsoAnterior = baseCelsoAnterior?.total ?? 0;
+
     return {
       mesAtual: { label: mes, total: totalAtual },
       mesAnterior: { label: mesAnterior, total: totalAnterior },
       variacao: {
         valor,
         percentual: totalAnterior === 0 ? 0 : (valor / totalAnterior) * 100
+      },
+
+      // ⭐ o formato agora bate com ProfileComparisonCard
+      porPessoa: {
+        amanda: {
+          atual: { total: amandaAtual },
+          anterior: { total: amandaAnterior },
+          valor: amandaAtual - amandaAnterior
+        },
+        celso: {
+          atual: { total: celsoAtual },
+          anterior: { total: celsoAnterior },
+          valor: celsoAtual - celsoAnterior
+        }
       }
     };
   }, [mes, mesAnterior, dados]);
@@ -208,7 +231,7 @@ export function useDashboard() {
   );
 
   /* ======================================================
-     DÍVIDAS (RESTAURADO)
+     DÍVIDAS
   ====================================================== */
   const dividas = useMemo(
     () => calcularDividasMes(mes, dados),
@@ -263,7 +286,7 @@ export function useDashboard() {
   );
 
   /* ======================================================
-     SALÁRIOS (CORRIGIDO)
+     SALÁRIOS
   ====================================================== */
   const salarios = useMemo(() => {
     if (!salaryHistory.length) return null;
@@ -288,7 +311,7 @@ export function useDashboard() {
   }, [salaryHistory, mensal, mes]);
 
   /* ======================================================
-     EXPORT COMPLETO (NADA QUEBRADO)
+     EXPORT
   ====================================================== */
   return {
     loading,
