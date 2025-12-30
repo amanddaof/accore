@@ -111,7 +111,7 @@ const comparativoCard = useMemo(() => {
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", marginLeft: "58px" }}>
         <Header
           mes={mes}
           onMesChange={setMes}
