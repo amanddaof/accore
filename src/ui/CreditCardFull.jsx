@@ -1,4 +1,9 @@
+// =============================
+//   CREDIT CARD FULL — PREMIUM
+// =============================
 import { useState } from "react";
+import "./CardsDrawer.css";
+import { money } from "../utils/money";
 
 function getBankClass(card = {}) {
   const texto = `${card.banco || ""} ${card.nome || ""}`.toLowerCase();
@@ -10,6 +15,31 @@ function getBankClass(card = {}) {
   return "credit-default";
 }
 
+const bankLogo = {
+  nubank: "/logo-nu.png",
+  si: "/logo-si.png",
+  sicredi: "/logo-si.png",
+  bb: "/logo-bb.png",
+  brasil: "/logo-bb.png"
+};
+
+function getLogo(card = {}) {
+  const texto = `${card.banco || ""} ${card.nome || ""}`.toLowerCase();
+
+  if (texto.includes("nu")) return bankLogo.nubank;
+  if (texto.includes("si") || texto.includes("sicredi")) return bankLogo.sicredi;
+  if (texto.includes("bb") || texto.includes("brasil")) return bankLogo.bb;
+
+  return null;
+}
+
+function getOwner(card = {}) {
+  const nome = `${card.nome || ""}`.toLowerCase();
+  if (nome.includes("amanda")) return "Amanda";
+  if (nome.includes("celso")) return "Celso";
+  return "";
+}
+
 export default function CreditCardFull({
   card,
   transactions = [],
@@ -17,14 +47,12 @@ export default function CreditCardFull({
   onNext,
   onPrev
 }) {
-	console.log("CLASSES DO CARTÃO:", getBankClass(card));
-console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
-
-
   const bankClass = getBankClass(card);
+  const logo = getLogo(card);
+  const owner = getOwner(card);
+
   const limite = Number(card.limite || 0);
 
-  // FATURA DO MÊS (pendente + Ambos em dobro)
   const fatura = transactions
     .filter(t => (t.status || "").toLowerCase() === "pendente")
     .reduce((sum, t) => {
@@ -35,7 +63,6 @@ console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
       return sum + v * multiplicador;
     }, 0);
 
-  // LIMITE USADO GLOBAL (para disponível) – aqui NÃO duplica Ambos
   const usadoGlobal = pendentesGlobais.reduce((sum, t) => {
     const v = Number(t.valor);
     if (isNaN(v)) return sum;
@@ -45,12 +72,10 @@ console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
   const disponivel = Math.max(limite - usadoGlobal, 0);
   const pct = limite ? Math.round((usadoGlobal / limite) * 100) : 0;
 
-  // POR PESSOA (Amanda / Celso), só mês atual
   const porPessoa = [
     { nome: "Amanda", chave: "amanda" },
     { nome: "Celso", chave: "celso" }
   ].map(p => {
-
     const total = transactions
       .filter(t => (t.status || "").toLowerCase() === "pendente")
       .reduce((sum, t) => {
@@ -58,17 +83,15 @@ console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
         if (isNaN(v)) return sum;
 
         const quem = (t.quem || "").toLowerCase();
-
         if (quem === p.chave) return sum + v;
         if (quem === "ambos") return sum + v;
-
         return sum;
       }, 0);
 
     return { nome: p.nome, valor: total };
   });
 
-  // 🔹 Swipe / arrastar
+  // swipe — não alterado
   const [startX, setStartX] = useState(null);
   const SWIPE_MIN = 40;
 
@@ -81,8 +104,8 @@ console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
     const endX = e.changedTouches[0].clientX;
     const delta = endX - startX;
 
-    if (delta < -SWIPE_MIN && onNext) onNext();   // arrastou para esquerda → próximo
-    if (delta > SWIPE_MIN && onPrev) onPrev();    // arrastou para direita → anterior
+    if (delta < -SWIPE_MIN && onNext) onNext();
+    if (delta > SWIPE_MIN && onPrev) onPrev();
 
     setStartX(null);
   }
@@ -112,34 +135,51 @@ console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
       onMouseUp={handleMouseUp}
     >
 
-      {/* TOPO */}
-      <div className="card-header">
-        <div>
-          <span className="bank">{card.banco || "Banco"}</span>
-          <h2 className="title">{card.nome}</h2>
+      {/* =========================
+          CABEÇALHO PREMIUM
+      ========================= */}
+      <div className="card-header-premium">
+        <div className="card-header-left">
+          {logo && <img src={logo} alt="logo banco" className="bank-logo" />}
+
+          <div className="bank-info">
+            <span className="bank-name">{card.banco}</span>
+            {owner && <span className="bank-owner">{owner}</span>}
+          </div>
         </div>
 
-        <div className="badge">{pct}% usado</div>
+        <div className="usage-badge">
+          {pct}% usado
+        </div>
       </div>
 
-      {/* BARRA */}
-      <div className="limit-bar">
+
+      {/* =========================
+          BARRA DE UTILIZAÇÃO
+      ========================= */}
+      <div className="limit-bar-premium">
         <div className="fill" style={{ width: `${pct}%` }} />
       </div>
 
-      {/* VALORES */}
-      <div className="values-grid">
+
+      {/* =========================
+          VALORES PRINCIPAIS
+      ========================= */}
+      <div className="values-grid-premium">
         <Metric label="Limite" value={limite} />
         <Metric label="Disponível" value={disponivel} />
         <Metric label="Fatura" value={fatura} highlight />
       </div>
 
-      {/* GASTO POR PESSOA */}
-      <div className="people">
+
+      {/* =========================
+          POR PESSOA — AGORA DENTRO
+      ========================= */}
+      <div className="people-premium">
         {porPessoa.map(p => (
-          <div key={p.nome} className="person">
+          <div key={p.nome} className="person-box">
             <span>{p.nome}</span>
-            <strong>R$ {p.valor.toLocaleString("pt-BR")}</strong>
+            <strong>{money(p.valor)}</strong>
           </div>
         ))}
       </div>
@@ -148,12 +188,15 @@ console.log("CLASSE FINAL:", `credit-card-full ${getBankClass(card)}`);
   );
 }
 
-/* BLOQUINHO DE VALOR */
+
+// ==========================
+// BLOCO DE VALOR
+// ==========================
 function Metric({ label, value, highlight }) {
   return (
     <div className={highlight ? "metric highlight" : "metric"}>
-      <span>{label}</span>
-      <strong>R$ {Number(value).toLocaleString("pt-BR")}</strong>
+      <span className="metric-label">{label}</span>
+      <strong className="metric-value">{money(value)}</strong>
     </div>
   );
 }

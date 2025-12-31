@@ -158,7 +158,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
       const numeroParcela = i + 1;
       const dataParcela = addMeses(form.data_real, i);
       const mesParcela = avancarMes(form.mes, i);
-    
+
       inserts.push({
         descricao: form.descricao,
         valor: Number(form.valor),
@@ -206,13 +206,14 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
 
   return (
     <div className="drawer-overlay" onClick={onClose}>
-    <aside className="drawer" onClick={(e) => e.stopPropagation()}>
+      <aside className="drawer" onClick={(e) => e.stopPropagation()}>
         <div className="drawer-header">
           <h2>Cartões</h2>
           <button onClick={onClose}>✕</button>
         </div>
 
         <div className="drawer-content">
+          {/* ===== CARDS ===== */}
           <div className="cards-stack-fm">
             {prevIndex !== null && (
               <motion.div className="card-ghost left">
@@ -249,7 +250,8 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             )}
           </div>
 
-          {/* 🔁 FILTRO DE MÊS — AGORA FUNCIONA */}
+
+          {/* ===== FILTRO DE MÊS — FORA DO CARTÃO ===== */}
           <div className="drawer-filter">
             <button
               onClick={() =>
@@ -282,10 +284,13 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             </button>
           </div>
 
+
+          {/* ===== TOTAL ===== */}
           <div className="drawer-total">
             Total da fatura: <strong>{money(totalFatura)}</strong>
           </div>
 
+          {/* ===== BOTÃO ===== */}
           <button
             className="primary-btn"
             onClick={() => setShowForm(v => !v)}
@@ -293,6 +298,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
             + Nova compra
           </button>
 
+          {/* ===== FORM ===== */}
           {showForm && (
             <form className="purchase-form" onSubmit={salvarCompra}>
               <input
@@ -303,7 +309,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 }
                 required
               />
-          
               <input
                 type="number"
                 step="0.01"
@@ -314,7 +319,6 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 }
                 required
               />
-          
               <input
                 type="date"
                 value={form.data_real}
@@ -323,16 +327,14 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 }
                 required
               />
-          
               <input
-                placeholder="Parcelas (3/10)"
+                placeholder="Parcelas (ex: 3/10)"
                 value={form.parcelas}
                 onChange={e =>
                   setForm({ ...form, parcelas: e.target.value })
                 }
                 required
               />
-          
               <input
                 placeholder="Fatura (ex: Jan/26)"
                 value={form.mes}
@@ -341,7 +343,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 }
                 required
               />
-          
+
               <select
                 value={form.quem}
                 onChange={e =>
@@ -353,7 +355,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 <option>Ambos</option>
                 <option>Terceiros</option>
               </select>
-          
+
               <select
                 value={form.status}
                 onChange={e =>
@@ -363,7 +365,7 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                 <option>Pendente</option>
                 <option>Pago</option>
               </select>
-          
+
               <select
                 value={form.category_id}
                 onChange={e =>
@@ -378,15 +380,16 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
                   </option>
                 ))}
               </select>
-          
+
               <input value={form.origem} disabled />
-          
+
               <button className="primary-btn" type="submit">
                 Salvar compra
               </button>
             </form>
           )}
 
+          {/* ===== EXTRATO ===== */}
           {loading ? (
             <div className="card-transactions empty">Carregando...</div>
           ) : (
@@ -397,6 +400,3 @@ export default function CardsDrawer({ open, onClose, cards = [], mes }) {
     </div>
   );
 }
-
-
-

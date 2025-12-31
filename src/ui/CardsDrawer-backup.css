@@ -1,0 +1,1160 @@
+/* ==============================
+   OVERLAY E DRAWER
+============================== */
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 20;
+}
+
+.drawer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(180deg, #10132e, #07091a);
+  box-shadow: -20px 0 40px rgba(0,0,0,.6);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn .35s ease forwards;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+}
+
+.drawer-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* ==============================
+   CONTEÚDO
+============================== */
+
+.drawer-content {
+  padding: 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ==============================
+   STACK FUNCIONAL SIMPLES
+============================== */
+
+.cards-stack-fm {
+  position: relative;
+  height: 0;              /* não usa mais height fixa */
+  padding-bottom: 260px;  /* reserva espaço para o cartão */
+  margin-bottom: 12px;
+}
+
+/* mantém os cards absolutos ocupando esse espaço */
+.cards-stack-fm > div {
+  position: absolute;
+  inset: 0;
+}
+
+/* CARD PRINCIPAL */
+.cards-stack-fm .card-main {
+  z-index: 3;
+}
+
+/* CARDS DE FUNDO */
+.cards-stack-fm .card-ghost.left {
+  z-index: 1;
+}
+
+.cards-stack-fm .card-ghost.right {
+  z-index: 2;
+}
+
+/* ==============================
+   UI ABAIXO DO CARTÃO
+============================== */
+
+.drawer-filter,
+.drawer-total,
+.primary-btn,
+.purchase-form,
+.card-transactions {
+  position: relative;
+  z-index: 10;
+}
+
+/* ==============================
+   FORMULÁRIO
+============================== */
+
+.purchase-form {
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.purchase-form input,
+.purchase-form select {
+  background: rgba(255,255,255,.1);
+  border: none;
+  padding: 8px;
+  border-radius: 10px;
+  color: white;
+}
+
+/* ==============================
+   BOTÃO
+============================== */
+
+.primary-btn {
+  background: linear-gradient(135deg, #6c63ff, #877dff);
+  border: none;
+  padding: 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+/* ==============================
+   NAV
+============================== */
+
+.cards-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-size: .8rem;
+  margin-bottom: 8px;
+}
+
+.drawer-filter,
+.drawer-total {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ================================
+   🎯 FILTRO DE MÊS - ESTILIZADO
+================================ */
+
+/* ===========================
+   FILTRO DE MÊS (PREMIUM)
+=========================== */
+
+.drawer-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+
+  border-radius: 14px;
+  padding: 6px 10px;
+
+  backdrop-filter: blur(8px);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 6px 14px rgba(0,0,0,.25);
+}
+
+/* TEXTO DO MÊS */
+.drawer-filter strong {
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .4px;
+  color: rgba(255,255,255,.9);
+  user-select: none;
+}
+
+/* BOTÕES DE SETA */
+.drawer-filter button {
+  background: rgba(255,255,255,.08);
+  border: none;
+  border-radius: 999px;
+
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: .85rem;
+  color: white;
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 3px 6px rgba(0,0,0,.3);
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease,
+    filter .15s ease;
+}
+
+.drawer-filter button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.drawer-filter button:active {
+  transform: scale(.92);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.25);
+}
+
+/* ============================
+   INPUTS PREMIUM • FORMULÁRIO
+============================ */
+
+.purchase-form input,
+.purchase-form select {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.03)
+  );
+
+  border-radius: 12px;
+  padding: 11px 14px;
+  border: none;
+
+  color: white;
+  font-size: .85rem;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 4px 10px rgba(0,0,0,.25);
+
+  transition:
+    box-shadow .15s ease,
+    background .15s ease,
+    transform .1s ease;
+}
+
+/* Placeholder elegante */
+.purchase-form input::placeholder {
+  color: rgba(255,255,255,.45);
+}
+
+/* Foco premium */
+.purchase-form input:focus,
+.purchase-form select:focus {
+  outline: none;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.12),
+    rgba(255,255,255,.05)
+  );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.2),
+    0 0 0 2px rgba(140,120,255,.45),
+    0 6px 14px rgba(0,0,0,.35);
+
+  transform: translateY(-1px);
+}
+
+/* Campo desativado */
+.purchase-form input[disabled] {
+  opacity: .6;
+  background: rgba(255,255,255,.04);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* SELECT */
+.purchase-form select {
+  cursor: pointer;
+}
+
+/* Botão do formulário */
+.purchase-form button {
+  margin-top: 6px;
+
+  background: linear-gradient(135deg, #5f6cff, #7c86ff);
+  color: white;
+
+  border-radius: 999px;
+  border: none;
+  padding: 12px;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(95,108,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+
+  transition:
+    transform .15s ease,
+    filter .15s ease,
+    box-shadow .15s ease;
+}
+
+.purchase-form button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.purchase-form button:active {
+  transform: scale(.96);
+}
+
+/* ================================
+   EXTRATO FINTECH • PREMIUM
+================================ */
+
+.card-transactions {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* CADA LINHA */
+.history-row {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.03),
+    rgba(255,255,255,.01)
+  );
+  
+  border-radius: 14px;
+  padding: 12px 14px;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    0 4px 12px rgba(0,0,0,.25);
+
+  transition:
+    background .15s ease,
+    transform .12s ease,
+    box-shadow .15s ease;
+}
+
+/* HOVER */
+.history-row:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 8px 18px rgba(0,0,0,.35);
+}
+
+/* COLUNA DA DESCRIÇÃO */
+.history-desc {
+  display: grid;
+  gap: 4px;
+}
+
+.history-desc .title {
+  font-size: .85rem;
+  font-weight: 600;
+  opacity: .95;
+}
+
+.history-desc .sub {
+  font-size: .7rem;
+  opacity: .5;
+}
+
+/* VALOR */
+.amount {
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+/* CORES FINAS */
+.amount.success {
+  color: #2dd4bf;
+}
+
+.amount.danger {
+  color: #fb7185;
+}
+
+/* LINHAS MAIS "AREJADAS" */
+.card-transactions > * {
+  margin-bottom: 3px;
+}
+
+/* PASSAGEM MAIS SUAVE AO SCROLL */
+.card-transactions {
+  scroll-behavior: smooth;
+}
+
+
+/* quando abre as opções */
+select option {
+  background: #0f1333;   /* fundo escuro */
+  color: #ffffff;        /* texto claro */
+}
+
+/* ===========================
+   CAMPOS PREMIUM (INPUTS + SELECT)
+=========================== */
+
+.purchase-form input,
+.purchase-form select {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: .85rem;
+  color: #f1f1ff;
+  transition: 
+    border .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
+}
+
+/* placeholder elegante */
+.purchase-form input::placeholder {
+  color: rgba(180,180,220,.45);
+  font-size: .78rem;
+}
+
+/* foco premium */
+.purchase-form input:focus,
+.purchase-form select:focus {
+  outline: none;
+  border-color: rgba(130,110,255,.7);
+  box-shadow: 0 0 0 2px rgba(120,100,255,.25);
+  background: rgba(255,255,255,.09);
+}
+
+/* dropdown dark (select) */
+.purchase-form select {
+  appearance: none;
+  background-image:
+    linear-gradient(135deg, transparent 50%, #aaa 50%),
+    linear-gradient(225deg, transparent 50%, #aaa 50%),
+    linear-gradient(to right, rgba(255,255,255,.15), rgba(255,255,255,.15));
+  background-position:
+    calc(100% - 18px) calc(50% - 2px),
+    calc(100% - 13px) calc(50% - 2px),
+    calc(100% - 42px) 50%;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1px 20px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+/* abrir lista mais escura */
+.purchase-form select option {
+  background: #101330;
+  color: #f5f6ff;
+}
+
+/* hover sutil */
+.purchase-form input:hover,
+.purchase-form select:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.mark-month-btn {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  transition: .2s ease;
+  margin-bottom: 8px;
+}
+
+.mark-month-btn:hover {
+  transform: scale(1.03);
+  opacity: .9;
+}
+
+/* ============================
+   RESERVAS — MÊS AO LADO
+============================ */
+
+.reserva-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.reserve-month {
+  font-weight: 600;
+  font-size: .9rem;
+  min-width: 60px;
+  color: rgba(255,255,255,.85);
+}
+
+/* topo */
+.card-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* logo */
+.bank-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* textos */
+.bank-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.bank-name {
+  font-size: .9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+}
+
+.bank-owner {
+  font-size: .75rem;
+  opacity: .7;
+  margin-top: 2px;
+}
+
+/* badge */
+.usage-badge {
+  background: rgba(255,255,255,.15);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+/* barra maior */
+.limit-bar-premium {
+  height: 6px;
+  background: rgba(255,255,255,.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.limit-bar-premium .fill {
+  height: 100%;
+  background: linear-gradient(90deg,#7c6bff,#c46bff);
+  border-radius: 999px;
+}
+
+/* valores */
+.values-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.metric-label {
+  font-size: .75rem;
+  opacity: .6;
+  letter-spacing: .3px;
+}
+
+.metric-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.metric.highlight .metric-value {
+  color: #ffffff;
+}
+
+/* por pessoa */
+.people-premium {
+  display: flex;
+  gap: 12px;
+}
+
+.person-box {
+  background: rgba(255,255,255,.06);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: .85rem;
+}
+
+/* ============================
+   CARTÃO PREMIUM – ESTRUTURA
+============================ */
+
+/* posicionamento dos valores por pessoa */
+.people-premium {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  padding-bottom: 6px;
+}
+
+.person-box {
+  background: rgba(255, 255, 255, .10);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: .85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    0 4px 14px rgba(0,0,0,.25);
+}
+
+/* espaçamento refinado dentro do cartão */
+.card-header-premium {
+  margin-bottom: 18px;
+}
+
+.values-grid-premium {
+  margin-top: 2px;
+  margin-bottom: 12px;
+}
+
+.people-premium {
+  margin-top: 4px;
+}
+
+.people-premium {
+  display: flex;
+  gap: 14px;
+  padding: 8px 0 6px;
+  transform: translateY(-6px); /* move suavemente pra dentro */
+}
+
+/* ============================
+   CORES PREMIUM POR BANCO
+============================ */
+
+/* ===========================================
+   BANCO DO BRASIL — premium + identidade azul
+   =========================================== */
+
+/* FUNDO DO CARTÃO (ouro bonito e menos “amarelo puro”) */
+.credit-card-full.credit-bb {
+  background: linear-gradient(
+    135deg,
+    #f9d548 0%,   /* amarelo claro */
+    #d6a530 45%,  /* dourado médio */
+    #b78519 100%  /* dourado escuro */
+  );
+}
+
+/* COR DE TEXTO PARA GARANTIR LEITURA */
+.credit-card-full.credit-bb .metric-value,
+.credit-card-full.credit-bb .metric-label,
+.credit-card-full.credit-bb .bank-name,
+.credit-card-full.credit-bb .bank-owner {
+  color: rgba(255,255,255,.95);
+}
+
+/* BADGE */
+.credit-card-full.credit-bb .usage-badge {
+  background: rgba(255,255,255,.22);
+  color: white;
+}
+
+/* BARRA — FUNDO SUTIL */
+.credit-card-full.credit-bb .limit-bar-premium {
+  background: rgba(255,255,255,.22);
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 6px 0 16px;
+}
+
+/* BARRA — PREENCHIDO (toque azul identidade BB) */
+.credit-card-full.credit-bb .limit-bar-premium .fill {
+  background: linear-gradient(
+    90deg,
+    #003a8c 0%,   /* azul BB escuro */
+    #004fad 50%,
+    #0066d4 100%  /* azul BB claro */
+  );
+}
+
+/* MÉTRICA EM DESTAQUE — azul BB translúcido */
+.credit-card-full.credit-bb .metric.highlight {
+  background: rgba(0, 74, 164, .22); /* azul BB transparente */
+  backdrop-filter: blur(4px);
+}
+
+/* BLOCOS AMANDA / CELSO — dourado degradê premium */
+.credit-card-full.credit-bb .person-box {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 224, 140, .32), /* mais claro */
+    rgba(191, 145, 37, .38)   /* mais escuro */
+  );
+  backdrop-filter: blur(6px);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.15),
+    0 6px 18px rgba(0,0,0,.25);
+  color: rgba(255,255,255,.96);
+}
+
+/* NAVEGAÇÃO DO SLIDER — deixa combinando */
+.credit-card-full.credit-bb ~ .cards-nav button {
+  background: rgba(0, 74, 164, .25);
+}
+
+/* remove fundo antigo que estava vazando no highlight */
+.credit-card-full .metric.highlight {
+  background: none !important;
+}
+
+/* ===========================================
+   NUBANK — premium + coerência visual BB style
+   =========================================== */
+
+/* FUNDO DO CARTÃO */
+.credit-card-full.credit-nu {
+  background: linear-gradient(
+    135deg,
+    #8a05be 0%,   /* roxo NU claro */
+    #a407cd 45%,  /* neon médio */
+    #5E02A6 100%  /* roxo escuro */
+  );
+  color: #fff;
+}
+
+/* BADGE */
+.credit-card-full.credit-nu .usage-badge {
+  background: rgba(255,255,255,.22);
+  color: white;
+}
+
+/* BARRA — FUNDO */
+.credit-card-full.credit-nu .limit-bar-premium {
+  background: rgba(255,255,255,.22);
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 6px 0 16px;
+}
+
+/* BARRA — PREENCHIDO */
+.credit-card-full.credit-nu .limit-bar-premium .fill {
+  background: linear-gradient(
+    90deg,
+    #4f008a 0%,
+    #6d02b7 60%,
+    #8a05be 100%
+  );
+}
+
+/* MÉTRICA EM DESTAQUE — roxo translúcido premium */
+.credit-card-full.credit-nu .metric.highlight {
+  background: rgba(97, 5, 139, .22);
+  backdrop-filter: blur(4px);
+}
+
+/* CHIPS AMANDA / CELSO — roxo degradê translúcido */
+.credit-card-full.credit-nu .person-box {
+  background: linear-gradient(
+    135deg,
+    rgba(168, 89, 214, .28), /* claro */
+    rgba(112, 37, 155, .38)  /* escuro */
+  );
+  backdrop-filter: blur(6px);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    0 6px 18px rgba(0,0,0,.25);
+  color: rgba(255,255,255,.96);
+}
+
+/* ===========================================
+   SICREDI — premium + coerência visual BB style
+   =========================================== */
+
+/* FUNDO DO CARTÃO */
+.credit-card-full.credit-si {
+  background: linear-gradient(
+    135deg,
+    #79d14c 0%,   /* verde claro */
+    #4fa933 45%,  /* verde médio */
+    #2f6f1d 100%  /* verde escuro */
+  );
+  color: #fff;
+}
+
+/* BADGE */
+.credit-card-full.credit-si .usage-badge {
+  background: rgba(255,255,255,.22);
+  color: white;
+}
+
+/* BARRA — FUNDO */
+.credit-card-full.credit-si .limit-bar-premium {
+  background: rgba(255,255,255,.22);
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 6px 0 16px;
+}
+
+/* BARRA — PREENCHIDO */
+.credit-card-full.credit-si .limit-bar-premium .fill {
+  background: linear-gradient(
+    90deg,
+    #245b15 0%,
+    #2f7d1b 50%,
+    #49a92c 100%
+  );
+}
+
+/* MÉTRICA EM DESTAQUE — verde translúcido premium */
+.credit-card-full.credit-si .metric.highlight {
+  background: rgba(42, 141, 43, .22);
+  backdrop-filter: blur(4px);
+}
+
+/* CHIPS AMANDA / CELSO — verde degradê translúcido */
+.credit-card-full.credit-si .person-box {
+  background: linear-gradient(
+    135deg,
+    rgba(144, 220, 107, .28), /* claro */
+    rgba(60, 122, 35, .38)    /* escuro */
+  );
+  backdrop-filter: blur(6px);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    0 6px 18px rgba(0,0,0,.25);
+  color: rgba(255,255,255,.96);
+}
+
+/* fallback */
+.credit-card-full.credit-default {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+  color: white;
+}
+
+/* ============================
+   CABEÇALHO
+============================ */
+
+.card-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bank-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.bank-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.bank-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: .9;
+}
+
+.bank-owner {
+  font-size: .80rem;
+  opacity: .6;
+  margin-top: 2px;
+}
+
+.usage-badge {
+  background: rgba(255,255,255,.15);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+/* ============================
+   BARRA DE USO
+============================ */
+
+.limit-bar-premium {
+  height: 6px;
+  background: rgba(255,255,255,.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.limit-bar-premium .fill {
+  height: 100%;
+  background: linear-gradient(90deg,#7c6bff,#c46bff);
+  border-radius: 999px;
+}
+
+/* ============================
+   GRID DE VALORES PRINCIPAIS
+============================ */
+
+.values-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-label {
+  font-size: .75rem;
+  opacity: .6;
+}
+
+.metric-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ============================
+   VALORES POR PESSOA
+============================ */
+
+.people-premium {
+  display: flex;
+  gap: 14px;
+}
+
+.person-box {
+  background: rgba(255,255,255,.06);
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: .85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.person-box strong {
+  font-size: .95rem;
+}
+
+/* ==== ajuste para aproximar os chips da área principal ==== */
+
+/* reduz a distância entre grid e chips */
+.people-premium {
+  margin-top: -4px;       /* sobe */
+  padding-bottom: 10px;   /* respiro antes do radius */
+}
+
+/* dá mais fundo para os chips serem vistos melhor */
+.person-box {
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(10px);
+}
+
+/* deixa os chips visualmente alinhados com o conteúdo */
+.credit-card-full {
+  padding-bottom: 24px;   /* antes estava pequeno */
+}
+
+.credit-card-full {
+  margin-bottom: 42px; /* empurra o card pra cima e o nav desce */
+}
+
+/* garantir grid responsivo */
+.people-premium {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* duas colunas iguais */
+  gap: 14px;
+  width: 100%;
+}
+
+/* chips do mesmo tamanho e alinhados */
+.person-box {
+  width: 100%;
+  min-height: 70px; /* para padronizar altura */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px;
+  text-align: center;
+}
+
+/* nome e valor alinhados */
+.person-box span,
+.person-box strong {
+  display: block;
+}
+
+/* ===============================
+   CARTÃO PREMIUM — BLOCO ÚNICO
+   =============================== */
+
+.credit-card-full {
+  width: 100%;
+  border-radius: 26px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.35),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* brilho premium sutil */
+.credit-card-full::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,.00) 0%,
+    rgba(255,255,255,.14) 50%,
+    rgba(255,255,255,.00) 100%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* ======== RESTAURA ESPAÇAMENTO DO CARTÃO COMO ERA ======== */
+
+.credit-card-full {
+  padding: 20px 24px !important;   /* volta ao original */
+  min-height: 290px !important;    /* altura que não empurra nada */
+}
+
+/* espaço menor entre partes internas */
+.values-grid-premium {
+  margin-top: 0 !important;
+  margin-bottom: 10px !important;
+}
+
+/* reposiciona os chips sem empurrar tudo */
+.people-premium {
+  margin-top: 0 !important;
+  padding: 4px 0 !important;
+}
+
+/* === CHIPS POR PESSOA — largura total e alinhados === */
+
+/* garante que ocupem toda a largura disponível em 2 colunas */
+.people-premium {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr; /* duas colunas iguais */
+  gap: 14px;
+  width: 100%;
+  margin-top: 0 !important;
+  padding: 0 2px 4px !important; /* encosta nos cantos sem colar demais */
+}
+
+/* cada chip ocupa sua coluna inteira */
+.person-box {
+  width: 100% !important;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px;
+  text-align: center;
+  border-radius: 18px;
+}
+
+/* nome + valor centralizados verticalmente */
+.person-box span,
+.person-box strong {
+  display: block;
+  line-height: 1.25;
+}
+
+/* espaço entre os chips e a navegação */
+.credit-card-full .people-premium {
+  margin-bottom: 16px;   /* respiro */
+}
+
+/* garante que a navegação fique colada logo abaixo do cartão */
+.cards-nav {
+  margin-top: -4px;       /* opcional: aproxima um pouco */
+}
+
+/* garante espaço interno após os chips */
+.credit-card-full {
+  padding-bottom: 32px !important;
+}
+
+/* remove o translateY que está puxando os chips pra cima */
+.people-premium {
+  transform: none !important;
+}
+
+/* evita que a barra de navegação “entre” no cartão */
+.cards-nav {
+  margin-top: 6px !important;
+}
+
+.cards-nav {
+  margin-top: 24px !important;
+}

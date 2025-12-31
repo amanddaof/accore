@@ -180,15 +180,23 @@ useEffect(() => {
             <button onClick={() => setMesFiltro(m => proximoMes(m,1))}>▶</button>
           </div>
 
-          {/* TOTAL */}
-          <div className="drawer-total">
-            Total externo: <strong>{money(total)}</strong>
-          </div>
+          {/* TOTAL EXTERNO */}
+			<div className="drawer-total total-externo">
+			  <span>Total externo</span>
+			  <strong>{money(total)}</strong>
+			</div>
 
-          <div className="drawer-total" style={{ justifyContent: "space-around" }}>
-            <span>Amanda: <strong>{money(porPessoa.amanda)}</strong></span>
-            <span>Celso: <strong>{money(porPessoa.celso)}</strong></span>
-          </div>
+			{/* POR PESSOA */}
+			<div className="drawer-total total-por-pessoa">
+			  <div>
+				<span>Amanda</span>
+				<strong>{money(porPessoa.amanda)}</strong>
+			  </div>
+			  <div>
+				<span>Celso</span>
+				<strong>{money(porPessoa.celso)}</strong>
+			  </div>
+			</div>
 
           <button
             className="mark-month-btn"

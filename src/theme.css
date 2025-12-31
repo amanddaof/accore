@@ -1,20 +1,18 @@
 /* ==============================
    ACCORE • THEME PRINCIPAL
 ================================ */
+
 html, body {
   max-width: 100%;
   overflow-x: hidden;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html, body {
   margin: 0;
   background: radial-gradient(1200px 600px at 10% 10%, #1a1d3a 0%, #0b0e25 35%, #06081b 70%);
   color: #e8e9f3;
   font-family: "Inter", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* ======= VARIÁVEIS ======= */
@@ -33,7 +31,7 @@ html, body {
 }
 
 /* FUNDO DECORATIVO */
-body::before{
+body::before {
   content:"";
   position:fixed;
   inset:0;
@@ -43,6 +41,10 @@ body::before{
     radial-gradient(500px 290px at 10% 60%, rgba(255,140,95,.06), transparent 45%);
 }
 
+/* ==============================
+   ESTRUTURA
+============================== */
+
 .app-container {
   max-width: 100%;
   margin: 0 auto;
@@ -51,6 +53,7 @@ body::before{
   gap: 20px;
 }
 
+/* VIDRO */
 .glass {
   background: linear-gradient(180deg, rgba(24,26,64,.88), rgba(14,16,48,.88));
   backdrop-filter: blur(16px);
@@ -66,10 +69,15 @@ body::before{
   opacity: .8;
 }
 
+/* ==============================
+   ELEMENTOS
+============================== */
+
 button {
   cursor: pointer;
 }
 
+/* LISTAS / HISTÓRICO */
 .history-row {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -101,139 +109,15 @@ button {
   font-weight: 600;
 }
 
-.credit-card-full {
-  position: relative;
-  width: 100%;
-  height: 240px;
-  border-radius: 28px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.08),
-    0 18px 32px rgba(0,0,0,.55);
-}
-
-/* HEADER */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-header .bank {
-  font-size: .7rem;
-  opacity: .8;
-}
-
-.card-header .title {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-/* BADGE */
-.badge {
-  background: rgba(0,0,0,.35);
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: .7rem;
-}
-
-/* BARRA */
-.limit-bar {
-  height: 6px;
-  background: rgba(255,255,255,.3);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.limit-bar .fill {
-  height: 100%;
-  background: white;
-}
-
-/* GRID DOS VALORES */
-.values-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.metric {
-  background: rgba(255,255,255,.08);
-  padding: 10px;
-  border-radius: 14px;
-}
-
-.metric strong {
-  margin-top: 4px;
-  display: block;
-}
-
-.metric.highlight {
-  background: rgba(0,0,0,.25);
-}
-
-/* PESSOAS */
-.people {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.person {
-  background: rgba(0,0,0,.25);
-  border-radius: 14px;
-  padding: 10px;
-  font-size: .75rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-.credit-card-full.credit-nu {
-  background: linear-gradient(135deg, #7c3aed, #5b21b6);
-}
-
-.credit-card-full.credit-bb {
-  background: linear-gradient(135deg, #1e40af, #172554);
-}
-
-.credit-card-full.credit-si {
-  background: linear-gradient(135deg, #119f5e, #2dd4bf);
-}
-
+/* INPUTS & SELECTS */
 input, select {
   background: rgba(255,255,255,.08);
   color: white;
 }
 
-/* NORMALIZAÇÃO FINAL DOS CARTÕES */
-.credit-card-full {
-  width: 100% !important;
-  max-width: 360px !important;   /* trava o tamanho */
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-.limit-bar { 
-  height: 6px !important; 
-}
-
-.values-grid {
-  gap: 10px !important;
-}
-
-.metric,
-.person,
-.badge {
-  border-radius: 14px !important;
-}
-
-/* ===========================
+/* ==============================
    BOTÃO PREMIUM (PRIMARY)
-=========================== */
+============================== */
 
 .primary-btn {
   background: linear-gradient(135deg, #5f6cff, #7a88ff);
@@ -273,33 +157,10 @@ input, select {
   opacity: .95;
 }
 
-.drawer-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+/* ==============================
+   OVERLAY + DRAWER (ATIVOS)
+============================== */
 
-  background: rgba(0, 0, 0, .4); /* se quiser backdrop */
-  z-index: 2000; /* maior que o header */
-}
-
-.drawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  width: 420px;           /* exemplo */
-  height: 100%;
-  background: #0c0e23;    /* seu fundo */
-  border-radius: 18px 0 0 18px;
-
-  /* opcional: transição bonitinha */
-  transition: transform .3s cubic-bezier(.4, 0, .2, 1);
-  transform: translateX(0);
-}
-
-/* OVERLAY */
 .drawer-overlay {
   position: fixed;
   top: 0;
@@ -312,19 +173,17 @@ input, select {
   z-index: 2000;
 }
 
-/* quando aberto — fundo escurece suave */
 .drawer-overlay.open {
   background: rgba(0, 0, 0, .40);
-  backdrop-filter: blur(4px); /* opcional, mas combina com seu estilo */
+  backdrop-filter: blur(4px);
 }
 
-
-/* DRAWER */
+/* DRAWER PRINCIPAL */
 .drawer {
   position: absolute;
   top: 0;
   right: 0;
-  width: 420px;
+  width: 540px;          /* ajuste recomendado */
   height: 100%;
   background: #0c0e23;
   border-radius: 18px 0 0 18px;
@@ -334,10 +193,14 @@ input, select {
   transition: transform .45s cubic-bezier(.17,.84,.44,1);
 }
 
-/* quando aberto */
+/* QUANDO ABERTO */
 .drawer.open {
   transform: translateX(0);
 }
+
+/* ==============================
+   FOOTER
+============================== */
 
 .app-footer {
   width: 100%;
@@ -375,4 +238,6 @@ input, select {
   line-height: 1.38;
 }
 
-
+.cards-nav {
+  margin-top: 24px; /* aumenta esse valor até descolar do card */
+}

@@ -1,5 +1,5 @@
 /* ==============================
-   OVERLAY E DRAWER
+   OVERLAY & DRAWER
 ============================== */
 
 .drawer-overlay {
@@ -14,7 +14,6 @@
   right: 0;
   top: 0;
   height: 100%;
-  width: 420px;
   background: linear-gradient(180deg, #10132e, #07091a);
   box-shadow: -20px 0 40px rgba(0,0,0,.6);
   display: flex;
@@ -25,14 +24,14 @@
 
 @keyframes slideIn {
   from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  to   { transform: translateX(0); }
 }
 
 .drawer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px;
+  padding: 10px;
 }
 
 .drawer-header button {
@@ -56,45 +55,23 @@
 }
 
 /* ==============================
-   STACK FUNCIONAL SIMPLES
+   STACK — CARDS
 ============================== */
 
 .cards-stack-fm {
   position: relative;
-  height: 0;              /* não usa mais height fixa */
-  padding-bottom: 260px;  /* reserva espaço para o cartão */
+  padding-bottom: 260px;
   margin-bottom: 12px;
 }
 
-/* mantém os cards absolutos ocupando esse espaço */
 .cards-stack-fm > div {
   position: absolute;
   inset: 0;
 }
 
-/* CARD PRINCIPAL */
-.cards-stack-fm .card-main {
-  z-index: 3;
-}
-
-/* CARDS DE FUNDO */
-.cards-stack-fm .card-ghost.left {
-  z-index: 1;
-}
-
-.cards-stack-fm .card-ghost.right {
-  z-index: 2;
-}
-
-/* ==============================
-   GARANTE TAMANHO DOS CARTÕES
-============================== */
-
-.credit-card-full {
-  width: 100%;
-  height: 240px;
-  box-sizing: border-box;
-}
+.card-main { z-index: 3; }
+.card-ghost.left  { z-index: 1; }
+.card-ghost.right { z-index: 2; }
 
 /* ==============================
    UI ABAIXO DO CARTÃO
@@ -107,6 +84,67 @@
 .card-transactions {
   position: relative;
   z-index: 10;
+}
+
+/* ==============================
+   FILTRO DE MÊS
+============================== */
+
+.drawer-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border-radius: 14px;
+  padding: 6px 10px;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 6px 14px rgba(0,0,0,.25);
+}
+
+.drawer-filter strong {
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .4px;
+  color: rgba(255,255,255,.9);
+  user-select: none;
+}
+
+.drawer-filter button {
+  background: rgba(255,255,255,.08);
+  border: none;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  color: white;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 3px 6px rgba(0,0,0,.3);
+  transition: transform .15s ease, filter .15s ease;
+}
+
+.drawer-filter button:hover   { transform: scale(1.05); filter: brightness(1.15); }
+.drawer-filter button:active  { transform: scale(.92); }
+
+/* ==============================
+   BOTÃO PRINCIPAL
+============================== */
+
+.primary-btn {
+  background: linear-gradient(135deg, #6c63ff, #877dff);
+  border: none;
+  padding: 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
 }
 
 /* ==============================
@@ -123,205 +161,290 @@
 
 .purchase-form input,
 .purchase-form select {
-  background: rgba(255,255,255,.1);
-  border: none;
-  padding: 8px;
-  border-radius: 10px;
-  color: white;
-}
-
-/* ==============================
-   BOTÃO
-============================== */
-
-.primary-btn {
-  background: linear-gradient(135deg, #6c63ff, #877dff);
-  border: none;
-  padding: 10px;
-  border-radius: 999px;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-}
-
-/* ==============================
-   NAV
-============================== */
-
-.cards-nav {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  font-size: .8rem;
-  margin-bottom: 8px;
-}
-
-.drawer-filter,
-.drawer-total {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ================================
-   🎯 FILTRO DE MÊS - ESTILIZADO
-================================ */
-
-/* ===========================
-   FILTRO DE MÊS (PREMIUM)
-=========================== */
-
-.drawer-filter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,.06),
-    rgba(255,255,255,.02)
-  );
-
-  border-radius: 14px;
-  padding: 6px 10px;
-
-  backdrop-filter: blur(8px);
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.08),
-    0 6px 14px rgba(0,0,0,.25);
-}
-
-/* TEXTO DO MÊS */
-.drawer-filter strong {
-  font-size: .85rem;
-  font-weight: 600;
-  letter-spacing: .4px;
-  color: rgba(255,255,255,.9);
-  user-select: none;
-}
-
-/* BOTÕES DE SETA */
-.drawer-filter button {
-  background: rgba(255,255,255,.08);
-  border: none;
-  border-radius: 999px;
-
-  width: 28px;
-  height: 28px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: .85rem;
-  color: white;
-  cursor: pointer;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.08),
-    0 3px 6px rgba(0,0,0,.3);
-
-  transition:
-    transform .15s ease,
-    box-shadow .15s ease,
-    filter .15s ease;
-}
-
-.drawer-filter button:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-.drawer-filter button:active {
-  transform: scale(.92);
-  box-shadow:
-    inset 0 2px 4px rgba(0,0,0,.25);
-}
-
-/* ============================
-   INPUTS PREMIUM • FORMULÁRIO
-============================ */
-
-.purchase-form input,
-.purchase-form select {
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,.07),
-    rgba(255,255,255,.03)
-  );
-
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
   border-radius: 12px;
   padding: 11px 14px;
-  border: none;
-
-  color: white;
   font-size: .85rem;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.08),
-    0 4px 10px rgba(0,0,0,.25);
-
-  transition:
-    box-shadow .15s ease,
-    background .15s ease,
-    transform .1s ease;
+  color: #f1f1ff;
+  transition: background .15s ease, box-shadow .15s ease;
 }
 
-/* Placeholder elegante */
-.purchase-form input::placeholder {
-  color: rgba(255,255,255,.45);
+.purchase-form input:hover,
+.purchase-form select:hover {
+  background: rgba(255,255,255,.08);
 }
 
-/* Foco premium */
 .purchase-form input:focus,
 .purchase-form select:focus {
   outline: none;
-
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,.12),
-    rgba(255,255,255,.05)
-  );
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.2),
-    0 0 0 2px rgba(140,120,255,.45),
-    0 6px 14px rgba(0,0,0,.35);
-
-  transform: translateY(-1px);
+  border-color: rgba(130,110,255,.7);
+  box-shadow: 0 0 0 2px rgba(120,100,255,.25);
+  background: rgba(255,255,255,.1);
 }
 
-/* Campo desativado */
-.purchase-form input[disabled] {
-  opacity: .6;
-  background: rgba(255,255,255,.04);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.05);
-}
-
-/* SELECT */
-.purchase-form select {
-  cursor: pointer;
-}
-
-/* Botão do formulário */
 .purchase-form button {
   margin-top: 6px;
-
   background: linear-gradient(135deg, #5f6cff, #7c86ff);
   color: white;
-
   border-radius: 999px;
   border: none;
   padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ==============================
+   CARTÃO — BASE
+============================== */
+
+.credit-card-full {
+  width: 100%;
+  border-radius: 26px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden; 
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.35),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* 🔥 CARTÃO — ALTURA AUTOMÁTICA COMO VOCÊ PEDIU */
+
+/* ==============================
+   CABEÇALHO DO CARTÃO
+============================== */
+
+.card-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bank-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.bank-info { display: flex; flex-direction: column; }
+
+.bank-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: .9;
+}
+
+.bank-owner {
+  font-size: .80rem;
+  opacity: .6;
+}
+
+.usage-badge {
+  background: rgba(255,255,255,.2);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+/* ==============================
+   BARRA DE USO
+============================== */
+
+.limit-bar-premium {
+  height: 6px;
+  background: rgba(255,255,255,.22);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.limit-bar-premium .fill {
+  height: 100%;
+  background: linear-gradient(90deg,#7c6bff,#c46bff);
+}
+
+/* ==============================
+   GRID DE VALORES
+============================== */
+
+.values-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+}
+
+.metric-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* ==============================
+   CHIPS — POR PESSOA (GRID 2 colunas)
+============================== */
+
+.people-premium {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 4px 2px 6px;
+}
+
+.person-box {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 18px;
+  text-align: center;
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    0 4px 14px rgba(0,0,0,.25);
+}
+
+/* ==============================
+   CORES POR BANCO
+============================== */
+
+.credit-card-full.credit-bb {
+  background: linear-gradient(135deg,#f9d548,#d6a530 45%,#b78519);
+  color: white;
+}
+.credit-card-full.credit-bb .person-box {
+  background: linear-gradient(135deg,rgba(255,224,140,.32),rgba(191,145,37,.38));
+}
+
+.credit-card-full.credit-nu {
+  background: linear-gradient(135deg,#8a05be,#a407cd 45%,#5E02A6);
+  color: white;
+}
+.credit-card-full.credit-nu .person-box {
+  background: linear-gradient(135deg,rgba(168,89,214,.28),rgba(112,37,155,.38));
+}
+
+.credit-card-full.credit-si {
+  background: linear-gradient(135deg,#79d14c,#4fa933 45%,#2f6f1d);
+  color: white;
+}
+.credit-card-full.credit-si .person-box {
+  background: linear-gradient(135deg,rgba(144,220,107,.28),rgba(60,122,35,.38));
+}
+
+.credit-card-full.credit-default {
+  background: linear-gradient(135deg,#312e81,#1e1b4b);
+  color: white;
+}
+
+/* ==============================
+   EXTRATO
+============================== */
+
+.card-transactions { display: grid; gap: 8px; }
+.history-row {
+  background: linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  transition: background .15s ease, transform .12s ease;
+}
+.history-row:hover {
+  background: linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  transform: translateY(-1px);
+}
+.amount.success { color: #2dd4bf; }
+.amount.danger  { color: #fb7185; }
+
+.values-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px; /* era 14-16, reduz */
+  margin-top: 0;
+  margin-bottom: 6px;
+  text-align: center; /* evita empurrar pros lados */
+}
+
+.metric-label {
+  display: block;
+  margin-bottom: -2px; /* aproxima o rótulo do valor */
+}
+
+.metric-value {
+  display: block;
+  white-space: nowrap; /* impede quebra cortando */
+}
+
+/* ============================
+   BARRA — PREENCHIDO PERSONALIZADO
+============================ */
+
+/* Nubank */
+.credit-card-full.credit-nu .limit-bar-premium .fill {
+  background: linear-gradient(90deg,#9d50f5,#b46bff,#d28aff);
+}
+
+/* Banco do Brasil */
+.credit-card-full.credit-bb .limit-bar-premium .fill {
+  background: linear-gradient(90deg,#003a8c,#0066d4,#4ba3ff);
+}
+
+/* Sicredi */
+.credit-card-full.credit-si .limit-bar-premium .fill {
+  background: linear-gradient(90deg,#276b20,#44a62e,#7bd85c);
+}
+
+/* SCROLL PREMIUM */
+.drawer-content::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+.drawer-content::-webkit-scrollbar-track {
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+}
+
+.drawer-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.15);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.20),
+    0 0 8px rgba(0,0,0,.35);
+  transition: background .2s ease;
+}
+
+.drawer-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,.28);
+}
+
+/* BOTÃO: Marcar mês como pago — estilo verde premium */
+.mark-month-btn {
+  display: block;
+  width: 100%;                /* ocupar toda largura */
+  text-align: center;
+
+  background: linear-gradient(135deg,#22c55e,#15803d);
+  color: white;
+
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
 
   font-weight: 600;
+  font-size: .85rem;
   cursor: pointer;
 
   box-shadow:
-    0 8px 20px rgba(95,108,255,.35),
+    0 8px 20px rgba(34,197,94,.35),
     inset 0 0 0 1px rgba(255,255,255,.12);
 
   transition:
@@ -330,212 +453,149 @@
     box-shadow .15s ease;
 }
 
-.purchase-form button:hover {
+.mark-month-btn:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
 
-.purchase-form button:active {
+.mark-month-btn:active {
   transform: scale(.96);
 }
 
-/* ================================
-   EXTRATO FINTECH • PREMIUM
-================================ */
-
-.card-transactions {
-  display: grid;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-/* CADA LINHA */
-.history-row {
-  background: linear-gradient(
-    145deg,
-    rgba(255,255,255,.03),
-    rgba(255,255,255,.01)
-  );
-  
-  border-radius: 14px;
-  padding: 12px 14px;
-
-  display: grid;
-  grid-template-columns: 1fr auto;
+/* ---- totais externos ---- */
+.total-externo {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.05),
-    0 4px 12px rgba(0,0,0,.25);
-
-  transition:
-    background .15s ease,
-    transform .12s ease,
-    box-shadow .15s ease;
-}
-
-/* HOVER */
-.history-row:hover {
+  padding: 10px 14px;
+  border-radius: 14px;
   background: linear-gradient(
-    145deg,
+    135deg,
     rgba(255,255,255,.06),
-    rgba(255,255,255,.02)
+    rgba(255,255,255,.03)
   );
-
-  transform: translateY(-1px);
 
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.08),
-    0 8px 18px rgba(0,0,0,.35);
-}
+    0 4px 10px rgba(0,0,0,.25);
 
-/* COLUNA DA DESCRIÇÃO */
-.history-desc {
-  display: grid;
-  gap: 4px;
-}
-
-.history-desc .title {
-  font-size: .85rem;
-  font-weight: 600;
-  opacity: .95;
-}
-
-.history-desc .sub {
-  font-size: .7rem;
-  opacity: .5;
-}
-
-/* VALOR */
-.amount {
   font-size: .9rem;
-  font-weight: 600;
-  letter-spacing: .3px;
+  user-select: none;
 }
 
-/* CORES FINAS */
-.amount.success {
-  color: #2dd4bf;
-}
+/* ---- valores por pessoa ---- */
+.total-por-pessoa {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
 
-.amount.danger {
-  color: #fb7185;
-}
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.03),
+    rgba(255,255,255,.015)
+  );
 
-/* LINHAS MAIS "AREJADAS" */
-.card-transactions > * {
-  margin-bottom: 3px;
-}
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    0 3px 8px rgba(0,0,0,.2);
 
-/* PASSAGEM MAIS SUAVE AO SCROLL */
-.card-transactions {
-  scroll-behavior: smooth;
-}
-
-
-/* quando abre as opções */
-select option {
-  background: #0f1333;   /* fundo escuro */
-  color: #ffffff;        /* texto claro */
-}
-
-/* ===========================
-   CAMPOS PREMIUM (INPUTS + SELECT)
-=========================== */
-
-.purchase-form input,
-.purchase-form select {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 12px;
-  padding: 11px 14px;
   font-size: .85rem;
-  color: #f1f1ff;
-  transition: 
-    border .2s ease,
-    box-shadow .2s ease,
-    background .2s ease;
+  user-select: none;
 }
 
-/* placeholder elegante */
-.purchase-form input::placeholder {
-  color: rgba(180,180,220,.45);
-  font-size: .78rem;
+.total-por-pessoa > div {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
 }
 
-/* foco premium */
-.purchase-form input:focus,
-.purchase-form select:focus {
-  outline: none;
-  border-color: rgba(130,110,255,.7);
-  box-shadow: 0 0 0 2px rgba(120,100,255,.25);
-  background: rgba(255,255,255,.09);
-}
-
-/* dropdown dark (select) */
-.purchase-form select {
-  appearance: none;
-  background-image:
-    linear-gradient(135deg, transparent 50%, #aaa 50%),
-    linear-gradient(225deg, transparent 50%, #aaa 50%),
-    linear-gradient(to right, rgba(255,255,255,.15), rgba(255,255,255,.15));
-  background-position:
-    calc(100% - 18px) calc(50% - 2px),
-    calc(100% - 13px) calc(50% - 2px),
-    calc(100% - 42px) 50%;
-  background-size:
-    5px 5px,
-    5px 5px,
-    1px 20px;
-  background-repeat: no-repeat;
-  cursor: pointer;
-}
-
-/* abrir lista mais escura */
-.purchase-form select option {
-  background: #101330;
-  color: #f5f6ff;
-}
-
-/* hover sutil */
-.purchase-form input:hover,
-.purchase-form select:hover {
-  background: rgba(255,255,255,.08);
-}
-
-.mark-month-btn {
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  border: none;
-  color: white;
-  padding: 10px;
-  border-radius: 999px;
-  font-weight: bold;
-  cursor: pointer;
-  text-align: center;
-  transition: .2s ease;
-  margin-bottom: 8px;
-}
-
-.mark-month-btn:hover {
-  transform: scale(1.03);
-  opacity: .9;
-}
-
-/* ============================
-   RESERVAS — MÊS AO LADO
-============================ */
+/* ======== RESERVAS ─ deixar descrição visível ======== */
 
 .reserva-row {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.reserve-month {
-  font-weight: 600;
+.reserva-row .reserve-month {
+  font-size: .8rem;
+  opacity: .7;
+}
+
+.reserva-row .title {
   font-size: .9rem;
-  min-width: 60px;
-  color: rgba(255,255,255,.85);
+  font-weight: 600;
+  color: rgba(255,255,255,.92); /* deixa visível */
+  white-space: normal; /* NÃO corta em uma linha */
 }
 
+.history-row {
+  grid-template-columns: 1fr auto;
+}
 
+.title {
+  color: white !important;
+  font-size: 16px !important;
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* ================================
+   RESERVAS — PREMIUM LOOK
+================================ */
+
+.history-row.reserva-premium {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,.04);
+  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 8px 22px rgba(0,0,0,.38);
+  transition: transform .15s ease, box-shadow .25s ease, background .25s ease;
+}
+
+/* hover suave */
+.history-row.reserva-premium:hover {
+  background: rgba(255,255,255,.08);
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    0 10px 28px rgba(0,0,0,.45);
+}
+
+/* lado esquerdo: data + descrição */
+.reserva-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* data mini e elegante */
+.reserva-info .date {
+  font-size: .78rem;
+  opacity: .55;
+  letter-spacing: .3px;
+}
+
+/* descrição destaque */
+.reserva-info .title {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: .9;
+  letter-spacing: .2px;
+}
+
+/* valor */
+.reserva-amount {
+  font-size: .95rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+  align-self: center;
+}

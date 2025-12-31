@@ -338,21 +338,28 @@ export default function ReservasDrawer({ open, onClose }) {
 }
 
 /* ===============================
-   LINHA
+   LINHA DE RESERVA — PREMIUM
 ================================ */
 
 function ReservaRow({ r, onProcessar }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="history-row" onClick={() => setOpen(v => !v)}>
-      <div className="history-desc reserva-row">
-        <span className="reserve-month">{formatarDataBR(r.data_real)}</span>
-        <span className="title">{r.descricao}</span>
+    <>
+      {/* linha principal */}
+      <div
+        className="history-row reserva-premium"
+        onClick={() => setOpen(o => !o)}
+      >
+        <div className="reserva-info">
+          <span className="date">{formatarDataBR(r.data_real)}</span>
+          <span className="title">{r.descricao}</span>
+        </div>
+
+        <strong className="reserva-amount">{money(r.valor)}</strong>
       </div>
 
-      <strong className="amount">{money(r.valor)}</strong>
-
+      {/* bloco expandido */}
       {open && (
         <div className="txn-details">
           <div><span>Origem</span><strong>{r.origem}</strong></div>
@@ -366,7 +373,6 @@ function ReservaRow({ r, onProcessar }) {
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }
-
