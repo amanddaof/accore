@@ -157,7 +157,7 @@ export default function Cabecalho() {
 
           <button
             className="icone"
-            onClick={() => window.location.reload()}
+            onClick={buscarDados}
           >
             <img src="/icone/atualizar.png" alt="Atualizar" />
           </button>
