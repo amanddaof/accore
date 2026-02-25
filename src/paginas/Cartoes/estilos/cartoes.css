@@ -1,0 +1,637 @@
+.pagina-cartoes {
+  padding: 24px;
+}
+
+/* ========================================
+   GRID
+======================================== */
+
+.grid-cartoes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .grid-cartoes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   CARD BASE
+======================================== */
+
+.cartao-card {
+  border-radius: 22px;
+  padding: 22px;
+  position: relative;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.75),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  backdrop-filter: blur(8px);
+}
+
+.cartao-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.85),
+    inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+/* ========================================
+   DEGRADÊ SUAVE POR BANCO
+======================================== */
+
+.banco-nu {
+  background: linear-gradient(
+    160deg,
+    rgba(25, 18, 60, 0.96),
+    rgba(138, 5, 190, 0.20)
+  );
+}
+
+.banco-bb {
+  background: linear-gradient(
+    160deg,
+    rgba(20, 25, 55, 0.96),
+    rgba(0, 102, 212, 0.20)
+  );
+}
+
+.banco-si {
+  background: linear-gradient(
+    160deg,
+    rgba(20, 35, 30, 0.96),
+    rgba(68, 166, 46, 0.20)
+  );
+}
+
+.banco-default {
+  background: linear-gradient(
+    160deg,
+    rgba(30, 25, 70, 0.96),
+    rgba(75, 85, 200, 0.20)
+  );
+}
+
+/* ========================================
+   TOPO
+======================================== */
+
+.topo-card {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.cartao-card h3 {
+  font-size: .85rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(255,255,255,.08);
+}
+
+.logo-banco {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  opacity: .85;
+}
+
+/* ========================================
+   BADGE
+======================================== */
+
+.percentual-badge {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: .65rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+
+/* ========================================
+   TEXTOS
+======================================== */
+
+.info-label {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.75);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 14px;
+  text-shadow: 0 0 12px rgba(255,255,255,.05);
+}
+
+/* ========================================
+   FATURA BLOCO
+======================================== */
+
+.fatura-bloco {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.04);
+}
+
+/* ========================================
+   PESSOAS
+======================================== */
+.pessoa-item{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pessoas-bloco {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.pessoa-item span {
+  font-size: .6rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.55);
+}
+
+.pessoa-item strong {
+  font-size: .85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ========================================
+   BARRA
+======================================== */
+
+.barra {
+  margin-top: 14px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+
+.barra-fill {
+  height: 100%;
+  transition: width .4s ease;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(255,255,255,.12);
+}
+
+/* ========================================
+   CORES BARRA
+======================================== */
+
+.banco-nu .barra-fill {
+  background: linear-gradient(90deg,#9d50f5,#b46bff);
+}
+
+.banco-bb .barra-fill {
+  background: linear-gradient(90deg,#1e63d6,#4ba3ff);
+}
+
+.banco-si .barra-fill {
+  background: linear-gradient(90deg,#2f6f1d,#7bd85c);
+}
+
+.banco-default .barra-fill {
+  background: linear-gradient(90deg,#8B5CF6,#6B4FEA);
+}
+
+/* ========================================
+   EXPANDIDO
+======================================== */
+
+.expandido-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+}
+
+.botao-voltar {
+  background: none;
+  border: none;
+  color: #8B5CF6;
+  font-size: .85rem;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.expandido-titulo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 25px;
+  color: #F2F3FF;
+  letter-spacing: .04em;
+}
+
+.expandido-resumo {
+  display: flex;
+  gap: 80px;
+  margin-bottom: 40px;
+  padding: 25px 30px;
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    #1A184A,
+    #221F63
+  );
+  box-shadow:
+    0 15px 40px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+.expandido-resumo span {
+  display: block;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.6);
+}
+
+.expandido-resumo strong {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #F2F3FF;
+}
+
+.lista-bloco {
+  margin-bottom: 40px;
+  padding: 25px 25px 10px;
+  border-radius: 18px;
+  background: rgba(26,24,74,.6);
+  backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.lista-bloco h4 {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.6);
+  margin-bottom: 12px;
+}
+
+.linha-transacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 4px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  transition: background .2s ease;
+}
+
+.linha-transacao:hover {
+  background: rgba(139,92,246,.06);
+  border-radius: 10px;
+}
+
+.linha-transacao strong {
+  font-size: .9rem;
+  color: #fff;
+}
+
+.linha-transacao span {
+  font-size: .7rem;
+  color: rgba(255,255,255,.5);
+}
+
+.linha-transacao.pendente div:last-child {
+  color: #8B5CF6;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(139,92,246,.4);
+}
+
+.linha-transacao.paga {
+  opacity: .6;
+}
+
+.lista-bloco.pagas {
+  background: rgba(20,18,54,.5);
+}
+
+.linha-transacao.paga {
+  opacity: .45;
+}
+
+.linha-transacao.paga div:last-child {
+  color: #7D80B3;
+}
+
+.tag-pessoa {
+  font-size: .65rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.tag-pessoa.amanda {
+  background: rgba(245,201,122,.15);
+  color: #F5C97A;
+}
+
+.tag-pessoa.celso {
+  background: rgba(122,162,247,.15);
+  color: #7AA2F7;
+}
+
+.tag-pessoa.ambos {
+  background: rgba(139,92,246,.15);
+  color: #8B5CF6;
+}
+
+.info-esquerda {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.linha-secundaria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.data-compra {
+  font-size: .65rem;
+  letter-spacing: .05em;
+  color: #A7A9D6;
+  background: rgba(255,255,255,.04);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.grupo-dia {
+  margin-bottom: 25px;
+}
+
+.grupo-data {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #8B5CF6;
+  margin-bottom: 10px;
+  padding-left: 4px;
+  text-transform: uppercase;
+}
+
+.lado-direito {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.valor {
+  font-weight: 700;
+  font-size: .95rem;
+  color: #8B5CF6;
+  min-width: 95px;
+  text-align: right;
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.linha-transacao:hover .acoes {
+  opacity: 1;
+}
+
+.acoes img {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  opacity: .65;
+  transition: all .2s ease;
+}
+
+.acoes img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.barra-acoes-topo {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+}
+
+.btn-nova-compra {
+  background: linear-gradient(90deg,#8B5CF6,#6B4FEA);
+  border: none;
+  color: #fff;
+  padding: 10px 18px;
+  font-size: .8rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.btn-nova-compra:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139,92,246,.4);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-box {
+  background: #1A184A;
+  padding: 30px;
+  border-radius: 16px;
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-box input,
+.modal-box select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #221F63;
+  color: #fff;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Base */
+.modal-botoes button {
+  min-width: 90px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  border: none;
+}
+
+/* Cancelar (discreto elegante) */
+.modal-botoes button:first-child {
+  background: transparent;
+  color: #A7A9D6;
+  border: 1px solid rgba(167,169,214,.4);
+}
+
+.modal-botoes button:first-child:hover {
+  background: rgba(167,169,214,.08);
+  color: #F2F3FF;
+  border-color: #A7A9D6;
+}
+
+/* Salvar (protagonista roxo) */
+.modal-botoes button:last-child {
+  background: linear-gradient(90deg,#8B5CF6,#6B4FEA);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(139,92,246,.4);
+}
+
+.modal-botoes button:last-child:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(139,92,246,.6);
+}
+
+.topo-expandido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.acoes-topo {
+  display: flex;
+  gap: 12px;
+}
+
+/* Botão principal */
+.btn-primario {
+  background: linear-gradient(90deg,#8B5CF6,#6B4FEA);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.btn-primario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139,92,246,.5);
+}
+
+/* BOTÃO MARCAR TUDO COMO PAGO - PREMIUM */
+.btn-secundario {
+  background: transparent;
+  border: 1px solid rgba(34,197,94,.6);
+  color: #4ade80;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all .25s ease;
+  box-shadow: 0 0 0 rgba(34,197,94,0);
+}
+
+/* Hover elegante */
+.btn-secundario:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(34,197,94,.15),
+    rgba(22,163,74,.25)
+  );
+  border-color: #4ade80;
+  color: #ffffff;
+  box-shadow: 0 8px 25px rgba(34,197,94,.25);
+  transform: translateY(-2px);
+}
+
+.btn-secundario:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  box-shadow: none;
+  border-color: rgba(34,197,94,.2);
+  color: rgba(34,197,94,.4);
+}
+
+.topo-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.topo-direita {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-banco {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
+}
+
+.percentual-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: .65rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}

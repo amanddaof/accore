@@ -1,0 +1,152 @@
+.pagina-limites {
+  padding: 30px 40px;
+  color: #F2F3FF;
+}
+
+.pagina-limites h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* LISTA */
+
+.lista-limites {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* CARD */
+
+.card-limite {
+  background: #1A184A;
+  padding: 14px 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s ease;
+}
+
+.card-limite:hover {
+  box-shadow: 0 0 0 1px #8B5CF6;
+}
+
+.info-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nome-cartao {
+  font-size: 15px;
+  font-weight: 600;
+  color: #F2F3FF;
+}
+
+.valor-cartao {
+  font-size: 14px;
+  color: #A7A9D6;
+}
+
+/* BOTÃO */
+
+.botao-editar {
+  background: transparent;
+  border: 1px solid #8B5CF6;
+  color: #F2F3FF;
+  padding: 5px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.botao-editar:hover {
+  background: #8B5CF6;
+}
+
+/* MODAL */
+
+.overlay-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-limite {
+  background: #141236;
+  padding: 30px;
+  border-radius: 16px;
+  width: 340px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal-limite h2 {
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-limite label {
+  font-size: 13px;
+  color: #A7A9D6;
+}
+
+.modal-limite input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 22px;
+  background: #1A184A;
+  border: 1px solid #2A2765;
+  border-radius: 8px;
+  color: #F2F3FF;
+  font-size: 14px;
+}
+
+.modal-limite input:focus {
+  outline: none;
+  border: 1px solid #8B5CF6;
+}
+
+/* AÇÕES */
+
+.acoes-modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.botao-primario {
+  background: #8B5CF6;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.botao-primario:hover {
+  background: #6B4FEA;
+}
+
+.botao-secundario {
+  background: transparent;
+  border: none;
+  color: #A7A9D6;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.botao-secundario:hover {
+  color: #F2F3FF;
+}

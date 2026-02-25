@@ -1,0 +1,151 @@
+.pagina-categorias {
+  padding: 30px 40px;
+  color: #F2F3FF;
+}
+
+.topo-categorias {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.botao-primario {
+  background: #8B5CF6;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botao-primario:hover {
+  background: #6B4FEA;
+}
+
+.lista-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-categoria {
+  background: #1A184A;
+  padding: 14px 20px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.card-categoria:hover {
+  box-shadow: 0 0 0 1px #8B5CF6;
+}
+
+.card-categoria.inativa {
+  opacity: .35;
+}
+
+.info-categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cor-categoria {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.nome-categoria {
+  font-weight: 500;
+}
+
+.acoes-categoria {
+  display: flex;
+  gap: 10px;
+}
+
+.botao-editar {
+  background: transparent;
+  border: 1px solid #8B5CF6;
+  color: #F2F3FF;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botao-editar:hover {
+  background: #8B5CF6;
+}
+
+.botao-toggle {
+  background: transparent;
+  border: 1px solid #2A2765;
+  color: #A7A9D6;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botao-toggle:hover {
+  border: 1px solid #8B5CF6;
+  color: #F2F3FF;
+}
+
+/* MODAL */
+
+.overlay-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-categoria {
+  background: #141236;
+  padding: 28px;
+  border-radius: 16px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-categoria input {
+  background: #1A184A;
+  border: 1px solid #2A2765;
+  color: #F2F3FF;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.modal-categoria input:focus {
+  outline: none;
+  border: 1px solid #8B5CF6;
+}
+
+.acoes-modal {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.botao-secundario {
+  background: transparent;
+  border: none;
+  color: #A7A9D6;
+  cursor: pointer;
+}
+
+.botao-secundario:hover {
+  color: #F2F3FF;
+}

@@ -1,0 +1,79 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #1a184a;
+  padding: 28px;
+  border-radius: 18px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #221f63;
+}
+
+.modal h2 {
+  margin: 0 0 8px 0;
+  color: #f2f3ff;
+}
+
+.modal input {
+  background: #141236;
+  border: 1px solid #221f63;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #f2f3ff;
+  font-size: 14px;
+}
+
+.modal input:focus {
+  outline: none;
+  border-color: #8b5cf6;
+}
+
+/* AÇÕES */
+.acoes-modal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* BOTÃO PRIMÁRIO */
+.btn-primario {
+  background: #8b5cf6;
+  border: none;
+  color: #0c0a1f;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-primario:hover {
+  background: #6b4fea;
+}
+
+/* BOTÃO SECUNDÁRIO */
+.btn-secundario {
+  background: transparent;
+  border: 1px solid #221f63;
+  color: #a7a9d6;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-secundario:hover {
+  background: #141236;
+  color: #f2f3ff;
+}

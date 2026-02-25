@@ -1,0 +1,311 @@
+.dashboard-container {
+  background: #0C0A1F;
+  min-height: 100vh;
+  padding: 32px;
+  color: #F2F3FF;
+}
+
+/* ================================
+   GRID PRINCIPAL
+================================ */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ================================
+   CARDS
+================================ */
+
+.card-dashboard {
+  background: #141236;
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 18px;
+  padding: 24px;
+  transition: all .25s ease;
+}
+
+.card-dashboard:hover {
+  border-color: rgba(139,92,246,.4);
+}
+
+/* ================================
+   RESUMO PESSOAS
+================================ */
+
+.card-resumo h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+.resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .95rem;
+}
+
+.resumo-valor {
+  color: #F2F3FF;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sobra-positiva {
+  color: #5EEAD4;
+}
+
+.sobra-negativa {
+  color: #E5484D;
+}
+
+/* ================================
+   SEÇÃO FULL WIDTH
+================================ */
+
+.full-width {
+  grid-column: span 2;
+}
+
+/* ================================
+   AUDITORIA
+================================ */
+
+.auditoria-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.linha-auditoria {
+  display: flex;
+  justify-content: space-between;
+  font-size: .85rem;
+  margin-bottom: 6px;
+  color: #A7A9D6;
+}
+
+/* ================================
+   CORES POR PESSOA
+================================ */
+
+.card-amanda {
+  border-top: 3px solid #F5C97A;
+  box-shadow: 0 0 20px rgba(245,201,122,.08);
+}
+
+.card-celso {
+  border-top: 3px solid #7AA2F7;
+  box-shadow: 0 0 20px rgba(122,162,247,.08);
+}
+
+.nome-amanda {
+  color: #F5C97A;
+}
+
+.nome-celso {
+  color: #7AA2F7;
+}
+
+.card-header-click {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.resumo-expandido {
+  margin-top: 20px;
+  border-top: 1px solid #2B2A55;
+  padding-top: 16px;
+}
+
+.linha-expandida {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .95rem;
+  color: #A7A9D6;
+}
+
+/* =========================
+   SOBRA DESTACADA
+========================= */
+
+.resumo-sobra {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #2B2A55;
+}
+
+.valor-sobra {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.valor-sobra.positivo {
+  color: #5EEAD4; /* Positivo */
+}
+
+.valor-sobra.negativo {
+  color: #E5484D; /* Negativo */
+}
+
+.resumo-expandido {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #2B2A55;
+}
+
+/* ===============================
+   ACERTO - LINHA ÚNICA EXPANSÍVEL
+================================ */
+
+.acerto-linha-unica {
+  grid-column: span 2;
+  margin-top: 14px;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  border-top: 1px solid #2B2A55;
+  border-bottom: 1px solid #2B2A55;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.acerto-linha-unica:hover {
+  background: rgba(139,92,246,.05);
+}
+
+.acerto-texto {
+  color: #A7A9D6;
+}
+
+.acerto-valor {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Cor dinâmica baseada na pessoa */
+
+.valor-amanda {
+  color: #F5C97A;
+}
+
+.valor-celso {
+  color: #7AA2F7;
+}
+
+.acerto-detalhes {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #2B2A55;
+}
+
+/* ================= VISÃO ANUAL ================= */
+
+.visao-anual-header {
+  margin-bottom: 16px;
+}
+
+.visao-anual-tabela {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.linha-anual {
+  border-bottom: 1px solid #2B2A55;
+  padding: 8px 0;
+}
+
+.linha-anual-resumo {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr;
+  cursor: pointer;
+  align-items: center;
+}
+
+.mes-coluna {
+  color: #A7A9D6;
+}
+
+.valor-coluna {
+  text-align: right;
+  font-weight: 600;
+}
+
+.total-coluna {
+  opacity: .7;
+}
+
+.linha-anual-detalhe {
+  margin-top: 10px;
+  padding: 12px;
+  background: rgba(255,255,255,.03);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.positivo {
+  color: #5EEAD4;
+}
+
+.negativo {
+  color: #E5484D;
+}
+
+.linha-anual-cabecalho {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  font-weight: 600;
+  font-size: 13px;
+  opacity: 0.8;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 8px;
+}
+
+.nome-amanda {
+  color: #F5C97A; /* Pessoa 1 */
+}
+
+.nome-celso {
+  color: #7AA2F7; /* Pessoa 2 */
+}
+
+.linha-anual-detalhe {
+  display: flex;
+  gap: 40px;
+  margin-top: 12px;
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+}
+
+.detalhe-bloco {
+  flex: 1;
+}
+
+.detalhe-bloco h4 {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.detalhe-linha {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.detalhe-linha.destaque {
+  margin-top: 6px;
+  font-weight: 600;
+}

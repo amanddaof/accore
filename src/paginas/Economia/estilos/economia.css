@@ -1,0 +1,202 @@
+/* =================================
+   CONTAINER PRINCIPAL
+================================= */
+
+.economia {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* =================================
+   RESUMO DA META
+================================= */
+
+.resumo-meta {
+  background: linear-gradient(180deg, #1A184A, #141236);
+  border: 1px solid #221F63;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.resumo-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resumo-topo h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #F2F3FF;
+}
+
+.resumo-numeros {
+  display: flex;
+  gap: 40px;
+}
+
+.resumo-numeros .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7D80B3;
+}
+
+.resumo-numeros .valor {
+  font-size: 22px;
+  font-weight: 600;
+  color: #F2F3FF;
+}
+
+/* =================================
+   BARRA DE PROGRESSO
+================================= */
+
+.barra-progresso {
+  width: 100%;
+  height: 10px;
+  background: #0C0A1F;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barra-preenchida {
+  height: 100%;
+  background: linear-gradient(90deg, #8B5CF6, #6B4FEA);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.percentual {
+  font-size: 13px;
+  color: #A7A9D6;
+}
+
+/* =================================
+   AÇÕES
+================================= */
+
+.economia-acoes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* =================================
+   LISTA DE MESES
+================================= */
+
+.lista-economia {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item-mes {
+  background: #141236;
+  border: 1px solid #221F63;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s ease;
+}
+
+.item-mes:hover {
+  border-color: #8B5CF6;
+}
+
+.item-mes span {
+  font-size: 15px;
+  color: #F2F3FF;
+}
+
+.item-mes input {
+  background: #0C0A1F;
+  border: 1px solid #221F63;
+  color: #F2F3FF;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.item-mes button {
+  background: #8B5CF6;
+  border: none;
+  color: #F2F3FF;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.status-meta {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.status-meta.positivo {
+  color: #5EEAD4;
+}
+
+.status-meta.negativo {
+  color: #E5484D;
+}
+
+.info-projecao {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #A7A9D6;
+}
+
+.info-ritmo {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #7AA2F7;
+}
+
+.grafico-acumulado {
+  margin-top: 30px;
+  padding: 20px;
+  background: #141236;
+  border-radius: 14px;
+  border: 1px solid #221F63;
+}
+
+.grafico-total {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #A7A9D6;
+}
+
+.valor-editavel {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.valor-editavel:hover {
+  color: #8B5CF6;
+}
+
+.input-edicao {
+  transition: 0.2s ease;
+}
+
+.comparativo-pessoas {
+  display: flex;
+  height: 8px;
+  margin-top: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.barra-amanda {
+  background: #F5C97A;
+}
+
+.barra-celso {
+  background: #7AA2F7;
+}

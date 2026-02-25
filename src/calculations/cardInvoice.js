@@ -1,1 +1,0 @@
-export { calcularMesFatura } from "./cardClosing";

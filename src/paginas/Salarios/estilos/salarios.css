@@ -1,0 +1,147 @@
+.pagina-salarios {
+  padding: 32px;
+}
+
+.cabecalho-salarios {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.cards-salarios {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.card-salario {
+  flex: 1;
+  background: #1a184a;
+  border: 1px solid #221f63;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.card-salario span {
+  font-size: 12px;
+  opacity: .7;
+}
+
+.card-salario strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.card-salario.amanda { border-left: 3px solid #F5C97A; }
+.card-salario.celso  { border-left: 3px solid #7AA2F7; }
+
+.tabela-salarios {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-salarios th {
+  text-align: left;
+  font-size: 12px;
+  opacity: .6;
+  padding: 8px;
+}
+
+.tabela-salarios td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #221f63;
+  cursor: pointer;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.badge.amanda {
+  background: rgba(245,201,122,.15);
+  color: #F5C97A;
+}
+
+.badge.celso {
+  background: rgba(122,162,247,.15);
+  color: #7AA2F7;
+}
+
+/* Modal */
+
+.overlay-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-salario {
+  background: #1a184a;
+  padding: 24px;
+  border-radius: 16px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-salario input,
+.modal-salario select {
+  background: #141236;
+  border: 1px solid #221f63;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+}
+
+.acoes-modal {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-primario {
+  background: #8b5cf6;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: #0c0a1f;
+}
+
+.btn-secundario {
+  background: transparent;
+  border: 1px solid #221f63;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: #a7a9d6;
+}
+
+.btn-secundario.perigo {
+  border-color: #e5484d;
+  color: #e5484d;
+}
+
+.grafico-salarios {
+  margin-bottom: 24px;
+}
+
+.card-grafico {
+  background: #1A184A;
+  border: 1px solid #221F63;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.card-grafico h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  opacity: .6;
+  margin-bottom: 12px;
+}

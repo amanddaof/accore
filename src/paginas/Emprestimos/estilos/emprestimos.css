@@ -1,0 +1,117 @@
+.pagina-emprestimos {
+  padding: 32px;
+}
+
+.cabecalho-emprestimos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.filtro-ano {
+  background: #1a184a;
+  border: 1px solid #221f63;
+  color: #f2f3ff;
+  border-radius: 12px;
+  padding: 6px 12px;
+}
+
+.lista-emprestimos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-emprestimo {
+  background: #1a184a;
+  border: 1px solid #221f63;
+  border-radius: 18px;
+  padding: 20px;
+  transition: .2s ease;
+}
+
+.card-emprestimo:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+.titulo-emprestimo {
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #f2f3ff;
+}
+
+.resumo-emprestimo {
+  background: #141236;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.barra-progresso {
+  height: 8px;
+  width: 100%;
+  background: #0c0a1f;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.barra-preenchida {
+  height: 100%;
+  background: #8b5cf6;
+  transition: width .3s ease;
+}
+
+.dados-resumo {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dados-resumo div {
+  display: flex;
+  flex-direction: column;
+}
+
+.anos-emprestimo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.coluna-ano {
+  background: #141236;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.titulo-ano {
+  text-align: center;
+  margin-bottom: 8px;
+  opacity: .7;
+}
+
+.linha-parcela {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.linha-parcela:hover {
+  background: #1f1b55;
+}
+
+.parcela-paga {
+  opacity: .4;
+  text-decoration: line-through;
+}
+
+.check {
+  color: #5eead4;
+  margin-left: 6px;
+}

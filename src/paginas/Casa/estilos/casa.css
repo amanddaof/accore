@@ -1,0 +1,209 @@
+/* ===============================
+   CONTAINER PRINCIPAL
+=================================*/
+
+.casa {
+  padding: 32px 24px;
+}
+
+.casas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.casas-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #F2F3FF;
+}
+
+.botao-adicionar-conta {
+  background: #8B5CF6;
+  color: #F2F3FF;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.botao-adicionar-conta:hover {
+  background: #6B4FEA;
+  transform: translateY(-1px);
+}
+
+/* ===============================
+   GRID DE COLUNAS
+=================================*/
+
+.casa-colunas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.casa-coluna {
+  background: linear-gradient(180deg, #1A184A, #141236);
+  border: 1px solid #221F63;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.casa-coluna h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #A7A9D6;
+  margin-bottom: 14px;
+}
+
+/* ===============================
+   CARDS
+=================================*/
+
+.bill-card {
+  background: #141236;
+  border: 1px solid #221F63;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: 0.2s ease;
+}
+
+.bill-card:hover {
+  border-color: #8B5CF6;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+.bill-card.futura {
+  border: 1px dashed #8B5CF6;
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.bill-card.pago {
+  background: #111033;
+  border: 1px solid #1A184A;
+  opacity: 0.85;
+}
+
+.bill-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bill-mes {
+  font-size: 13px;
+  color: #A7A9D6;
+}
+
+.bill-status {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.bill-status.pendente {
+  background: rgba(232, 72, 77, 0.15);
+  color: #E5484D;
+}
+
+.bill-status.ok {
+  background: rgba(94, 234, 212, 0.15);
+  color: #5EEAD4;
+}
+
+.bill-valor {
+  font-size: 26px;
+  font-weight: 600;
+  color: #F2F3FF;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bill-valor.pequeno {
+  font-size: 18px;
+  font-weight: 500;
+  color: #A7A9D6;
+}
+
+.bill-valor.editavel {
+  cursor: pointer;
+}
+
+.bill-card.pago .bill-valor {
+  cursor: default;
+}
+
+.edit-icon {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.bill-edit {
+  display: flex;
+  gap: 10px;
+}
+
+.bill-edit input {
+  flex: 1;
+  background: #0C0A1F;
+  border: 1px solid #221F63;
+  color: #F2F3FF;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.bill-edit button {
+  background: #8B5CF6;
+  border: none;
+  color: #F2F3FF;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.bill-pagar {
+  background: transparent;
+  border: none;
+  color: #5EEAD4;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+/* ===============================
+   LISTAS
+=================================*/
+
+.lista-bills {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lista-header {
+  background: transparent;
+  border: none;
+  color: #A7A9D6;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 6px 0;
+  text-align: left;
+  transition: 0.2s;
+}
+
+.lista-header:hover {
+  color: #8B5CF6;
+}

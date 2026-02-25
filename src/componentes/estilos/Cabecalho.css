@@ -1,0 +1,176 @@
+/* HEADER BASE */
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: linear-gradient(180deg, #141236 0%, #100E2A 100%);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 -1px 0 #221F63;
+}
+
+.cabecalho-conteudo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+}
+
+/* ESQUERDA */
+.cabecalho-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.logo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.logo-img {
+  height: 28px;
+  display: block;
+}
+
+/* MENU */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.menu-trigger {
+  background: none;
+  border: none;
+  color: #A7A9D6;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0 0 6px 0;
+  line-height: 1;
+}
+
+.menu-trigger:hover {
+  color: #8B5CF6;
+}
+
+/* DROPDOWN */
+.menu-item {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  background: #1A184A;
+  border: 1px solid #221F63;
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.dropdown-direita {
+  right: 0;
+  left: auto;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  color: #F2F3FF;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.dropdown button:hover {
+  background: #221F63;
+  color: #8B5CF6;
+}
+
+/* DIREITA */
+.cabecalho-direita {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icone {
+  background: none;
+  border: none;
+  color: #A7A9D6;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.icone:hover {
+  color: #8B5CF6;
+}
+
+.perfil {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #8B5CF6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-trigger {
+  position: relative;
+  background: none;
+  border: none;
+  color: #A7A9D6;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0 0 6px 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+/* Linha animada */
+.menu-trigger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: #8B5CF6;
+  transition: width 0.25s ease;
+  border-radius: 2px;
+}
+
+/* Hover */
+.menu-trigger:hover {
+  color: #F2F3FF;
+}
+
+.menu-trigger:hover::after {
+  width: 100%;
+}
+
+/* Ativo */
+.menu-trigger.ativo {
+  color: #F2F3FF;
+}
+
+.menu-trigger.ativo::after {
+  width: 100%;
+}

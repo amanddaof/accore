@@ -1,121 +1,88 @@
-import { Routes, Route } from "react-router-dom";
-import { useDashboard } from "./hooks/useDashboard";
-import Layout from "./Layout";
-import Profile from "./pages/Profile";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "./contextos/AuthContext";
+import { AuthProvider } from "./contextos/AuthContext";
+import PrivateRoute from "./rotas/PrivateRoute";
 
-import Salaries from "./pages/settings/Salaries";
-import Limits from "./pages/cards/Limits";
-import Loans from "./pages/settings/Loans";
-import Categories from "./pages/settings/Categories";
+import Cabecalho from "./componentes/Cabecalho";
+import Rodape from "./componentes/Rodape";
 
-import Home from "./pages/Home";
-import Cards from "./pages/Cards";
-import Externo from "./pages/Externo";
-import Reservas from "./pages/Reservas";
-import ContasCasa from "./pages/ContasCasa";
-import NewTransaction from "./pages/NewTransaction";
+import Dashboard from "./paginas/Dashboard/index";
+import Cartoes from "./paginas/Cartoes/index";
+import Externo from "./paginas/Externo/index";
+import Reservas from "./paginas/Reservas/index";
+import Casa from "./paginas/Casa/index";
+import Economia from "./paginas/Economia/index";
+import Entradas from "./paginas/Entradas/index";
+import Emprestimos from "./paginas/Emprestimos/index";
+import Salarios from "./paginas/Salarios/index";
+import Limites from "./paginas/Limites/index";
+import Categorias from "./paginas/Categorias/index";
+import Perfil from "./paginas/Perfil";
 
-import Login from "./pages/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./paginas/Login";
 
-import "./theme.css";
+function Layout() {
+  const location = useLocation();
+  const isLogin = location.pathname === "/login";
+  const { usuario, carregando } = useContext(AuthContext);
 
-export default function App() {
-  const {
-    loading,
-    mes,
-    setMes,
-
-    // 🔥 DASHBOARD
-    mensal,
-    mensalAnterior,
-    comparativoMensal, // ✅ AQUI
-
-    dividas,
-    categorias,
-    cards,
-
-    // 🔍 DADOS BRUTOS (BUSCA GLOBAL)
-    transactions,
-    reservations,
-    bills,
-    loans,
-
-    salarios,
-    reload,
-
-    savingsGoal,
-    setSavingsGoal
-  } = useDashboard();
-
-  if (loading) return <p>Carregando...</p>;
+  if (carregando) return null;
 
   return (
-    <Routes>
-      {/* 🔓 LOGIN */}
-      <Route path="/login" element={<Login />} />
+    <>
+      {!isLogin && <Cabecalho />}
 
-      {/* 🔒 ROTAS PROTEGIDAS */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <Layout
-              mes={mes}
-              setMes={setMes}
-              reload={reload}
-              cards={cards}
-              mensal={mensal}
-			  comparativoMensal={comparativoMensal}
-              salarios={salarios}
-
-              /* 🔍 BUSCA GLOBAL */
-              transactions={transactions}
-              reservations={reservations}
-              bills={bills}
-              loans={loans}
-            />
-          </ProtectedRoute>
-        }
-      >
-        {/* HOME */}
+      <Routes>
         <Route
-          index
+          path="/"
           element={
-            <Home
-              mensal={mensal}
-              comparativoMensal={comparativoMensal}  
-              dividas={dividas}
-              categorias={categorias}
-              cards={cards}
-              salarios={salarios}
-              loans={loans}
-              mes={mes}
-              savingsGoal={savingsGoal}
-              setSavingsGoal={setSavingsGoal}
-            />
+            usuario ? (
+              <Navigate to="/dashboard" />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
 
-        {/* PERFIL DO USUÁRIO */}
-        <Route path="perfil" element={<Profile />} />
+        <Route
+          path="/login"
+          element={
+            usuario ? <Navigate to="/dashboard" /> : <Login />
+          }
+        />
 
-        {/* PÁGINAS */}
-        <Route path="cards" element={<Cards cards={cards} />} />
-        <Route path="externo" element={<Externo />} />
-        <Route path="reservas" element={<Reservas />} />
-        <Route path="contas" element={<ContasCasa />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
 
-        {/* SETTINGS */}
-        <Route path="settings/cards" element={<Limits />} />
-        <Route path="settings/loans" element={<Loans />} />
-        <Route path="settings/categories" element={<Categories />} />
-        <Route path="settings/salaries" element={<Salaries />} />
+        <Route path="/cartoes" element={<PrivateRoute><Cartoes /></PrivateRoute>} />
+        <Route path="/externo" element={<PrivateRoute><Externo /></PrivateRoute>} />
+        <Route path="/reservas" element={<PrivateRoute><Reservas /></PrivateRoute>} />
+        <Route path="/casa" element={<PrivateRoute><Casa /></PrivateRoute>} />
+        <Route path="/economia" element={<PrivateRoute><Economia /></PrivateRoute>} />
+        <Route path="/entrada" element={<PrivateRoute><Entradas /></PrivateRoute>} />
+        <Route path="/emprestimos" element={<PrivateRoute><Emprestimos /></PrivateRoute>} />
+        <Route path="/salarios" element={<PrivateRoute><Salarios /></PrivateRoute>} />
+        <Route path="/limites" element={<PrivateRoute><Limites /></PrivateRoute>} />
+        <Route path="/categorias" element={<PrivateRoute><Categorias /></PrivateRoute>} />
+        <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
+      </Routes>
 
-        {/* NOVO LANÇAMENTO */}
-        <Route path="new" element={<NewTransaction />} />
-      </Route>
-    </Routes>
+      {!isLogin && <Rodape />}
+    </>
   );
 }
 
-
+export default function App() {
+  return (
+    <AuthProvider>
+      <Layout />
+    </AuthProvider>
+  );
+}

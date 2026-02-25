@@ -1,8 +1,8 @@
-export function money(valor) {
-  if (typeof valor !== "number") return "R$ 0,00";
+export default function money(valor) {
+  if (valor == null || isNaN(valor)) return "R$ 0,00";
 
-  return valor.toLocaleString("pt-BR", {
+  return Number(valor).toLocaleString("pt-BR", {
     style: "currency",
-    currency: "BRL"
+    currency: "BRL",
   });
 }

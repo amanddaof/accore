@@ -1,0 +1,379 @@
+/* ==============================
+   PÁGINA RESERVAS
+============================== */
+
+.pagina-reservas {
+  max-width: 950px;   /* mesmo padrão do Externo */
+  margin: 0 auto;     /* centraliza */
+  padding: 30px 20px 60px;
+  color: #F2F3FF;
+}
+
+.pagina-reservas h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #F2F3FF;
+}
+
+/* ==============================
+   FORMULÁRIO
+============================== */
+
+.pagina-reservas form {
+  background: #141236;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  display: grid;
+  gap: 12px;
+}
+
+.pagina-reservas input,
+.pagina-reservas select {
+  background: #1A184A;
+  border: 1px solid #221F63;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #F2F3FF;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.pagina-reservas input:focus,
+.pagina-reservas select:focus {
+  border-color: #8B5CF6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
+}
+
+/* ==============================
+   LISTA
+============================== */
+
+.linha-reserva {
+  background: #141236;
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 14px;
+
+  padding: 12px 18px; /* antes era 16px 20px */
+  margin-bottom: 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  transition: all .2s ease;
+}
+
+.linha-reserva:hover {
+  border-color: rgba(139,92,246,.4);
+  transform: translateY(-2px);
+}
+
+.linha-reserva span {
+  display: block;
+  font-size: 13px;
+  color: #A7A9D6;
+}
+
+.linha-reserva strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: #F2F3FF;
+}
+
+/* ==============================
+   DETALHE EXPANDIDO
+============================== */
+.data-reserva {
+    font-size: .75rem;
+    color: rgba(255,255,255,.5);
+}
+
+.detalhe-reserva {
+  background: #1A184A;
+  border: 1px solid rgba(255,255,255,.05);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+
+  padding: 18px 20px;
+  margin-top: -6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.35),
+    inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+.detalhe-reserva div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.detalhe-reserva span {
+  color: #A7A9D6;
+}
+
+.detalhe-reserva strong {
+  color: #F2F3FF;
+}
+
+.detalhe-reserva button {
+  margin-top: 8px;
+  background: #5EEAD4;
+  color: #0C0A1F;
+  font-weight: 600;
+}
+
+.detalhe-reserva button:hover {
+  opacity: 0.85;
+}
+
+.detalhe-reserva .linha-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .85rem;
+}
+
+.detalhe-reserva .linha-info span {
+  color: rgba(255,255,255,.5);
+  font-weight: 500;
+}
+
+.detalhe-reserva .linha-info strong {
+  color: #F2F3FF;
+  font-weight: 600;
+}
+
+/* =============================
+   BOTÃO PRIMÁRIO PADRÃO
+============================= */
+
+.botao-primario {
+  background: linear-gradient(90deg, #8B5CF6, #6B4FEA);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.botao-primario:hover {
+  opacity: 0.9;
+}
+
+/* =============================
+   BADGES PESSOAS
+============================= */
+
+.badge-amanda {
+  background: rgba(245, 201, 122, 0.15);
+  color: #F5C97A;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-celso {
+  background: rgba(122, 162, 247, 0.15);
+  color: #7AA2F7;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =============================
+   MODAL
+============================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 10, 31, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #141236;
+  padding: 24px;
+  border-radius: 18px;
+  width: 400px;
+}
+
+.modal h3 {
+  margin-bottom: 16px;
+}
+
+.modal form {
+  display: grid;
+  gap: 12px;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* =============================
+   CABEÇALHO PADRÃO PÁGINA
+============================= */
+
+.cabecalho-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.cabecalho-pagina h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #F2F3FF;
+}
+
+/* =============================
+   BOTÃO PADRÃO PROJETO
+============================= */
+
+.btn-primario {
+  background: linear-gradient(90deg, #8B5CF6, #6B4FEA);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: all .25s ease;
+  box-shadow: 0 6px 20px rgba(107,79,234,.25);
+}
+
+.btn-primario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(107,79,234,.35);
+}
+
+.lista-reservas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.grade-reservas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.coluna-reservas h3 {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin-bottom: 12px;
+  color: rgba(255,255,255,.5);
+}
+
+.grade-reservas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.titulo-coluna {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.titulo-coluna h3 {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.5);
+}
+
+.total-coluna {
+  font-size: .75rem;
+  font-weight: 600;
+  color: #8B5CF6;
+}
+
+.lado-direito-reserva {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.valor-reserva {
+  font-size: .9rem;
+}
+
+.badge-ambos {
+  background: rgba(139,92,246,.15);
+  color: #8B5CF6;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn-secundario-reserva {
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(94,234,212,.15);
+  color: #5EEAD4;
+  font-weight: 600;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all .2s ease;
+  align-self: flex-start;
+}
+
+.btn-secundario-reserva:hover {
+  background: rgba(94,234,212,.25);
+  transform: translateY(-1px);
+}
+
+.acoes-reserva {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.acoes-icones {
+  display: flex;
+  gap: 12px;
+}
+
+.acoes-icones img {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  opacity: .7;
+  transition: all .2s ease;
+}
+
+.acoes-icones img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
