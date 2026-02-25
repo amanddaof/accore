@@ -133,8 +133,9 @@ export default function Cabecalho() {
             <button
               className="icone"
               onClick={() => toggleMenu("config")}
+              title="Configurações"
             >
-              ⚙️
+              <img src="/icone/config.png" alt="Configurações" />
             </button>
 
             {menuAberto === "config" && (
@@ -158,7 +159,7 @@ export default function Cabecalho() {
             className="icone"
             onClick={() => window.location.reload()}
           >
-            ⟳
+            <img src="/icone/atualizar.png" alt="Atualizar" />
           </button>
 
           <NavLink to="/perfil" className="perfil" />
@@ -168,7 +169,7 @@ export default function Cabecalho() {
             onClick={handleLogout}
             title="Sair"
           >
-            ⎋
+            <img src="/icone/sair.png" alt="Sair" />
           </button>
 
         </div>
