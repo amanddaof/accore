@@ -16,6 +16,8 @@ export default function Dashboard() {
   const [expandirDividas, setExpandirDividas] = useState(false);
   const [impactoAnual, setImpactoAnual] = useState([]);
   const [mesExpandido, setMesExpandido] = useState(null);
+  const [filtroOrigem, setFiltroOrigem] = useState("Todas");
+  const [filtroPessoa, setFiltroPessoa] = useState("Todas");
 
   useEffect(() => {
     carregar();
@@ -48,6 +50,27 @@ export default function Dashboard() {
 }
 
   if (!dados) return null;
+
+    const origensDisponiveis = [
+    "Todas",
+    ...new Set(dados.dividas.detalhamento.map(i => i.origem))
+  ];
+
+  const detalhamentoFiltrado = dados.dividas.detalhamento.filter(item => {
+
+    const origemOk =
+      filtroOrigem === "Todas" || item.origem === filtroOrigem;
+
+    const pessoaOk =
+      filtroPessoa === "Todas" || item.quem === filtroPessoa;
+
+    return origemOk && pessoaOk;
+  });
+
+  const totalFiltrado = detalhamentoFiltrado.reduce(
+  (acc, item) => acc + item.valor,
+  0
+);
 
   return (
     <div className="dashboard-container">
@@ -237,21 +260,89 @@ export default function Dashboard() {
 
             {expandirDividas && (
               <div className="acerto-detalhes">
-                {dados.dividas.detalhamento.map((item, i) => (
-                  <div key={i} className="linha-expandida">
-                    <span>
-                      {item.tipo} - {item.descricao}
-                      <small>
-                        {" "}({item.quem} → {item.quem_paga})
-                      </small>
-                    </span>
 
-                    <span className="resumo-valor">
-                      R$ {item.valor.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                <div
+  className="acerto-filtros"
+  onClick={(e) => e.stopPropagation()}
+>
+
+  <div className="filtros-esquerda">
+
+    <label>
+      Origem:
+      <select
+  value={filtroOrigem}
+  onClick={(e) => e.stopPropagation()}
+  onChange={e => setFiltroOrigem(e.target.value)}
+>
+        {origensDisponiveis.map((origem, i) => (
+          <option key={i} value={origem}>
+            {origem}
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <label>
+      Pessoa:
+      <select
+        value={filtroPessoa}
+        onClick={(e) => e.stopPropagation()}
+        onChange={e => setFiltroPessoa(e.target.value)}
+      >
+        <option value="Todas">Todas</option>
+        <option value="Amanda">Amanda</option>
+        <option value="Celso">Celso</option>
+      </select>
+    </label>
+
+  </div>
+
+  <div className="filtros-direita">
+    <span>Registros: {detalhamentoFiltrado.length}</span>
+    <span>
+      Total filtrado: <strong>R$ {totalFiltrado.toFixed(2)}</strong>
+    </span>
+  </div>
+
+</div>
+
+  <div className="acerto-cabecalho">
+    <span className="col-origem">Origem</span>
+    <span className="col-descricao">Descrição</span>
+    <span className="col-fluxo">De → Para</span>
+    <span className="col-valor">Valor</span>
+  </div>
+
+  {detalhamentoFiltrado.map((item, i) => (
+    <div key={i} className="linha-acerto">
+
+      <span className="col-origem origem-badge">
+        {item.origem || "-"}
+      </span>
+
+      <span className="col-descricao">
+        {item.descricao}
+      </span>
+
+      <span className="col-fluxo">
+        <span className={item.quem === "Amanda" ? "nome-amanda" : "nome-celso"}>
+          {item.quem}
+        </span>
+        {" → "}
+        <span className={item.quem_paga === "Amanda" ? "nome-amanda" : "nome-celso"}>
+          {item.quem_paga}
+        </span>
+      </span>
+
+      <span className="col-valor">
+        R$ {item.valor.toFixed(2)}
+      </span>
+
+    </div>
+  ))}
+
+</div>
             )}
           </div>
         )}
