@@ -201,19 +201,37 @@ export default function Dashboard() {
             className="acerto-linha-unica full-width"
             onClick={() => setExpandirDividas(v => !v)}
           >
-            <span className="acerto-texto">
+            <span
+              className={
+                dados.dividas.saldoFinal.quemDeve === "Amanda"
+                  ? "nome-amanda"
+                  : "nome-celso"
+              }
+            >
               {dados.dividas.saldoFinal.quemDeve}
-              {" deve pagar "}
-              <span
-                className={`acerto-valor ${
-                  dados.dividas.saldoFinal.quemDeve === "Amanda"
-                    ? "valor-amanda"
-                    : "valor-celso"
-                }`}
-              >
-                R$ {dados.dividas.saldoFinal.valor.toFixed(2)}
-              </span>
-              {" para "}
+            </span>
+
+            {" deve pagar "}
+
+            <span
+              className={`acerto-valor ${
+                dados.dividas.saldoFinal.quemDeve === "Amanda"
+                  ? "valor-amanda"
+                  : "valor-celso"
+              }`}
+            >
+              R$ {dados.dividas.saldoFinal.valor.toFixed(2)}
+            </span>
+
+            {" para "}
+
+            <span
+              className={
+                dados.dividas.saldoFinal.quemRecebe === "Amanda"
+                  ? "nome-amanda"
+                  : "nome-celso"
+              }
+            >
               {dados.dividas.saldoFinal.quemRecebe}
             </span>
 
