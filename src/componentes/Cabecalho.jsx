@@ -156,11 +156,11 @@ export default function Cabecalho() {
           <SeletorMes />
 
           <button
-            className="icone"
-            onClick={buscarDados}
-          >
-            <img src="/icone/atualizar.png" alt="Atualizar" />
-          </button>
+  className="icone"
+  onClick={() => navigate(0)}
+>
+  <img src="/icone/atualizar.png" alt="Atualizar" />
+</button>
 
           <NavLink to="/perfil" className="perfil" />
 
