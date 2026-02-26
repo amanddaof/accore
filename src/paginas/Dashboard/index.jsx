@@ -5,6 +5,7 @@ import { useMes } from "../../contextos/MesContexto";
 import { calcularResumo } from "./logica/calcularResumo";
 import { calcularImpactoAnual } from "./logica/calcularImpactoAnual";
 import { buscarResumoMes } from "./logica/buscarResumoMes";
+import GraficoGastos from "./componentes/GraficoGastos";
 import "./estilos/dashboard.css";
 
 export default function Dashboard() {
@@ -71,6 +72,12 @@ export default function Dashboard() {
   (acc, item) => acc + item.valor,
   0
 );
+
+function getStatus(percentual) {
+  if (percentual < 75) return { label: "Saudável", classe: "status-saudavel" };
+  if (percentual <= 90) return { label: "Atenção", classe: "status-atencao" };
+  return { label: "Crítico", classe: "status-critico" };
+}
 
   return (
     <div className="dashboard-container">
@@ -368,103 +375,199 @@ export default function Dashboard() {
 
     {impactoAnual.map((item, index) => {
 
-      const mesNome = item.mes.split("/")[0];
+  const mesNome = item.mes.split("/")[0];
 
-      return (
-        <div key={index} className="linha-anual">
+  return (
+    <div key={index} className="linha-anual">
 
-          <div
-            className="linha-anual-resumo"
-            onClick={() =>
-              setMesExpandido(
-                mesExpandido === index ? null : index
-              )
-            }
-          >
+      <div
+        className="linha-anual-resumo"
+        onClick={() =>
+          setMesExpandido(
+            mesExpandido === index ? null : index
+          )
+        }
+      >
 
-            <span className="mes-coluna">
-              {mesNome}
-            </span>
+        <span className="mes-coluna">
+          {mesNome}
+        </span>
 
-            <span
-              className={`valor-coluna ${
-                item.amanda.sobra >= 0
-                  ? "positivo"
-                  : "negativo"
-              }`}
-            >
-              {item.amanda.sobra.toFixed(2)}
-            </span>
+        <span
+          className={`valor-coluna ${
+            item.amanda.sobra >= 0
+              ? "positivo"
+              : "negativo"
+          }`}
+        >
+          {item.amanda.sobra.toFixed(2)}
+        </span>
 
-            <span
-              className={`valor-coluna ${
-                item.celso.sobra >= 0
-                  ? "positivo"
-                  : "negativo"
-              }`}
-            >
-              {item.celso.sobra.toFixed(2)}
-            </span>
+        <span
+          className={`valor-coluna ${
+            item.celso.sobra >= 0
+              ? "positivo"
+              : "negativo"
+          }`}
+        >
+          {item.celso.sobra.toFixed(2)}
+        </span>
 
-            <span
-              className={`valor-coluna total-coluna ${
-                item.total.sobra >= 0
-                  ? "positivo"
-                  : "negativo"
-              }`}
-            >
-              {item.total.sobra.toFixed(2)}
-            </span>
+        <span
+          className={`valor-coluna total-coluna ${
+            item.total.sobra >= 0
+              ? "positivo"
+              : "negativo"
+          }`}
+        >
+          {item.total.sobra.toFixed(2)}
+        </span>
+
+      </div>
+
+      {mesExpandido === index && (
+
+        <div className="linha-anual-detalhe">
+
+          {/* ================= AMANDA ================= */}
+          <div className="bloco-pessoa">
+
+            <div className="kpi-bloco">
+              <h4 className="nome-amanda">Amanda</h4>
+
+              <div className="detalhe-linha">
+                <span>Salário</span>
+                <span>R$ {item.amanda.salario.toFixed(2)}</span>
+              </div>
+
+              <div className="detalhe-linha">
+                <span>Gastos</span>
+                <span>R$ {item.amanda.gasto.toFixed(2)}</span>
+              </div>
+
+              {(() => {
+                const salario = item.amanda.salario;
+                const gasto = item.amanda.gasto;
+
+                const percentual = salario > 0
+                  ? (gasto / salario) * 100
+                  : 0;
+
+                const extrapolou = gasto > salario;
+                const status = getStatus(percentual);
+
+                return (
+                  <>
+                    <div className="detalhe-linha">
+                      <span>% Comprometido</span>
+                      <span className={extrapolou ? "negativo" : ""}>
+                        {percentual.toFixed(1)}%
+                      </span>
+                    </div>
+
+                    {!extrapolou && (
+                      <div className={`detalhe-linha ${status.classe}`}>
+                        <span>Status</span>
+                        <span>{status.label}</span>
+                      </div>
+                    )}
+
+                    {extrapolou && (
+                      <div className="alerta-gasto">
+                        🚨 Renda insuficiente para cobrir despesas
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+
+              <div className="detalhe-linha destaque">
+                <span>Sobra</span>
+                <span className={item.amanda.sobra >= 0 ? "positivo" : "negativo"}>
+                  R$ {item.amanda.sobra.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className="grafico-bloco">
+              <GraficoGastos dados={item.amanda} />
+            </div>
 
           </div>
 
-          {mesExpandido === index && (
+          {/* ================= CELSO ================= */}
+          <div className="bloco-pessoa">
 
-            <div className="linha-anual-detalhe">
+            <div className="kpi-bloco">
+              <h4 className="nome-celso">Celso</h4>
 
-              <div className="detalhe-bloco detalhe-amanda">
-                <h4>Amanda</h4>
-                <div className="detalhe-linha">
-                  <span>Salário</span>
-                  <span>R$ {item.amanda.salario.toFixed(2)}</span>
-                </div>
-                <div className="detalhe-linha">
-                  <span>Gastos</span>
-                  <span>R$ {item.amanda.gasto.toFixed(2)}</span>
-                </div>
-                <div className="detalhe-linha destaque">
-                  <span>Sobra</span>
-                  <span className={item.amanda.sobra >= 0 ? "positivo" : "negativo"}>
-                    R$ {item.amanda.sobra.toFixed(2)}
-                  </span>
-                </div>
+              <div className="detalhe-linha">
+                <span>Salário</span>
+                <span>R$ {item.celso.salario.toFixed(2)}</span>
               </div>
 
-              <div className="detalhe-bloco detalhe-celso">
-                <h4>Celso</h4>
-                <div className="detalhe-linha">
-                  <span>Salário</span>
-                  <span>R$ {item.celso.salario.toFixed(2)}</span>
-                </div>
-                <div className="detalhe-linha">
-                  <span>Gastos</span>
-                  <span>R$ {item.celso.gasto.toFixed(2)}</span>
-                </div>
-                <div className="detalhe-linha destaque">
-                  <span>Sobra</span>
-                  <span className={item.celso.sobra >= 0 ? "positivo" : "negativo"}>
-                    R$ {item.celso.sobra.toFixed(2)}
-                  </span>
-                </div>
+              <div className="detalhe-linha">
+                <span>Gastos</span>
+                <span>R$ {item.celso.gasto.toFixed(2)}</span>
               </div>
 
+              {(() => {
+                const salario = item.celso.salario;
+                const gasto = item.celso.gasto;
+
+                const percentual = salario > 0
+                  ? (gasto / salario) * 100
+                  : 0;
+
+                const extrapolou = gasto > salario;
+                const status = getStatus(percentual);
+
+                return (
+                  <>
+                    <div className="detalhe-linha">
+                      <span>% Comprometido</span>
+                      <span className={extrapolou ? "negativo" : ""}>
+                        {percentual.toFixed(1)}%
+                      </span>
+                    </div>
+
+                    {!extrapolou && (
+                      <div className={`detalhe-linha ${status.classe}`}>
+                        <span>Status</span>
+                        <span>{status.label}</span>
+                      </div>
+                    )}
+
+                    {extrapolou && (
+                      <div className="alerta-gasto">
+                        🚨 Renda insuficiente para cobrir despesas
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+
+              <div className="detalhe-linha destaque">
+                <span>Sobra</span>
+                <span className={item.celso.sobra >= 0 ? "positivo" : "negativo"}>
+                  R$ {item.celso.sobra.toFixed(2)}
+                </span>
+              </div>
             </div>
 
-          )}
+            <div className="grafico-bloco">
+              <GraficoGastos dados={item.celso} />
+            </div>
+
+          </div>
 
         </div>
-      );
-    })}
+
+      )}
+
+    </div>
+  );
+})}
 
   </div>
 
