@@ -38,6 +38,7 @@ export function calcularDividas({
 
         detalhamento.push({
             tipo: "Transação",
+            origem: t.origem,
             descricao: t.descricao,
             quem: "Celso",
             quem_paga: "Amanda",
@@ -77,6 +78,7 @@ export function calcularDividas({
 
     detalhamento.push({
         tipo: "Transação",
+        origem: t.origem,
         descricao: t.descricao,
         quem: t.quem,
         quem_paga: t.quem_paga,
@@ -102,6 +104,7 @@ export function calcularDividas({
 
     detalhamento.push({
       tipo: "Conta da casa",
+      origem: "Casa",
       descricao: c.conta,
       quem: "Amanda",
       quem_paga: "Celso",
@@ -124,6 +127,7 @@ export function calcularDividas({
 
     detalhamento.push({
       tipo: "Empréstimo",
+      origem: "Empréstimo",
       descricao: e.descricao,
       quem: "Celso",
       quem_paga: "Amanda",
@@ -132,30 +136,31 @@ export function calcularDividas({
   });
 
   /* =========================
-     4️⃣ RESULTADO FINAL
-  ========================= */
+   4️⃣ RESULTADO FINAL
+========================= */
 
-  let saldoFinal;
+let saldoFinal = {
+  quemDeve: null,
+  quemRecebe: null,
+  valor: 0
+};
 
-  if (saldo > 0) {
-    saldoFinal = {
-      quemDeve: "Amanda",
-      valor: saldo
-    };
-  } else if (saldo < 0) {
-    saldoFinal = {
-      quemDeve: "Celso",
-      valor: Math.abs(saldo)
-    };
-  } else {
-    saldoFinal = {
-      quemDeve: null,
-      valor: 0
-    };
-  }
-
-  return {
-    saldoFinal,
-    detalhamento
+if (saldo > 0) {
+  saldoFinal = {
+    quemDeve: "Amanda",
+    quemRecebe: "Celso",
+    valor: saldo
   };
+} else if (saldo < 0) {
+  saldoFinal = {
+    quemDeve: "Celso",
+    quemRecebe: "Amanda",
+    valor: Math.abs(saldo)
+  };
+}
+
+return {
+  saldoFinal,
+  detalhamento
+};
 }

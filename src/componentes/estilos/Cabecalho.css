@@ -174,3 +174,30 @@
 .menu-trigger.ativo::after {
   width: 100%;
 }
+
+.icone {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.icone img {
+  width: 18px;
+  height: 18px;
+}
+
+.icone:hover img {
+  opacity: 0.8;
+  transform: rotate(90deg);
+  transition: 0.2s ease;
+}
+
+.icone:hover {
+  background: rgba(229, 72, 77, 0.15); /* vermelho suave do sistema negativo */
+  border-radius: 6px;
+}
