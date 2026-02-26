@@ -412,6 +412,9 @@ export default function CartaoExpandido({ cartao, mesFiltro, onVoltar }) {
               type="text"
               value={novaCompra.parcelas}
               disabled={modoEdicao}
+              onChange={e =>
+                setNovaCompra({ ...novaCompra, parcelas: e.target.value })
+              }
             />
 
             <select
