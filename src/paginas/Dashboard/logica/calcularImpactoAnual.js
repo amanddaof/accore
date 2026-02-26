@@ -17,16 +17,21 @@ export async function calcularImpactoAnual(ano) {
 
     resultado.push({
       mes: mesStr,
+
       amanda: {
         salario: resumo.salarioAmanda,
         gasto: resumo.comprometidoAmanda,
-        sobra: resumo.sobraAmanda
+        sobra: resumo.sobraAmanda,
+        grupos: resumo.gruposAmanda // 👈 ADICIONADO
       },
+
       celso: {
         salario: resumo.salarioCelso,
         gasto: resumo.comprometidoCelso,
-        sobra: resumo.sobraCelso
+        sobra: resumo.sobraCelso,
+        grupos: resumo.gruposCelso // 👈 ADICIONADO
       },
+
       total: {
         salario: resumo.salarioAmanda + resumo.salarioCelso,
         gasto: resumo.comprometidoAmanda + resumo.comprometidoCelso,
