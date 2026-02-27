@@ -3,7 +3,8 @@ const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov"
 export function avancarDataReserva(dataStr, recorrencia) {
   if (!dataStr) return null;
 
-  const data = new Date(dataStr);
+  const [ano, mes, dia] = dataStr.split("-").map(Number);
+  const data = new Date(ano, mes - 1, dia);
 
   switch (recorrencia) {
     case "Mensal":
@@ -24,7 +25,11 @@ export function avancarDataReserva(dataStr, recorrencia) {
       data.setMonth(data.getMonth() + 1);
   }
 
-  return data.toISOString().slice(0, 10);
+  const anoNovo = data.getFullYear();
+  const mesNovo = String(data.getMonth() + 1).padStart(2, "0");
+  const diaNovo = String(data.getDate()).padStart(2, "0");
+
+  return `${anoNovo}-${mesNovo}-${diaNovo}`;
 }
 
 export function avancarMesReserva(mesAtual, recorrencia) {

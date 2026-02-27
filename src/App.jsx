@@ -4,6 +4,16 @@ import { AuthContext } from "./contextos/AuthContext";
 import { AuthProvider } from "./contextos/AuthContext";
 import PrivateRoute from "./rotas/PrivateRoute";
 
+import { useEffect } from "react";
+import { buscarTodos, inserir, atualizar } from "./servicos/banco";
+import {
+  avancarDataReserva,
+  avancarMesReserva,
+  avancarParcelaReserva
+} from "./paginas/Reservas/logica/recorrenciaReserva";
+
+import { processarReservasAutomaticamente } from "./core/processamentoAutomaticoReservas";
+
 import Cabecalho from "./componentes/Cabecalho";
 import Rodape from "./componentes/Rodape";
 
@@ -26,6 +36,23 @@ function Layout() {
   const location = useLocation();
   const isLogin = location.pathname === "/login";
   const { usuario, carregando } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    async function rodarProcessamento() {
+      await processarReservasAutomaticamente({
+        buscarTodos,
+        inserir,
+        atualizar,
+        avancarDataReserva,
+        avancarMesReserva
+      });
+    }
+
+    rodarProcessamento();
+
+  }, [usuario]);
 
   if (carregando) return null;
 
