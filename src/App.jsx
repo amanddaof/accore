@@ -38,21 +38,33 @@ function Layout() {
   const { usuario, carregando } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!usuario) return;
+  if (!usuario) return;
 
-    async function rodarProcessamento() {
-      await processarReservasAutomaticamente({
-        buscarTodos,
-        inserir,
-        atualizar,
-        avancarDataReserva,
-        avancarMesReserva
-      });
-    }
+  const hoje = new Date();
+  const hojeFormatado =
+    hoje.getFullYear() + "-" +
+    String(hoje.getMonth() + 1).padStart(2, "0") + "-" +
+    String(hoje.getDate()).padStart(2, "0");
 
-    rodarProcessamento();
+  const ultimaExecucao = localStorage.getItem("reservas_processadas");
 
-  }, [usuario]);
+  if (ultimaExecucao === hojeFormatado) return;
+
+  async function rodarProcessamento() {
+    await processarReservasAutomaticamente({
+      buscarTodos,
+      inserir,
+      atualizar,
+      avancarDataReserva,
+      avancarMesReserva
+    });
+
+    localStorage.setItem("reservas_processadas", hojeFormatado);
+  }
+
+  rodarProcessamento();
+
+}, [usuario]);
 
   if (carregando) return null;
 
@@ -112,4 +124,5 @@ export default function App() {
       <Layout />
     </AuthProvider>
   );
+
 }
