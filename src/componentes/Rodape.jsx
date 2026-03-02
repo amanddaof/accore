@@ -15,7 +15,7 @@ export default function Rodape() {
         </div>
 
         <div className="rodape-linha-secundaria">
-          <span>Versão 3.1.4</span>
+          <span>Versão 3.1.5</span>
           <span className="rodape-bolinha">•</span>
           <span>© 2026 ACCORE</span>
         </div>
