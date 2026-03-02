@@ -4,10 +4,14 @@ import {
   Tooltip
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { useState, useRef } from "react";
 
 ChartJS.register(ArcElement, Tooltip);
 
-export default function GraficoGastos({ dados }) {
+export default function GraficoGastos({ dados, onAbrirReservas }) {
+
+  const chartRef = useRef();
+  const [segmentoAtivo, setSegmentoAtivo] = useState(null);
 
   const grupos = dados?.grupos || {};
   const sobra = dados?.sobra || 0;
@@ -25,12 +29,12 @@ export default function GraficoGastos({ dados }) {
   const valores = labels.map(label => estrutura[label]);
 
   const coresBase = {
-    cartoes: "#3B82F6",     // azul
-    externo: "#1F2937",     // grafite
-    reservas: "#FBBF24",    // dourado
-    casa: "#8B5CF6",        // roxo
-    emprestimos: "#CBD5E1", // cinza claro
-    sobra: "#10B981"        // verde elegante
+    cartoes: "#3B82F6",
+    externo: "#1F2937",
+    reservas: "#FBBF24",
+    casa: "#8B5CF6",
+    emprestimos: "#CBD5E1",
+    sobra: "#10B981"
   };
 
   const chartData = {
@@ -60,9 +64,7 @@ export default function GraficoGastos({ dados }) {
   const options = {
     cutout: "68%",
     plugins: {
-      legend: {
-        display: false
-      },
+      legend: { display: false },
       tooltip: {
         backgroundColor: "#141236",
         borderColor: "#8B5CF6",
@@ -82,26 +84,54 @@ export default function GraficoGastos({ dados }) {
     }
   };
 
+  const handleClick = (event) => {
+  const chart = chartRef.current;
+  if (!chart) return;
+
+  const elements = chart.getElementsAtEventForMode(
+    event.nativeEvent,
+    "nearest",
+    { intersect: true },
+    true
+  );
+
+  if (!elements.length) return;
+
+  const index = elements[0].index;
+  const label = String(chart.data.labels[index]).toLowerCase().trim();
+
+  if (label.includes("reserva")) {
+    onAbrirReservas?.();
+  }
+};
+
   if (!valores.length) return null;
 
   return (
     <div className="grafico-container">
-      <div className="grafico-area">
-        <Doughnut data={chartData} options={options} />
-      </div>
 
-      <div className="grafico-legenda">
-        {labels.map((label) => (
-          <div key={label} className="legenda-item">
-            <span
-              className="legenda-cor"
-              style={{ background: coresBase[label] }}
-            />
-            <span className="legenda-texto">{label}</span>
-          </div>
-        ))}
+  <div className="grafico-area">
+    <Doughnut
+      ref={chartRef}
+      data={chartData}
+      options={options}
+      onClick={handleClick}
+    />
+  </div>
+
+  <div className="grafico-legenda">
+    {labels.map((label) => (
+      <div key={label} className="legenda-item">
+        <span
+          className="legenda-cor"
+          style={{ background: coresBase[label] }}
+        />
+        <span className="legenda-texto">{label}</span>
       </div>
-    </div>
+    ))}
+  </div>
+
+</div>
   );
 }
 

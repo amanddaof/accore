@@ -1,0 +1,31 @@
+/* =========================================
+   STATUS / CORES
+========================================= */
+
+.positivo { color: #5EEAD4; }
+.negativo { color: #E5484D; }
+
+.status-saudavel span:last-child {
+  color: #5EEAD4;
+  font-weight: 600;
+}
+
+.status-atencao span:last-child {
+  color: #FACC15;
+  font-weight: 600;
+}
+
+.status-critico span:last-child {
+  color: #E5484D;
+  font-weight: 600;
+}
+
+.alerta-gasto {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  background: rgba(229,72,77,0.15);
+  color: #E5484D;
+  font-weight: 600;
+}

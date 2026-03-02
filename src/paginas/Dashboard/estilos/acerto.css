@@ -1,0 +1,85 @@
+/* =========================================
+   ACERTO
+========================================= */
+
+.acerto-linha-unica {
+  margin-top: 14px;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  border-top: 1px solid #2B2A55;
+  border-bottom: 1px solid #2B2A55;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.acerto-linha-unica:hover {
+  background: rgba(139,92,246,.05);
+}
+
+.acerto-detalhes {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #2B2A55;
+}
+
+.acerto-cabecalho,
+.linha-acerto {
+  display: grid;
+  grid-template-columns: 140px 1fr 160px 120px;
+  padding: 8px 0;
+}
+
+.linha-acerto {
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px;
+}
+
+.col-valor {
+  text-align: right;
+  font-weight: 600;
+}
+
+/* ================= FILTROS ACERTO ================= */
+
+.acerto-filtros {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.filtros-esquerda {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.filtros-esquerda label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #A7A9D6;
+}
+
+.filtros-esquerda select {
+  background: #141236;
+  color: #F2F3FF;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.filtros-direita {
+  display: flex;
+  gap: 18px;
+  opacity: 0.75;
+}
+
+.filtros-direita strong {
+  color: #F2F3FF;
+}

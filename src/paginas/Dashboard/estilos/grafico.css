@@ -1,0 +1,68 @@
+/* =========================================
+   GRÁFICO
+========================================= */
+
+.bloco-pessoa {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  background: rgba(255,255,255,0.03);
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.kpi-bloco { flex: 1; }
+
+.grafico-bloco {
+  width: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grafico-area {
+  width: 220px;
+  height: 220px;
+}
+
+.grafico-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 18px;
+  margin-top: 16px;
+  max-width: 240px;
+}
+
+/* =========================================
+   LEGENDA DO GRÁFICO
+========================================= */
+
+.grafico-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grafico-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 18px;
+  margin-top: 16px;
+  max-width: 240px;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #A7A9D6;
+}
+
+.legenda-cor {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}

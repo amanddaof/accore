@@ -43,6 +43,9 @@ export function calcularReservas(reservas, transacoesMes, mesSelecionado) {
   let gruposAmanda = { reservas: 0 };
   let gruposCelso = { reservas: 0 };
 
+  const reservasAmandaDetalhadas = [];
+  const reservasCelsoDetalhadas = [];
+
   reservas.forEach(r => {
 
     if (!reservaImpactaMes(r, mesSelecionado)) return;
@@ -60,18 +63,39 @@ export function calcularReservas(reservas, transacoesMes, mesSelecionado) {
     if (r.quem === "Amanda") {
       totalAmanda += valor;
       gruposAmanda.reservas += valor;
+
+      reservasAmandaDetalhadas.push({
+        nome: r.descricao,
+        valor
+      });
     }
 
     if (r.quem === "Celso") {
       totalCelso += valor;
       gruposCelso.reservas += valor;
+
+      reservasCelsoDetalhadas.push({
+        nome: r.descricao,
+        valor
+      });
     }
 
     if (r.quem === "Ambos") {
       totalAmanda += valor;
       totalCelso += valor;
+
       gruposAmanda.reservas += valor;
       gruposCelso.reservas += valor;
+
+      reservasAmandaDetalhadas.push({
+        nome: r.descricao,
+        valor
+      });
+
+      reservasCelsoDetalhadas.push({
+        nome: r.descricao,
+        valor
+      });
     }
   });
 
@@ -79,6 +103,8 @@ export function calcularReservas(reservas, transacoesMes, mesSelecionado) {
     totalAmanda,
     totalCelso,
     gruposAmanda,
-    gruposCelso
+    gruposCelso,
+    reservasAmandaDetalhadas,
+    reservasCelsoDetalhadas
   };
 }

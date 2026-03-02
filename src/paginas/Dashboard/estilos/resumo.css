@@ -1,0 +1,49 @@
+/* =========================================
+   RESUMO PESSOAS
+========================================= */
+
+.card-resumo h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+.resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .95rem;
+}
+
+.resumo-valor {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.resumo-sobra {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #2B2A55;
+}
+
+.valor-sobra {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.valor-sobra.positivo { color: #5EEAD4; }
+.valor-sobra.negativo { color: #E5484D; }
+
+.resumo-expandido {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #2B2A55;
+}
+
+.linha-expandida {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .95rem;
+  color: #A7A9D6;
+}

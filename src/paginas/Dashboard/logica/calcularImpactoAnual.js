@@ -16,28 +16,30 @@ export async function calcularImpactoAnual(ano) {
     const resumo = await buscarResumoMes(mesStr);
 
     resultado.push({
-      mes: mesStr,
+  mes: mesStr,
 
-      amanda: {
-        salario: resumo.salarioAmanda,
-        gasto: resumo.comprometidoAmanda,
-        sobra: resumo.sobraAmanda,
-        grupos: resumo.gruposAmanda // 👈 ADICIONADO
-      },
+  amanda: {
+  salario: resumo.salarioAmanda,
+  gasto: resumo.comprometidoAmanda,
+  sobra: resumo.sobraAmanda,
+  grupos: resumo.gruposAmanda,
+  reservasDetalhadas: resumo.reservasAmanda
+},
 
-      celso: {
-        salario: resumo.salarioCelso,
-        gasto: resumo.comprometidoCelso,
-        sobra: resumo.sobraCelso,
-        grupos: resumo.gruposCelso // 👈 ADICIONADO
-      },
+celso: {
+  salario: resumo.salarioCelso,
+  gasto: resumo.comprometidoCelso,
+  sobra: resumo.sobraCelso,
+  grupos: resumo.gruposCelso,
+  reservasDetalhadas: resumo.reservasCelso
+},
 
-      total: {
-        salario: resumo.salarioAmanda + resumo.salarioCelso,
-        gasto: resumo.comprometidoAmanda + resumo.comprometidoCelso,
-        sobra: resumo.sobraAmanda + resumo.sobraCelso
-      }
-    });
+  total: {
+    salario: resumo.salarioAmanda + resumo.salarioCelso,
+    gasto: resumo.comprometidoAmanda + resumo.comprometidoCelso,
+    sobra: resumo.sobraAmanda + resumo.sobraCelso
+  }
+});
   }
 
   return resultado;

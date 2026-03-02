@@ -1,0 +1,160 @@
+/* =========================================
+   VISÃO ANUAL
+========================================= */
+
+.visao-anual-header {
+  margin-bottom: 16px;
+}
+
+.visao-anual-tabela {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.linha-anual-cabecalho {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr;
+  font-weight: 600;
+  font-size: 13px;
+  opacity: 0.8;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 8px;
+}
+
+.linha-anual {
+  border-bottom: 1px solid #2B2A55;
+  padding: 8px 0;
+}
+
+.linha-anual-resumo {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr;
+  cursor: pointer;
+  align-items: center;
+}
+
+.mes-coluna {
+  color: #A7A9D6;
+}
+
+.valor-coluna {
+  text-align: right;
+  font-weight: 600;
+}
+
+.total-coluna {
+  opacity: .7;
+}
+
+/* =========================================
+   DETALHE DO MÊS (AMANDA + CELSO)
+========================================= */
+
+.linha-anual-detalhe {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  align-items: stretch;
+}
+
+/* BLOCO DE CADA PESSOA */
+
+.bloco-pessoa {
+  flex: 1;
+  min-width: 0; /* impede quebra */
+  display: flex;
+  gap: 24px;
+  background: rgba(255,255,255,0.03);
+  padding: 20px;
+  border-radius: 16px;
+}
+
+/* KPI */
+
+.kpi-bloco {
+  flex: 1;
+  min-width: 0;
+}
+
+.detalhe-linha {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.detalhe-linha.destaque {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* GRÁFICO */
+
+.grafico-bloco {
+  width: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grafico-area {
+  width: 220px;
+  height: 220px;
+}
+
+.grafico-area canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* =========================================
+   PAINEL RESERVAS (NÃO QUEBRA LAYOUT)
+========================================= */
+
+.painel-full {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.painel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.painel-header button {
+  background: rgba(139,92,246,.15);
+  border: 1px solid rgba(139,92,246,.3);
+  color: #C4B5FD;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.painel-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.painel-lista .linha-detalhe {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.04);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}

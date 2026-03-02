@@ -1,0 +1,32 @@
+/* =========================================
+   CARD BASE
+========================================= */
+
+.card-dashboard {
+  background: #141236;
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 18px;
+  padding: 24px;
+  transition: all .25s ease;
+}
+
+.card-dashboard:hover {
+  border-color: rgba(139,92,246,.4);
+}
+
+/* Pessoa */
+
+.card-amanda {
+  border-top: 3px solid #F5C97A;
+  box-shadow: 0 0 20px rgba(245,201,122,.08);
+}
+
+.card-celso {
+  border-top: 3px solid #7AA2F7;
+  box-shadow: 0 0 20px rgba(122,162,247,.08);
+}
+
+.nome-amanda { color: #F5C97A; }
+.nome-celso { color: #7AA2F7; }
+.valor-amanda { color: #F5C97A; }
+.valor-celso { color: #7AA2F7; }

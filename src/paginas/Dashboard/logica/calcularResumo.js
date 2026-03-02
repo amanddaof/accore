@@ -44,23 +44,29 @@ export function calcularResumo(dados) {
     });
 
   return {
-    salarioAmanda: salarios.salarioAmanda,
-    salarioCelso: salarios.salarioCelso,
-    comprometidoAmanda: totalAmanda,
-    comprometidoCelso: totalCelso,
-    sobraAmanda: salarios.salarioAmanda - totalAmanda,
-    sobraCelso: salarios.salarioCelso - totalCelso,
-    gruposAmanda: {
-      ...transacoes.gruposAmanda,
-      ...reservas.gruposAmanda,
-      ...casa.gruposAmanda
-    },
-    gruposCelso: {
-      ...transacoes.gruposCelso,
-      ...reservas.gruposCelso,
-      ...casa.gruposCelso,
-      ...emprestimos.gruposCelso
-    },
-    dividas
-  };
+  salarioAmanda: salarios.salarioAmanda,
+  salarioCelso: salarios.salarioCelso,
+  comprometidoAmanda: totalAmanda,
+  comprometidoCelso: totalCelso,
+  sobraAmanda: salarios.salarioAmanda - totalAmanda,
+  sobraCelso: salarios.salarioCelso - totalCelso,
+
+  gruposAmanda: {
+    ...transacoes.gruposAmanda,
+    ...reservas.gruposAmanda,
+    ...casa.gruposAmanda
+  },
+
+  gruposCelso: {
+    ...transacoes.gruposCelso,
+    ...reservas.gruposCelso,
+    ...casa.gruposCelso,
+    ...emprestimos.gruposCelso
+  },
+
+  reservasAmanda: reservas.reservasAmandaDetalhadas,
+  reservasCelso: reservas.reservasCelsoDetalhadas,
+
+  dividas
+};
 }

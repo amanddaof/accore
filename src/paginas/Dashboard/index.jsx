@@ -7,6 +7,13 @@ import { calcularImpactoAnual } from "./logica/calcularImpactoAnual";
 import { buscarResumoMes } from "./logica/buscarResumoMes";
 import GraficoGastos from "./componentes/GraficoGastos";
 import "./estilos/dashboard.css";
+import "./estilos/acerto.css";
+import "./estilos/anual.css";
+import "./estilos/cards.css";
+import "./estilos/grafico.css";
+import "./estilos/painel.css";
+import "./estilos/resumo.css";
+import "./estilos/status.css";
 
 export default function Dashboard() {
   const { mesSelecionado } = useMes();
@@ -19,6 +26,8 @@ export default function Dashboard() {
   const [mesExpandido, setMesExpandido] = useState(null);
   const [filtroOrigem, setFiltroOrigem] = useState("Todas");
   const [filtroPessoa, setFiltroPessoa] = useState("Todas");
+
+  const [modoDetalhe, setModoDetalhe] = useState({});
 
   useEffect(() => {
     carregar();
@@ -375,199 +384,267 @@ function getStatus(percentual) {
 
     {impactoAnual.map((item, index) => {
 
-  const mesNome = item.mes.split("/")[0];
+      const mesNome = item.mes.split("/")[0];
 
-  return (
-    <div key={index} className="linha-anual">
+      return (
+        <div key={index} className="linha-anual">
 
-      <div
-        className="linha-anual-resumo"
-        onClick={() =>
-          setMesExpandido(
-            mesExpandido === index ? null : index
-          )
-        }
-      >
+          <div
+            className="linha-anual-resumo"
+            onClick={() =>
+              setMesExpandido(
+                mesExpandido === index ? null : index
+              )
+            }
+          >
+            <span className="mes-coluna">{mesNome}</span>
 
-        <span className="mes-coluna">
-          {mesNome}
-        </span>
+            <span className={`valor-coluna ${
+              item.amanda.sobra >= 0 ? "positivo" : "negativo"
+            }`}>
+              {item.amanda.sobra.toFixed(2)}
+            </span>
 
-        <span
-          className={`valor-coluna ${
-            item.amanda.sobra >= 0
-              ? "positivo"
-              : "negativo"
-          }`}
-        >
-          {item.amanda.sobra.toFixed(2)}
-        </span>
+            <span className={`valor-coluna ${
+              item.celso.sobra >= 0 ? "positivo" : "negativo"
+            }`}>
+              {item.celso.sobra.toFixed(2)}
+            </span>
 
-        <span
-          className={`valor-coluna ${
-            item.celso.sobra >= 0
-              ? "positivo"
-              : "negativo"
-          }`}
-        >
-          {item.celso.sobra.toFixed(2)}
-        </span>
-
-        <span
-          className={`valor-coluna total-coluna ${
-            item.total.sobra >= 0
-              ? "positivo"
-              : "negativo"
-          }`}
-        >
-          {item.total.sobra.toFixed(2)}
-        </span>
-
-      </div>
-
-      {mesExpandido === index && (
-
-        <div className="linha-anual-detalhe">
-
-          {/* ================= AMANDA ================= */}
-          <div className="bloco-pessoa">
-
-            <div className="kpi-bloco">
-              <h4 className="nome-amanda">Amanda</h4>
-
-              <div className="detalhe-linha">
-                <span>Salário</span>
-                <span>R$ {item.amanda.salario.toFixed(2)}</span>
-              </div>
-
-              <div className="detalhe-linha">
-                <span>Gastos</span>
-                <span>R$ {item.amanda.gasto.toFixed(2)}</span>
-              </div>
-
-              {(() => {
-                const salario = item.amanda.salario;
-                const gasto = item.amanda.gasto;
-
-                const percentual = salario > 0
-                  ? (gasto / salario) * 100
-                  : 0;
-
-                const extrapolou = gasto > salario;
-                const status = getStatus(percentual);
-
-                return (
-                  <>
-                    <div className="detalhe-linha">
-                      <span>% Comprometido</span>
-                      <span className={extrapolou ? "negativo" : ""}>
-                        {percentual.toFixed(1)}%
-                      </span>
-                    </div>
-
-                    {!extrapolou && (
-                      <div className={`detalhe-linha ${status.classe}`}>
-                        <span>Status</span>
-                        <span>{status.label}</span>
-                      </div>
-                    )}
-
-                    {extrapolou && (
-                      <div className="alerta-gasto">
-                        🚨 Renda insuficiente para cobrir despesas
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-
-              <div className="detalhe-linha destaque">
-                <span>Sobra</span>
-                <span className={item.amanda.sobra >= 0 ? "positivo" : "negativo"}>
-                  R$ {item.amanda.sobra.toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            <div className="grafico-bloco">
-              <GraficoGastos dados={item.amanda} />
-            </div>
-
+            <span className={`valor-coluna total-coluna ${
+              item.total.sobra >= 0 ? "positivo" : "negativo"
+            }`}>
+              {item.total.sobra.toFixed(2)}
+            </span>
           </div>
 
-          {/* ================= CELSO ================= */}
-          <div className="bloco-pessoa">
+          {mesExpandido === index && (
 
-            <div className="kpi-bloco">
-              <h4 className="nome-celso">Celso</h4>
+            <div className="linha-anual-detalhe">
 
-              <div className="detalhe-linha">
-                <span>Salário</span>
-                <span>R$ {item.celso.salario.toFixed(2)}</span>
-              </div>
+              {/* ================= AMANDA ================= */}
+              <div className="bloco-pessoa">
 
-              <div className="detalhe-linha">
-                <span>Gastos</span>
-                <span>R$ {item.celso.gasto.toFixed(2)}</span>
-              </div>
+                {modoDetalhe[index]?.amanda === "reservas" ? (
 
-              {(() => {
-                const salario = item.celso.salario;
-                const gasto = item.celso.gasto;
+                  <div className="painel-full">
 
-                const percentual = salario > 0
-                  ? (gasto / salario) * 100
-                  : 0;
-
-                const extrapolou = gasto > salario;
-                const status = getStatus(percentual);
-
-                return (
-                  <>
-                    <div className="detalhe-linha">
-                      <span>% Comprometido</span>
-                      <span className={extrapolou ? "negativo" : ""}>
-                        {percentual.toFixed(1)}%
-                      </span>
+                    <div className="painel-header">
+                      <button
+                        onClick={() =>
+                          setModoDetalhe(prev => ({
+                            ...prev,
+                            [index]: { ...prev[index], amanda: null }
+                          }))
+                        }
+                      >
+                        ← Voltar
+                      </button>
+                      <span>Reservas Projetadas</span>
                     </div>
 
-                    {!extrapolou && (
-                      <div className={`detalhe-linha ${status.classe}`}>
-                        <span>Status</span>
-                        <span>{status.label}</span>
-                      </div>
-                    )}
+                    <div className="painel-lista">
+                      {item.amanda.reservasDetalhadas?.map((r, i) => (
+                        <div key={i} className="linha-detalhe">
+                          <span>{r.nome}</span>
+                          <span>R$ {r.valor.toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
 
-                    {extrapolou && (
-                      <div className="alerta-gasto">
-                        🚨 Renda insuficiente para cobrir despesas
+                  </div>
+
+                ) : (
+
+                  <>
+                    <div className="kpi-bloco">
+                      <h4 className="nome-amanda">Amanda</h4>
+
+                      <div className="detalhe-linha">
+                        <span>Salário</span>
+                        <span>R$ {item.amanda.salario.toFixed(2)}</span>
                       </div>
-                    )}
+
+                      <div className="detalhe-linha">
+                        <span>Gastos</span>
+                        <span>R$ {item.amanda.gasto.toFixed(2)}</span>
+                      </div>
+
+                      {(() => {
+                        const salario = item.amanda.salario;
+                        const gasto = item.amanda.gasto;
+
+                        const percentual = salario > 0
+                          ? (gasto / salario) * 100
+                          : 0;
+
+                        const extrapolou = gasto > salario;
+                        const status = getStatus(percentual);
+
+                        return (
+                          <>
+                            <div className="detalhe-linha">
+                              <span>% Comprometido</span>
+                              <span className={extrapolou ? "negativo" : ""}>
+                                {percentual.toFixed(1)}%
+                              </span>
+                            </div>
+
+                            {!extrapolou && (
+                              <div className={`detalhe-linha ${status.classe}`}>
+                                <span>Status</span>
+                                <span>{status.label}</span>
+                              </div>
+                            )}
+
+                            {extrapolou && (
+                              <div className="alerta-gasto">
+                                🚨 Renda insuficiente para cobrir despesas
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
+
+                      <div className="detalhe-linha destaque">
+                        <span>Sobra</span>
+                        <span className={item.amanda.sobra >= 0 ? "positivo" : "negativo"}>
+                          R$ {item.amanda.sobra.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grafico-bloco">
+                      <GraficoGastos
+                        dados={item.amanda}
+                        onAbrirReservas={() =>
+                          setModoDetalhe(prev => ({
+                            ...prev,
+                            [index]: { ...prev[index], amanda: "reservas" }
+                          }))
+                        }
+                      />
+                    </div>
                   </>
-                );
-              })()}
+                )}
 
-              <div className="detalhe-linha destaque">
-                <span>Sobra</span>
-                <span className={item.celso.sobra >= 0 ? "positivo" : "negativo"}>
-                  R$ {item.celso.sobra.toFixed(2)}
-                </span>
               </div>
+
+              {/* ================= CELSO ================= */}
+              <div className="bloco-pessoa">
+
+                {modoDetalhe[index]?.celso === "reservas" ? (
+
+                  <div className="painel-full">
+
+                    <div className="painel-header">
+                      <button
+                        onClick={() =>
+                          setModoDetalhe(prev => ({
+                            ...prev,
+                            [index]: { ...prev[index], celso: null }
+                          }))
+                        }
+                      >
+                        ← Voltar
+                      </button>
+                      <span>Reservas Projetadas</span>
+                    </div>
+
+                    <div className="painel-lista">
+                      {item.celso.reservasDetalhadas?.map((r, i) => (
+                        <div key={i} className="linha-detalhe">
+                          <span>{r.nome}</span>
+                          <span>R$ {r.valor.toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                  </div>
+
+                ) : (
+
+                  <>
+                    <div className="kpi-bloco">
+                      <h4 className="nome-celso">Celso</h4>
+
+                      <div className="detalhe-linha">
+                        <span>Salário</span>
+                        <span>R$ {item.celso.salario.toFixed(2)}</span>
+                      </div>
+
+                      <div className="detalhe-linha">
+                        <span>Gastos</span>
+                        <span>R$ {item.celso.gasto.toFixed(2)}</span>
+                      </div>
+
+                      {(() => {
+                        const salario = item.celso.salario;
+                        const gasto = item.celso.gasto;
+
+                        const percentual = salario > 0
+                          ? (gasto / salario) * 100
+                          : 0;
+
+                        const extrapolou = gasto > salario;
+                        const status = getStatus(percentual);
+
+                        return (
+                          <>
+                            <div className="detalhe-linha">
+                              <span>% Comprometido</span>
+                              <span className={extrapolou ? "negativo" : ""}>
+                                {percentual.toFixed(1)}%
+                              </span>
+                            </div>
+
+                            {!extrapolou && (
+                              <div className={`detalhe-linha ${status.classe}`}>
+                                <span>Status</span>
+                                <span>{status.label}</span>
+                              </div>
+                            )}
+
+                            {extrapolou && (
+                              <div className="alerta-gasto">
+                                🚨 Renda insuficiente para cobrir despesas
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
+
+                      <div className="detalhe-linha destaque">
+                        <span>Sobra</span>
+                        <span className={item.celso.sobra >= 0 ? "positivo" : "negativo"}>
+                          R$ {item.celso.sobra.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grafico-bloco">
+                      <GraficoGastos
+                        dados={item.celso}
+                        onAbrirReservas={() =>
+                          setModoDetalhe(prev => ({
+                            ...prev,
+                            [index]: { ...prev[index], celso: "reservas" }
+                          }))
+                        }
+                      />
+                    </div>
+                  </>
+                )}
+
+              </div>
+
             </div>
 
-            <div className="grafico-bloco">
-              <GraficoGastos dados={item.celso} />
-            </div>
-
-          </div>
+          )}
 
         </div>
-
-      )}
-
-    </div>
-  );
-})}
+      );
+    })}
 
   </div>
 
