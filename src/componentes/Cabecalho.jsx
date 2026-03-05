@@ -3,16 +3,21 @@ import { AuthContext } from "../contextos/AuthContext";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { supabase } from "../servicos/supabase";
 import SeletorMes from "./SeletorMes";
+import { useMes } from "../contextos/MesContexto";
+import { buscarResumoMes } from "../paginas/Dashboard/logica/buscarResumoMes";
 import "./estilos/Cabecalho.css";
 
 export default function Cabecalho() {
   const [menuAberto, setMenuAberto] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [displayName, setDisplayName] = useState(null);
+  const [sobraUsuario, setSobraUsuario] = useState(null);
 
   const headerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useContext(AuthContext);
+  const { mesSelecionado } = useMes();
 
   async function handleLogout() {
     await logout();
@@ -32,7 +37,7 @@ export default function Cabecalho() {
     setMenuAberto(null);
   }
 
-  /* ================= BUSCAR AVATAR ================= */
+  /* ================= BUSCAR AVATAR E NOME ================= */
 
   useEffect(() => {
     async function carregarPerfil() {
@@ -41,20 +46,44 @@ export default function Cabecalho() {
 
       const { data, error } = await supabase
         .from("user_profile")
-        .select("avatar_url")
+        .select("avatar_url, display_name")
         .eq("user_id", user.id)
         .single();
 
       if (error) {
-        console.error("Erro ao carregar avatar:", error);
+        console.error("Erro ao carregar perfil:", error);
         return;
       }
 
       setAvatarUrl(data?.avatar_url || null);
+      setDisplayName(data?.display_name || null);
     }
 
     carregarPerfil();
   }, []);
+
+  /* ================= CALCULAR SOBRA DO USUÁRIO ================= */
+
+  useEffect(() => {
+    async function carregarResumo() {
+      if (!displayName) return;
+
+      try {
+        const dados = await buscarResumoMes(mesSelecionado);
+
+        const sobra =
+          displayName === "Amanda"
+            ? dados.sobraAmanda
+            : dados.sobraCelso;
+
+        setSobraUsuario(sobra);
+      } catch (err) {
+        console.error("Erro ao buscar resumo:", err);
+      }
+    }
+
+    carregarResumo();
+  }, [displayName, mesSelecionado]);
 
   /* ================= FECHAR MENU CLICANDO FORA ================= */
 
@@ -69,6 +98,8 @@ export default function Cabecalho() {
     return () =>
       document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const isDashboard = location.pathname.startsWith("/dashboard");
 
   return (
     <header className="cabecalho" ref={headerRef}>
@@ -183,6 +214,24 @@ export default function Cabecalho() {
           </div>
 
           <SeletorMes />
+
+          {/* INDICADOR DE SOBRA (não aparece na dashboard) */}
+          {!isDashboard && sobraUsuario !== null && (
+            <div
+              className={`saldo-header ${
+                sobraUsuario >= 0 ? "positivo" : "negativo"
+              }`}
+            >
+              <>
+  R$ {sobraUsuario.toFixed(2)}
+  <img
+    src={sobraUsuario >= 0 ? "/icone/positivo.png" : "/icone/negativo.png"}
+    alt="status"
+    className="icone-status"
+  />
+</>
+            </div>
+          )}
 
           {/* ATUALIZAR */}
           <button
