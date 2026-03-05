@@ -28,7 +28,7 @@ import Emprestimos from "./paginas/Emprestimos/index";
 import Salarios from "./paginas/Salarios/index";
 import Limites from "./paginas/Limites/index";
 import Categorias from "./paginas/Categorias/index";
-import Perfil from "./paginas/Perfil";
+import Perfil from "./paginas/Perfil/index";
 
 import Login from "./paginas/Login";
 
@@ -126,3 +126,4 @@ export default function App() {
   );
 
 }
+
