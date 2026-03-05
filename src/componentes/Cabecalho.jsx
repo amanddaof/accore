@@ -218,10 +218,11 @@ export default function Cabecalho() {
           {/* INDICADOR DE SOBRA (não aparece na dashboard) */}
           {!isDashboard && sobraUsuario !== null && (
             <div
-              className={`saldo-header ${
-                sobraUsuario >= 0 ? "positivo" : "negativo"
-              }`}
-            >
+  key={sobraUsuario}
+  className={`saldo-header ${
+    sobraUsuario >= 0 ? "positivo" : "negativo"
+  }`}
+>
               <>
   R$ {sobraUsuario.toFixed(2)}
   <img
