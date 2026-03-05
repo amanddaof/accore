@@ -201,3 +201,30 @@
   background: rgba(229, 72, 77, 0.15); /* vermelho suave do sistema negativo */
   border-radius: 6px;
 }
+
+.perfil-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #221F63;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.perfil-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px #8B5CF6;
+}
+
+.perfil-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 18px;
+}
