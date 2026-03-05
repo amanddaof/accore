@@ -1,12 +1,14 @@
-import { useContext } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../contextos/AuthContext";
-import { useState, useRef, useEffect } from "react";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
+import { supabase } from "../servicos/supabase";
 import SeletorMes from "./SeletorMes";
 import "./estilos/Cabecalho.css";
 
 export default function Cabecalho() {
   const [menuAberto, setMenuAberto] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
   const headerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,13 +16,13 @@ export default function Cabecalho() {
 
   async function handleLogout() {
     await logout();
-    fecharMenu(); // fecha dropdown se estiver aberto
+    fecharMenu();
     navigate("/login", { replace: true });
   }
 
   function isActive(paths) {
-  return paths.some(path => location.pathname.startsWith(path));
-}
+    return paths.some(path => location.pathname.startsWith(path));
+  }
 
   function toggleMenu(nome) {
     setMenuAberto(menuAberto === nome ? null : nome);
@@ -29,6 +31,32 @@ export default function Cabecalho() {
   function fecharMenu() {
     setMenuAberto(null);
   }
+
+  /* ================= BUSCAR AVATAR ================= */
+
+  useEffect(() => {
+    async function carregarPerfil() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("user_profile")
+        .select("avatar_url")
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Erro ao carregar avatar:", error);
+        return;
+      }
+
+      setAvatarUrl(data?.avatar_url || null);
+    }
+
+    carregarPerfil();
+  }, []);
+
+  /* ================= FECHAR MENU CLICANDO FORA ================= */
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -48,6 +76,7 @@ export default function Cabecalho() {
 
         {/* ESQUERDA */}
         <div className="cabecalho-esquerda">
+
           <button
             className="logo"
             onClick={() => navigate("/dashboard")}
@@ -64,11 +93,11 @@ export default function Cabecalho() {
             {/* COMPRAS */}
             <div className="menu-item">
               <button
-  className={`menu-trigger ${isActive(["/cartoes", "/externo", "/reservas"]) ? "ativo" : ""}`}
-  onClick={() => toggleMenu("compras")}
->
-  Compras
-</button>
+                className={`menu-trigger ${isActive(["/cartoes", "/externo", "/reservas"]) ? "ativo" : ""}`}
+                onClick={() => toggleMenu("compras")}
+              >
+                Compras
+              </button>
 
               {menuAberto === "compras" && (
                 <div className="dropdown">
@@ -87,28 +116,28 @@ export default function Cabecalho() {
 
             {/* CASA */}
             <button
-  className={`menu-trigger ${isActive(["/casa"]) ? "ativo" : ""}`}
-  onClick={() => navigate("/casa")}
->
-  Casa
-</button>
+              className={`menu-trigger ${isActive(["/casa"]) ? "ativo" : ""}`}
+              onClick={() => navigate("/casa")}
+            >
+              Casa
+            </button>
 
             {/* ECONOMIA */}
             <button
-  className={`menu-trigger ${isActive(["/economia"]) ? "ativo" : ""}`}
-  onClick={() => navigate("/economia")}
->
-  Economia
-</button>
+              className={`menu-trigger ${isActive(["/economia"]) ? "ativo" : ""}`}
+              onClick={() => navigate("/economia")}
+            >
+              Economia
+            </button>
 
             {/* REGISTRO */}
             <div className="menu-item">
               <button
-  className={`menu-trigger ${isActive(["/entrada", "/emprestimos"]) ? "ativo" : ""}`}
-  onClick={() => toggleMenu("registro")}
->
-  Registro
-</button>
+                className={`menu-trigger ${isActive(["/entrada", "/emprestimos"]) ? "ativo" : ""}`}
+                onClick={() => toggleMenu("registro")}
+              >
+                Registro
+              </button>
 
               {menuAberto === "registro" && (
                 <div className="dropdown">
@@ -155,15 +184,24 @@ export default function Cabecalho() {
 
           <SeletorMes />
 
+          {/* ATUALIZAR */}
           <button
-  className="icone"
-  onClick={() => navigate(0)}
->
-  <img src="/icone/atualizar.png" alt="Atualizar" />
-</button>
+            className="icone"
+            onClick={() => window.location.reload()}
+          >
+            <img src="/icone/atualizar.png" alt="Atualizar" />
+          </button>
 
-          <NavLink to="/perfil" className="perfil" />
+          {/* AVATAR DO USUÁRIO */}
+          <NavLink to="/perfil" className="perfil-avatar">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Perfil" />
+            ) : (
+              <span className="avatar-placeholder">👤</span>
+            )}
+          </NavLink>
 
+          {/* SAIR */}
           <button
             className="icone"
             onClick={handleLogout}
