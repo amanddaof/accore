@@ -228,3 +228,23 @@
 .avatar-placeholder {
   font-size: 18px;
 }
+
+.saldo-header {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.saldo-header.positivo {
+  color: #5EEAD4;
+}
+
+.saldo-header.negativo {
+  color: #E5484D;
+}
+
+.icone-status {
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
